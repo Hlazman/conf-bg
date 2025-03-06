@@ -1,9 +1,34 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Form, Input, InputNumber, Button, Select, notification, Row, Col } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-import { GET_ORDERS } from './Orders';
+import { GET_ORDERS } from "./Orders"; // Импортируем запрос для обновления списка
+
+const GET_ORDER = gql`
+  query GetOrder($documentId: ID!) {
+    order(documentId: $documentId) {
+      documentId
+      number
+      deliveryCost
+      clientDiscount
+      taxRate
+      clientExtraPay
+      comment
+      agent {
+        documentId
+        name
+      }
+      client {
+        documentId
+        name
+      }
+      company {
+        documentId
+      }
+    }
+  }
+`;
 
 const GET_AGENTS_AND_CLIENTS = gql`
   query GetAgentsAndClients($filters: AgentFiltersInput, $clientFilters: ClientFiltersInput) {
@@ -18,16 +43,17 @@ const GET_AGENTS_AND_CLIENTS = gql`
   }
 `;
 
-const CREATE_ORDER = gql`
-  mutation CreateOrder($data: OrderInput!) {
-    createOrder(data: $data) {
+const UPDATE_ORDER = gql`
+  mutation UpdateOrder($documentId: ID!, $data: OrderInput!) {
+    updateOrder(documentId: $documentId, data: $data) {
       documentId
       number
     }
   }
 `;
 
-const CreateOrder = () => {
+const EditOrder = () => {
+  const { documentId } = useParams();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -35,16 +61,48 @@ const CreateOrder = () => {
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
   
-  const [createOrder] = useMutation(CREATE_ORDER);
+  const [updateOrder] = useMutation(UPDATE_ORDER);
+
+  // Получаем данные заказа
+  const { data: orderData, loading: orderLoading } = useQuery(GET_ORDER, {
+    variables: { documentId },
+    skip: !documentId,
+    onCompleted: (data) => {
+      // Заполняем форму данными с сервера
+      if (data?.order) {
+        form.setFieldsValue({
+          number: data.order.number,
+          deliveryCost: data.order.deliveryCost,
+          clientDiscount: data.order.clientDiscount,
+          taxRate: data.order.taxRate,
+          clientExtraPay: data.order.clientExtraPay,
+          comment: data.order.comment,
+          agent: data.order.agent?.documentId,
+          client: data.order.client?.documentId,
+        });
+        
+        // Устанавливаем компанию
+        if (data.order.company?.documentId) {
+          const companyData = {
+            documentId: data.order.company.documentId
+          };
+          setSelectedCompany(companyData);
+        }
+      }
+    }
+  });
 
   useEffect(() => {
-    const companyData = JSON.parse(localStorage.getItem("selectedCompany"));
-    if (companyData) {
-      setSelectedCompany(companyData);
+    if (!selectedCompany) {
+      const companyData = JSON.parse(localStorage.getItem("selectedCompany"));
+      if (companyData) {
+        setSelectedCompany(companyData);
+      }
     }
   }, []);
 
-  const { data, loading: queryLoading, error } = useQuery(GET_AGENTS_AND_CLIENTS, {
+  // Получаем список агентов и клиентов
+  const { data: agentsClientsData, loading: queryLoading } = useQuery(GET_AGENTS_AND_CLIENTS, {
     variables: { 
       filters: { 
         company: { 
@@ -63,16 +121,14 @@ const CreateOrder = () => {
     },
     skip: !selectedCompany?.documentId,
   });
-
-  console.log("GraphQL query result:", { data, error });
   
-  const agents = data?.agents || [];
-  const clients = data?.clients || [];
+  const agents = agentsClientsData?.agents || [];
+  const clients = agentsClientsData?.clients || [];
 
   const onFinish = async (values) => {
-    if (!selectedCompany?.documentId) return;
-  
-    const orderData = {
+    if (!selectedCompany?.documentId || !documentId) return;
+
+    const orderUpdateData = {
       number: values.number,
       deliveryCost: values.deliveryCost || 0,
       clientDiscount: values.clientDiscount || 0,
@@ -83,11 +139,14 @@ const CreateOrder = () => {
       agent: values.agent || null,
       client: values.client || null,
     };
-  
+
     try {
       setLoading(true);
-      await createOrder({
-        variables: { data: orderData },
+      await updateOrder({
+        variables: { 
+          documentId: documentId,
+          data: orderUpdateData 
+        },
         refetchQueries: [
           {
             query: GET_ORDERS,
@@ -103,16 +162,21 @@ const CreateOrder = () => {
           }
         ]
       });
-  
-      form.resetFields();
+
+      api.success({
+        message: translations.success || "Success",
+        description: translations.orderUpdated || "Order updated successfully",
+        placement: "topRight",
+      });
+      
       navigate("/orders");
     } catch (error) {
       api.error({
-        message: translations.err,
-        description: translations.faildOrder,
+        message: translations.err || "Error",
+        description: translations.failedOrderUpdate || "Failed to update order",
         placement: "topRight",
       });
-      console.error("Error creating order:", error);
+      console.error("Error updating order:", error);
     } finally {
       setLoading(false);
     }
@@ -121,7 +185,18 @@ const CreateOrder = () => {
   return (
     <>
       {contextHolder}
-      <Form form={form} layout="vertical" onFinish={onFinish}>
+      <h2>{translations.editOrder || "Edit Order"}</h2>
+      <Form 
+        form={form} 
+        layout="vertical" 
+        onFinish={onFinish}
+        initialValues={{
+          deliveryCost: 0,
+          clientDiscount: 0,
+          clientExtraPay: 0,
+        }}
+        disabled={orderLoading}
+      >
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item
@@ -195,7 +270,7 @@ const CreateOrder = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading} block>
-            {translations.createOrder}
+            {translations.saveChanges || "Save Changes"}
           </Button>
         </Form.Item>
       </Form>
@@ -203,4 +278,4 @@ const CreateOrder = () => {
   );
 };
 
-export default CreateOrder;
+export default EditOrder;

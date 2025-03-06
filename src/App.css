@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+
+.ant-select-disabled .ant-select-selection-item {
+  color: white !important;
+}

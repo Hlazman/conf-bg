@@ -18,6 +18,20 @@ const en = {
     product: "Product",
     dashboard: "Dashboard",
 
+    // CREATEORDER.JSX
+    err: 'Error',
+    orderNumber: 'Order Number',
+    requiredField: 'This field is required',
+    tax: 'Tax',
+    deliveryCost: 'Delivery cost',
+    discount: 'Discount',
+    extraCharge: 'Extra charge',
+    agent: 'Agent',
+    chooseAgent: 'Choose agent',
+    client: 'Client',
+    chooseClient: 'Choose client',
+    comment: 'Comment',
+
   };
   
   export default en;

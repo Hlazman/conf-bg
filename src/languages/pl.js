@@ -17,6 +17,20 @@ const pl = {
     createOrder: "Utwórz zamówienie",
     product: "Produkt",
     dashboard: "Pulpit nawigacyjny",
+
+    // CREATEORDER.JSX
+    err: 'Błąd',
+    orderNumber: 'Numer zamówienia',
+    requiredField: 'To pole jest wymagane',
+    tax: 'Podatek',
+    deliveryCost: 'Koszt dostawy',
+    discount: 'Rabat',
+    extraCharge: 'Dodatkowa opłata',
+    agent: 'Agent',
+    chooseAgent: 'Wybierz agenta',
+    client: 'Klient',
+    chooseClient: 'Wybierz klienta',
+    comment: 'Komentarz'
   };
   
   export default pl;

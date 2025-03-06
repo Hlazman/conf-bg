@@ -1,27 +1,47 @@
 import React, { useState, useContext } from "react";
 import { Form, Input, Button, Checkbox, Select, Card, Typography, notification } from "antd";
+import { useMutation } from "@apollo/client";
 import { AuthContext } from "../context/AuthContext";
 import { LanguageContext } from "../context/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { gql } from "graphql-tag";
 
 const { Option } = Select;
 const { Title } = Typography;
+
+const LOGIN_MUTATION = gql`
+  mutation Login($identifier: String!, $password: String!) {
+    login(input: { identifier: $identifier, password: $password }) {
+      jwt
+      user {
+        id
+        username
+        email
+        documentId
+      }
+    }
+  }
+`;
 
 const Login = () => {
   const { login } = useContext(AuthContext);
   const { language, setLanguage, translations } = useContext(LanguageContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const [api, contextHolder] = notification.useNotification();
+  const [loginMutation] = useMutation(LOGIN_MUTATION);
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      await login(values.email, values.password);
-      navigate("/");
+      const { data } = await loginMutation({
+        variables: { identifier: values.email, password: values.password },
+      });
+      if (data?.login?.jwt) {
+        await login(values.email, values.password);
+        navigate("/");
+      }
     } catch (error) {
-
       api.error({
         message: translations.loginError,
         description: translations.loginError,

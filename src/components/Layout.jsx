@@ -4,8 +4,18 @@ import { UserOutlined, LogoutOutlined, GlobalOutlined, FileAddOutlined, Unordere
 import { AuthContext } from "../context/AuthContext";
 import { LanguageContext } from "../context/LanguageContext";
 import { Link, useLocation } from "react-router-dom";
+import { gql, useQuery } from "@apollo/client";
 
 const { Header, Sider, Content } = Layout;
+
+const GET_USER_COMPANIES = gql`
+  query GetUserCompanies($filters: CompanyFiltersInput) {
+    companies(filters: $filters) {
+      name
+      documentId
+    }
+  }
+`;
 
 const AppLayout = ({ children }) => {
   const { user, logout } = useContext(AuthContext);
@@ -13,25 +23,61 @@ const AppLayout = ({ children }) => {
   const location = useLocation();
   const [selectedCompany, setSelectedCompany] = useState(null);
 
-  const companies = useMemo(() => user?.companies?.data || [], [user?.companies]);
+  const isEditOrderPage = useMemo(() => {
+    const pathParts = location.pathname.split("/").filter(Boolean);
+    return pathParts[0] === "edit-order" && pathParts[1];
+  }, [location.pathname]);
+  
+  console.log("User from context:", user);
+  console.log("User documentId:", user?.user?.documentId);
+  
+  const { data: companiesData, loading, error } = useQuery(GET_USER_COMPANIES, {
+    variables: { 
+      filters: { 
+        managers: { 
+          documentId: { 
+            eqi: user?.user?.documentId 
+          } 
+        } 
+      } 
+    },
+    skip: !user?.user?.documentId,
+  });
+  
+  console.log("Companies query result:", { data: companiesData, loading, error });
+  console.log("Error details:", error?.networkError?.result);
+  console.log("GraphQL errors:", error?.graphQLErrors);
+
+  const companies = useMemo(() => 
+    companiesData?.companies || [], 
+    [companiesData]
+  );
+  
+  console.log("Processed companies:", companies);
 
   useEffect(() => {
     const storedCompany = localStorage.getItem("selectedCompany");
+    console.log("Stored company from localStorage:", storedCompany);
+    
     if (storedCompany) {
-      const company = companies.find(c => c.id === JSON.parse(storedCompany)?.id);
+      const company = companies.find(c => c.documentId === JSON.parse(storedCompany)?.documentId);
+      console.log("Found company from localStorage:", company);
+      
       if (company) {
         setSelectedCompany(company);
         return;
       }
     }
     if (companies.length > 0) {
+      console.log("Setting first company as selected:", companies[0]);
       setSelectedCompany(companies[0]);
       localStorage.setItem("selectedCompany", JSON.stringify(companies[0]));
     }
   }, [companies]);
 
   const handleCompanyChange = (value) => {
-    const company = companies.find((c) => c.id === value);
+    console.log("Company changed to:", value);
+    const company = companies.find((c) => c.documentId === value);
     setSelectedCompany(company);
     localStorage.setItem("selectedCompany", JSON.stringify(company));
     window.location.reload();
@@ -47,6 +93,7 @@ const AppLayout = ({ children }) => {
       return pathParts[1] ? `${translations.order} #${pathParts[1]}` : translations.orders;
     }
     if (pathParts[0] === "create-order") return translations.createOrder;
+    if (pathParts[0] === "edit-order" && pathParts[1]) return `${translations.editOrder || "Edit Order"} #${pathParts[1]}`;
     if (pathParts[0] === "product" && pathParts[1]) return `${translations.product} #${pathParts[1]}`;
     return translations.dashboard;
   }, [location.pathname, translations]);
@@ -87,9 +134,10 @@ const AppLayout = ({ children }) => {
             </span>
             <Select
               style={{ width: 200 }}
-              value={selectedCompany?.id}
+              value={selectedCompany?.documentId}
               onChange={handleCompanyChange}
-              options={companies.map((c) => ({ value: c.id, label: c.name }))}
+              options={companies.map((c) => ({ value: c.documentId, label: c.name }))}
+              disabled={isEditOrderPage}
             />
             <Button type="primary" icon={<LogoutOutlined />} onClick={logout}>
               {translations.logout}
@@ -105,3 +153,11 @@ const AppLayout = ({ children }) => {
 };
 
 export default AppLayout;
+
+
+
+
+
+
+
+
