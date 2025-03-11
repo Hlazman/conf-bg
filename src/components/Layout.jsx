@@ -27,11 +27,8 @@ const AppLayout = ({ children }) => {
     const pathParts = location.pathname.split("/").filter(Boolean);
     return pathParts[0] === "edit-order" && pathParts[1];
   }, [location.pathname]);
-  
-  console.log("User from context:", user);
-  console.log("User documentId:", user?.user?.documentId);
-  
-  const { data: companiesData, loading, error } = useQuery(GET_USER_COMPANIES, {
+    
+  const { data: companiesData } = useQuery(GET_USER_COMPANIES, {
     variables: { 
       filters: { 
         managers: { 
@@ -44,24 +41,16 @@ const AppLayout = ({ children }) => {
     skip: !user?.user?.documentId,
   });
   
-  console.log("Companies query result:", { data: companiesData, loading, error });
-  console.log("Error details:", error?.networkError?.result);
-  console.log("GraphQL errors:", error?.graphQLErrors);
-
   const companies = useMemo(() => 
     companiesData?.companies || [], 
     [companiesData]
   );
   
-  console.log("Processed companies:", companies);
-
   useEffect(() => {
     const storedCompany = localStorage.getItem("selectedCompany");
-    console.log("Stored company from localStorage:", storedCompany);
     
     if (storedCompany) {
       const company = companies.find(c => c.documentId === JSON.parse(storedCompany)?.documentId);
-      console.log("Found company from localStorage:", company);
       
       if (company) {
         setSelectedCompany(company);
@@ -69,14 +58,12 @@ const AppLayout = ({ children }) => {
       }
     }
     if (companies.length > 0) {
-      console.log("Setting first company as selected:", companies[0]);
       setSelectedCompany(companies[0]);
       localStorage.setItem("selectedCompany", JSON.stringify(companies[0]));
     }
   }, [companies]);
 
   const handleCompanyChange = (value) => {
-    console.log("Company changed to:", value);
     const company = companies.find((c) => c.documentId === value);
     setSelectedCompany(company);
     localStorage.setItem("selectedCompany", JSON.stringify(company));
@@ -101,6 +88,7 @@ const AppLayout = ({ children }) => {
   const menuItems = [
     { key: "createOrder", icon: <FileAddOutlined />, label: <Link to="/create-order">{translations.createOrder}</Link> },
     { key: "orders", icon: <UnorderedListOutlined />, label: <Link to="/orders">{translations.orders}</Link> },
+    { key: "test", icon: <UnorderedListOutlined />, label: <Link to="/create-product">{'temp'}</Link> }, // TEMP
   ];
 
   const languageMenu = {

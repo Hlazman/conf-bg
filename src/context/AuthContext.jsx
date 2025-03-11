@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }) => {
         window.location.href = "/";
       }
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     }
   };

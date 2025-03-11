@@ -22,7 +22,7 @@ const CREATE_ORDER = gql`
   mutation CreateOrder($data: OrderInput!) {
     createOrder(data: $data) {
       documentId
-      number
+      orderNumber
     }
   }
 `;
@@ -63,8 +63,6 @@ const CreateOrder = () => {
     },
     skip: !selectedCompany?.documentId,
   });
-
-  console.log("GraphQL query result:", { data, error });
   
   const agents = data?.agents || [];
   const clients = data?.clients || [];
@@ -73,7 +71,7 @@ const CreateOrder = () => {
     if (!selectedCompany?.documentId) return;
   
     const orderData = {
-      number: values.number,
+      orderNumber: values.orderNumber,
       deliveryCost: values.deliveryCost || 0,
       clientDiscount: values.clientDiscount || 0,
       taxRate: values.taxRate,
@@ -112,7 +110,6 @@ const CreateOrder = () => {
         description: translations.faildOrder,
         placement: "topRight",
       });
-      console.error("Error creating order:", error);
     } finally {
       setLoading(false);
     }
@@ -125,11 +122,11 @@ const CreateOrder = () => {
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item
-              name="number"
+              name="orderNumber"
               label={translations.orderNumber}
               rules={[{ required: true, message: translations.requiredField }]}
             >
-              <InputNumber style={{ width: "100%" }} />
+              <Input style={{ width: "100%" }} />
             </Form.Item>
           </Col>
           <Col span={6}>

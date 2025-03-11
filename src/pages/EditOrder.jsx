@@ -9,7 +9,7 @@ const GET_ORDER = gql`
   query GetOrder($documentId: ID!) {
     order(documentId: $documentId) {
       documentId
-      number
+      orderNumber
       deliveryCost
       clientDiscount
       taxRate
@@ -47,7 +47,7 @@ const UPDATE_ORDER = gql`
   mutation UpdateOrder($documentId: ID!, $data: OrderInput!) {
     updateOrder(documentId: $documentId, data: $data) {
       documentId
-      number
+      orderNumber
     }
   }
 `;
@@ -71,7 +71,7 @@ const EditOrder = () => {
       // Заполняем форму данными с сервера
       if (data?.order) {
         form.setFieldsValue({
-          number: data.order.number,
+          orderNumber: data.order.orderNumber,
           deliveryCost: data.order.deliveryCost,
           clientDiscount: data.order.clientDiscount,
           taxRate: data.order.taxRate,
@@ -129,7 +129,7 @@ const EditOrder = () => {
     if (!selectedCompany?.documentId || !documentId) return;
 
     const orderUpdateData = {
-      number: values.number,
+      orderNumber: values.orderNumber,
       deliveryCost: values.deliveryCost || 0,
       clientDiscount: values.clientDiscount || 0,
       taxRate: values.taxRate,
@@ -176,7 +176,6 @@ const EditOrder = () => {
         description: translations.failedOrderUpdate || "Failed to update order",
         placement: "topRight",
       });
-      console.error("Error updating order:", error);
     } finally {
       setLoading(false);
     }
@@ -200,11 +199,11 @@ const EditOrder = () => {
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item
-              name="number"
+              name="orderNumber"
               label={translations.orderNumber}
               rules={[{ required: true, message: translations.requiredField }]}
             >
-              <InputNumber style={{ width: "100%" }} />
+              <Input style={{ width: "100%" }} />
             </Form.Item>
           </Col>
           <Col span={6}>

@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import EditOrder from "./pages/EditOrder";
 import './App.css';
+import CreateProduct from "./pages/CreateProduct";
 
 const App = () => {
   const { user } = React.useContext(AuthContext);
@@ -38,6 +39,8 @@ const App = () => {
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/create-order" element={<CreateOrder />} />
                 <Route path="/edit-order/:documentId" element={<EditOrder />} />
+
+                <Route path="/create-product" element={<CreateProduct />} />
                 <Route path="*" element={<Orders />} /> 
               </Routes>
             </Layout>
