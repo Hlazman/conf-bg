@@ -39,6 +39,7 @@ const GET_SUBORDER_PRODUCT = gql`
 const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const doorType = localStorage.getItem('currentType');
 
   // Размеры
   const [dimensionType, setDimensionType] = useState("door");
@@ -64,7 +65,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
           }
         },
         type: {
-          eq: "door"
+          // eq: "door"
+          eq: doorType
         }
       }
     },
@@ -186,7 +188,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
         thickness: wallThickness,
         type: dimensionType
       },
-      type: "door"
+      // type: "door"
+      type: doorType
     };
 
     // Обновляем существующий SuborderProduct

@@ -6,6 +6,7 @@ import DecorSelection from '../components/DecorSelection';
 import DoorParameters from '../components/DoorParameters';
 import FrameSelection from '../components/FrameSelection';
 import StartData from '../components/StartData';
+import SlidingSelection from '../components/SlidingSelection';
 
 const { Title } = Typography;
 
@@ -16,7 +17,9 @@ const CreateProduct = () => {
   const locationState = location.state || {};
   const suborderId = locationState.suborderId || localStorage.getItem('currentSuborderId');
   const orderId = locationState.orderId;
-  const type = locationState.type;
+  // const type = locationState.type;
+  const type = locationState.type || localStorage.getItem('currentType');
+  const doorType = localStorage.getItem('currentType');
   
   // Состояние для выбранной двери
   const [selectedDoor, setSelectedDoor] = useState(null);
@@ -124,7 +127,8 @@ const CreateProduct = () => {
           onColorChange={setFrontColorCode}
           isFrontSide={true}
           suborderId={suborderId}
-          productType = "door"
+          // productType = "door"
+          productType={doorType} 
         />
       )
     },
@@ -149,22 +153,28 @@ const CreateProduct = () => {
           isFrontSide={false}
           onClearSelection={clearBackSelection}
           suborderId={suborderId}
-          productType = "door"
+          // productType = "door"
+          productType={doorType}
         />
       )
     },
     {
       key: '6',
-      // label: "Выбор рамы",
-      label: <Title level={5} style={{ margin: 0 }}>Выбор рамы</Title>,
+      label: <Title level={5} style={{ margin: 0 }}>
+        {type === 'sliding' ? 'Раздвижная система' : 'Выбор рамы'}
+      </Title>,
       collapsible: !selectedDoor ? "disabled" : undefined,
-      children: (
+      children: type === 'sliding' ? (
+        <SlidingSelection 
+          suborderId={suborderId}
+        />
+      ) : (
         <FrameSelection
           doorId={selectedDoor?.documentId}
           collectionId={selectedDoor?.collections?.[0]?.documentId}
           selectedFrame={selectedFrame}
           onFrameSelect={setSelectedFrame}
-          suborderId={suborderId}  // Добавляем передачу suborderId
+          suborderId={suborderId}
         />
       )
     }

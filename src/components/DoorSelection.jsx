@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Card, Row, Col, Typography, Spin, Empty, Button, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_PRODUCTS } from '../api/queries';
@@ -37,9 +37,13 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
+// const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
 const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  const doorType = localStorage.getItem('currentType');
+  const [activeTabKey, setActiveTabKey] = useState(null); // ДЛЯ ВКЛАДОК
 
   // Запрос на получение дверей
   const { loading, error, data } = useQuery(GET_PRODUCTS, {
@@ -49,18 +53,31 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
       },
       filters: {
         type: {
-          eqi: "door"
+          // eqi: "door"
+          in: doorType === "hiddenDoor" ? ["door", "hiddenDoor"] : ["door"]
         }
       }
     }
   });
 
-  // Обработка данных после загрузки
-  const doors = data?.products?.filter(product =>
-    product.type === "door" &&
-    product.collections &&
-    product.collections.length > 0
-  ) || [];
+  // const doors = data?.products?.filter(product =>
+  //   (doorType === "hiddenDoor" ? 
+  //     (product.type === "door" || product.type === "hiddenDoor") : 
+  //     product.type === "door") &&
+  //   product.collections &&
+  //   product.collections.length > 0
+  // ) || [];
+
+  // Обработка данных после загрузки с использованием useMemo
+  const doors = useMemo(() => {
+    return data?.products?.filter(product =>
+      (doorType === "hiddenDoor" ? 
+        (product.type === "door" || product.type === "hiddenDoor") : 
+        product.type === "door") &&
+      product.collections &&
+      product.collections.length > 0
+    ) || [];
+  }, [data, doorType]);
 
   const { data: suborderProductData, loading: loadingSuborderProduct, refetch } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {
@@ -71,7 +88,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
           }
         },
         type: {
-          eq: "door"
+          // eq: "door"
+          eq: doorType // Используем тип из localStorage
         }
       }
     },
@@ -141,6 +159,14 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
           );
           if (doorFromProducts) {
             onDoorSelect(doorFromProducts);
+
+          // Для ВКЛАДОК
+          // Находим коллекцию выбранной двери и устанавливаем её как активную вкладку
+          const doorCollection = doorFromProducts.collections[0];
+            if (doorCollection) {
+              setActiveTabKey(doorCollection.documentId);
+            }
+            // Для ВКЛАДОК
           }
         }
       }
@@ -164,7 +190,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
     const doorData = {
       suborder: suborderId,
       product: selectedDoor.documentId,
-      type: "door"
+      // type: "door"
+      type: doorType // Используем тип из localStorage
     };
 
     if (suborderProductId) {
@@ -242,7 +269,9 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
           {suborderProductId ? "Обновить" : "Сохранить"}
         </Button>
       </div>
-      <Tabs type="card" items={doorTabItems} />
+      {/* ДЛЯ ВКЛАДОК */}
+      <Tabs activeKey={activeTabKey} onChange={setActiveTabKey} type="card" items={doorTabItems} />
+      {/* <Tabs type="card" items={doorTabItems} /> */}
     </div>
   );
 };

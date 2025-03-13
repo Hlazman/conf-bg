@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, Checkbox, Button, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_FRAMES } from '../api/queries';
@@ -55,6 +55,25 @@ const FrameSelection = ({
   const [saving, setSaving] = useState(false);
   const [thresholdChanged, setThresholdChanged] = useState(false);
 
+  const doorType = localStorage.getItem('currentType');
+
+  // Запрос для получения рам
+  // const { loading, error, data } = useQuery(GET_FRAMES, {
+  //   variables: {
+  //     filters: {
+  //       type: {
+  //         eqi: "frame"
+  //       },
+  //       collections: collectionId ? {
+  //         documentId: {
+  //           eq: collectionId
+  //         }
+  //       } : undefined
+  //     }
+  //   },
+  //   skip: !collectionId
+  // });
+
   // Запрос для получения рам
   const { loading, error, data } = useQuery(GET_FRAMES, {
     variables: {
@@ -62,15 +81,20 @@ const FrameSelection = ({
         type: {
           eqi: "frame"
         },
-        collections: collectionId ? {
-          documentId: {
-            eq: collectionId
-          }
-        } : undefined
+        collections: doorType === "hiddenDoor" 
+          ? undefined  // Для hiddenDoor не фильтруем по коллекции
+          : collectionId 
+            ? {
+                documentId: {
+                  eq: collectionId
+                }
+              } 
+            : undefined
       }
     },
-    skip: !collectionId
+    skip: doorType !== "hiddenDoor" && !collectionId
   });
+  
 
   // Запрос для получения существующего SuborderProduct типа frame
   const { data: frameProductData, loading: loadingFrameProduct, refetch: refetchFrame } = useQuery(GET_SUBORDER_PRODUCT, {
@@ -147,7 +171,22 @@ const FrameSelection = ({
     }
   });
 
-  const frames = data?.products || [];
+  // const frames = data?.products || [];
+  
+  // Получаем рамы из результатов запроса
+  const frames = useMemo(() => {
+    if (!data?.products) return [];
+    
+    // Если тип двери hiddenDoor, фильтруем рамы без коллекций
+    if (doorType === "hiddenDoor") {
+      return data.products.filter(frame => 
+        !frame.collections || frame.collections.length === 0
+      );
+    }
+    
+    // Для других типов дверей возвращаем все полученные рамы
+    return data.products;
+  }, [data, doorType]);
 
   // Эффект для загрузки данных при изменении frames
   useEffect(() => {
@@ -304,23 +343,13 @@ const FrameSelection = ({
                 borderWidth: selectedFrame?.documentId === frame.documentId ? '2px' : '1px'
               }}
               styles={{ body: { padding: '12px' } }}
+              onClick={() => onFrameSelect(frame)}
             >
               <Card.Meta title={frame.title} />
             </Card>
           </Col>
         ))}
       </Row>
-
-      {/* <div style={{ marginTop: 20 }}>
-        <Button 
-          type="primary" 
-          onClick={handleSave}
-          loading={saving}
-          disabled={!selectedFrame && !thresholdChanged}
-        >
-          Сохранить
-        </Button>
-      </div> */}
     </div>
   );
 };

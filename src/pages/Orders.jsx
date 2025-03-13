@@ -71,6 +71,7 @@ const DELETE_ORDER = gql`
   }
 `;
 
+
 const Orders = () => {
   const [commentModal, setCommentModal] = useState({ open: false, text: "" });
   const navigate = useNavigate();
@@ -211,13 +212,16 @@ const Orders = () => {
       
       // Сохраняем ID субордера в localStorage для надежности
       localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
+      localStorage.setItem('currentType', "door");
+      
       
       // После успешного создания Suborder переходим на страницу CreateProduct
       navigate(`/create-product`, { 
         state: { 
           orderId: record.documentId,
           suborderId: suborderData.createSuborder.documentId,
-          type: "interior" 
+          // type: "interior" 
+          type: "door" 
         } 
       });
     } catch (error) {
@@ -226,17 +230,124 @@ const Orders = () => {
     }
   };
 
+////////////////////////////////////////// HIDDEN DOORS //////////////////////////////////////////
+  const handleHiddenDoorClick = async (record) => {
+    try {
+      const { data: suborderData } = await createSuborder({
+        variables: {
+          data: {
+            hidden: true,
+            order: record.documentId,
+            suborder_type: 11 // ID для типа hiddenDoor
+          }
+        }
+      });
+  
+      // Сохраняем ID субордера в localStorage
+      localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
+      localStorage.setItem('currentType', "hiddenDoor");
+  
+      // Переходим на страницу CreateProduct
+      navigate(`/create-product`, {
+        state: {
+          orderId: record.documentId,
+          suborderId: suborderData.createSuborder.documentId,
+          type: "hiddenDoor"
+        }
+      });
+    } catch (error) {
+      message.error("Ошибка при создании подзаказа");
+      console.error("Error creating suborder:", error);
+    }
+  };
+////////////////////////////////////////// HIDDEN DOORS //////////////////////////////////////////
+
+////////////////////////////////////////// SLIDING DOORS //////////////////////////////////////////
+const handleSlidingDoorClick = async (record) => {
+  try {
+    const { data: suborderData } = await createSuborder({
+      variables: {
+        data: {
+          hidden: false,
+          order: record.documentId,
+          suborder_type: 12 // ID для типа slidingDoor
+        }
+      }
+    });
+
+    // Сохраняем ID субордера в localStorage
+    localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
+    localStorage.setItem('currentType', "sliding");
+
+    // Переходим на страницу CreateProduct
+    navigate(`/create-product`, {
+      state: {
+        orderId: record.documentId,
+        suborderId: suborderData.createSuborder.documentId,
+        type: "slidingDoor"
+      }
+    });
+  } catch (error) {
+    message.error("Ошибка при создании подзаказа");
+    console.error("Error creating suborder:", error);
+  }
+};
+////////////////////////////////////////// SLIDING DOORS //////////////////////////////////////////
+
+  // const handleEditSuborder = (suborderId, orderId) => {
+  //   // Сохраняем ID субордера в localStorage для надежности
+  //   localStorage.setItem('currentSuborderId', suborderId);
+    
+  //   // Переходим на страницу CreateProduct с передачей state
+  //   navigate(`/create-product`, { 
+  //     state: { 
+  //       orderId: orderId,
+  //       suborderId: suborderId,
+  //       // type: "interior",
+  //       type: "door",
+  //       isEditing: true // Флаг для определения режима редактирования
+  //     } 
+  //   });
+  // };
 
   const handleEditSuborder = (suborderId, orderId) => {
     // Сохраняем ID субордера в localStorage для надежности
     localStorage.setItem('currentSuborderId', suborderId);
+    
+    // Находим заказ по orderId
+    const order = orders.find(order => order.documentId === orderId);
+    
+    // Находим подзаказ по suborderId
+    const suborder = order?.suborders?.find(sub => sub.documentId === suborderId);
+    
+    // Определяем тип подзаказа на основе suborder_type.typeName
+    let type = "door"; // По умолчанию
+    let currentType = "door"; // По умолчанию для localStorage
+    
+    if (suborder?.suborder_type) {
+      const typeName = suborder.suborder_type.typeName?.toLowerCase();
+      
+      if (typeName.includes("скрыт") || typeName.includes("hidden")) {
+        type = "hiddenDoor";
+        currentType = "hiddenDoor";
+      } else if (typeName.includes("раздвиж") || typeName.includes("sliding")) {
+        type = "slidingDoor";
+        currentType = "sliding";
+      } else {
+        type = "door";
+        currentType = "door";
+      }
+    }
+    
+    // Сохраняем тип в localStorage, как это делается в других функциях
+    localStorage.setItem('currentType', currentType);
     
     // Переходим на страницу CreateProduct с передачей state
     navigate(`/create-product`, { 
       state: { 
         orderId: orderId,
         suborderId: suborderId,
-        type: "interior",
+        type: type,
         isEditing: true // Флаг для определения режима редактирования
       } 
     });
@@ -260,6 +371,7 @@ const Orders = () => {
       console.error("Error deleting suborder:", error);
     }
   };
+  
   
   const handleDeleteOrder = async (orderId) => {
     try {
@@ -301,11 +413,24 @@ const Orders = () => {
         label: "Добавить",
         icon: <PlusOutlined />,
         children: [
-          { key: "hidden", label: "Скрытые двери" },
+          // { key: "hidden", label: "Скрытые двери" },
           { 
-            key: "interior", 
+            key: "hiddenDoor", 
+            label: "Скрытые двери", 
+            icon: <FileTextOutlined />, 
+            onClick: () => handleHiddenDoorClick(record) 
+          },
+          { 
+            // key: "interior", 
+            key: "door", 
             label: "Межкомнатные двери", 
             onClick: () => handleInteriorClick(record)
+          },
+          { 
+            key: "slidingDoor", 
+            label: "Раздвижные двери", 
+            icon: <FileTextOutlined />, 
+            onClick: () => handleSlidingDoorClick(record) 
           },
           { key: "wall_panels", label: "Настенные панели" },
         ],
