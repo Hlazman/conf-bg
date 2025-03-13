@@ -32,6 +32,24 @@ const en = {
     chooseClient: 'Choose client',
     comment: 'Comment',
 
+    // STARTDATA.JSX
+    startData: "Start Data",
+    doubleDoor: "Double Door",
+    doorSide: "Door Side",
+    doorOpening: "Opening",
+    leftSide: "Left",
+    rightSide: "Right",
+    inside: "Inside",
+    outside: "Outside",
+    universal: "Universal",
+    yes: "Yes",
+    no: "No",
+    save: "Save",
+    dataSaved: "Data successfully saved",
+    saveError: "Error saving data",
+    loading: "Loading data...",
+    suborderIdNotFound: "Suborder ID not found",
+
   };
   
   export default en;

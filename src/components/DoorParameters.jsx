@@ -1,194 +1,118 @@
-// import React, { useState } from "react";
-// import { Row, Col, Form, Radio, InputNumber, Select, Divider } from "antd";
-// import { Typography } from "antd";
-
-// const { Title } = Typography;
-// const { Option } = Select;
-
-// const DoorParameters = ({ selectedDoor }) => {
-//   // Размеры
-//   const [dimensionType, setDimensionType] = useState("door");
-//   const [doorHeight, setDoorHeight] = useState(2000);
-//   const [doorWidth, setDoorWidth] = useState(800);
-//   const [wallThickness, setWallThickness] = useState(100);
-//   const [doorQuantity, setDoorQuantity] = useState(1); // Перенесено из стартовых данных
-
-//   // Врезка и уплотнение
-//   const [handleCutout, setHandleCutout] = useState(false);
-//   const [boltCutout, setBoltCutout] = useState(false);
-//   const [thresholdCutout, setThresholdCutout] = useState(false);
-//   const [doorSeal, setDoorSeal] = useState("none");
-//   const [lockCutout, setLockCutout] = useState("none");
-
-//   if (!selectedDoor) {
-//     return (
-//       <div style={{ textAlign: "center", padding: "20px" }}>
-//         <Title level={4}>Пожалуйста, выберите дверь</Title>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div>
-//       <Title level={4}>Параметры двери</Title>
-      
-//       {/* Размеры */}
-//       <Divider orientation="left">Размеры</Divider>
-//       <Row gutter={[16, 16]}>
-//         <Col span={24}>
-//           <Form.Item label="Тип размеров">
-//             <Radio.Group
-//               value={dimensionType}
-//               onChange={(e) => setDimensionType(e.target.value)}
-//             >
-//               <Radio value="door">Размер двери</Radio>
-//               <Radio value="opening">Размер проема</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Высота (мм)">
-//             <InputNumber
-//               min={1000}
-//               max={3000}
-//               value={doorHeight}
-//               onChange={setDoorHeight}
-//               style={{ width: "100%" }}
-//             />
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Ширина (мм)">
-//             <InputNumber
-//               min={500}
-//               max={1500}
-//               value={doorWidth}
-//               onChange={setDoorWidth}
-//               style={{ width: "100%" }}
-//             />
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Толщина стены (мм)">
-//             <InputNumber
-//               min={50}
-//               max={500}
-//               value={wallThickness}
-//               onChange={setWallThickness}
-//               style={{ width: "100%" }}
-//             />
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Количество">
-//             <InputNumber
-//               min={1}
-//               max={100}
-//               value={doorQuantity}
-//               onChange={setDoorQuantity}
-//               style={{ width: "100%" }}
-//             />
-//           </Form.Item>
-//         </Col>
-//       </Row>
-
-//       {/* Врезка и уплотнение */}
-//       <Divider orientation="left">Врезка и уплотнение</Divider>
-//       <Row gutter={[16, 16]}>
-//         <Col span={12}>
-//           <Form.Item label="Врезка ручки">
-//             <Radio.Group
-//               value={handleCutout}
-//               onChange={(e) => setHandleCutout(e.target.value)}
-//             >
-//               <Radio value={false}>Нет</Radio>
-//               <Radio value={true}>Да</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//         <Col span={12}>
-//           <Form.Item label="Врезка замка">
-//             <Select
-//               value={lockCutout}
-//               onChange={setLockCutout}
-//               style={{ width: "100%" }}
-//             >
-//               <Option value="none">Нет</Option>
-//               <Option value="standard">Стандартный</Option>
-//               <Option value="magnetic">Магнитный</Option>
-//             </Select>
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Врезка шпингалета">
-//             <Radio.Group
-//               value={boltCutout}
-//               onChange={(e) => setBoltCutout(e.target.value)}
-//             >
-//               <Radio value={false}>Нет</Radio>
-//               <Radio value={true}>Да</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Врезка порога">
-//             <Radio.Group
-//               value={thresholdCutout}
-//               onChange={(e) => setThresholdCutout(e.target.value)}
-//             >
-//               <Radio value={false}>Нет</Radio>
-//               <Radio value={true}>Да</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//         <Col span={8}>
-//           <Form.Item label="Уплотнение">
-//             <Select
-//               value={doorSeal}
-//               onChange={setDoorSeal}
-//               style={{ width: "100%" }}
-//             >
-//               <Option value="none">Нет</Option>
-//               <Option value="standard">Стандартное</Option>
-//               <Option value="premium">Премиум</Option>
-//             </Select>
-//           </Form.Item>
-//         </Col>
-//       </Row>
-//     </div>
-//   );
-// };
-
-// export default DoorParameters;
-
-
 import React, { useState, useEffect } from "react";
-import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Empty } from "antd";
-import { Typography } from "antd";
+import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Empty, Button, message, Typography } from "antd";
+import { useQuery, useMutation, gql } from "@apollo/client";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const DoorParameters = ({ selectedDoor, onParametersChange }) => {
+// Мутация для обновления SuborderProduct
+const UPDATE_SUBORDER_PRODUCT = gql`
+  mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
+    updateSuborderProduct(documentId: $documentId, data: $data) {
+      documentId
+    }
+  }
+`;
+
+// Запрос для получения существующего SuborderProduct
+const GET_SUBORDER_PRODUCT = gql`
+  query GetSuborderProduct($filters: SuborderProductFiltersInput) {
+    suborderProducts(filters: $filters) {
+      documentId
+      amount
+      doorSeal
+      knobInsertion
+      lockInsertion
+      spindleInsertion
+      thresholdInsertion
+      sizes {
+        height
+        width
+        thickness
+        type
+      }
+      type
+    }
+  }
+`;
+
+const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
+  const [suborderProductId, setSuborderProductId] = useState(null);
+  const [saving, setSaving] = useState(false);
+
   // Размеры
   const [dimensionType, setDimensionType] = useState("door");
   const [doorHeight, setDoorHeight] = useState(2000);
   const [doorWidth, setDoorWidth] = useState(800);
   const [wallThickness, setWallThickness] = useState(100);
-  const [doorQuantity, setDoorQuantity] = useState(1); // Перенесено из стартовых данных
+  const [doorQuantity, setDoorQuantity] = useState(1);
 
   // Врезка и уплотнение
   const [handleCutout, setHandleCutout] = useState(false);
   const [boltCutout, setBoltCutout] = useState(false);
   const [thresholdCutout, setThresholdCutout] = useState(false);
   const [doorSeal, setDoorSeal] = useState("none");
-  const [lockCutout, setLockCutout] = useState("none");
+  const [lockCutout, setLockCutout] = useState(false);
+
+  // Запрос на получение существующего SuborderProduct
+  const { data: suborderProductData, loading: loadingSuborderProduct } = useQuery(GET_SUBORDER_PRODUCT, {
+    variables: {
+      filters: {
+        suborder: {
+          documentId: {
+            eq: suborderId
+          }
+        },
+        type: {
+          eq: "door"
+        }
+      }
+    },
+    skip: !suborderId,
+    fetchPolicy: "network-only"
+  });
+
+  // Мутация для обновления SuborderProduct
+  const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
+    onCompleted: () => {
+      message.success("Параметры двери успешно обновлены");
+      setSaving(false);
+    },
+    onError: (error) => {
+      message.error(`Ошибка при обновлении: ${error.message}`);
+      setSaving(false);
+    }
+  });
+
+  // Эффект для загрузки данных при получении suborderProductData
+  useEffect(() => {
+    if (!loadingSuborderProduct && suborderProductData) {
+      if (suborderProductData.suborderProducts && suborderProductData.suborderProducts.length > 0) {
+        const suborderProduct = suborderProductData.suborderProducts[0];
+        setSuborderProductId(suborderProduct.documentId);
+        
+        // Заполняем состояние данными из suborderProduct
+        if (suborderProduct.sizes) {
+          setDoorHeight(suborderProduct.sizes.height || 2000);
+          setDoorWidth(suborderProduct.sizes.width || 800);
+          setWallThickness(suborderProduct.sizes.thickness || 100);
+          setDimensionType(suborderProduct.sizes.type || "door");
+        }
+        
+        setDoorQuantity(suborderProduct.amount || 1);
+        setHandleCutout(suborderProduct.knobInsertion || false);
+        setLockCutout(suborderProduct.lockInsertion || false);
+        setBoltCutout(suborderProduct.spindleInsertion || false);
+        setThresholdCutout(suborderProduct.thresholdInsertion || false);
+        setDoorSeal(suborderProduct.doorSeal ? suborderProduct.doorSeal : "none");
+      }
+    }
+  }, [suborderProductData, loadingSuborderProduct]);
 
   // Эффект для обновления параметров при выборе новой двери
   useEffect(() => {
     if (selectedDoor) {
       // Можно установить значения по умолчанию на основе выбранной двери
-      // Например, если у двери есть свойства с размерами по умолчанию
       if (selectedDoor.defaultHeight) {
         setDoorHeight(selectedDoor.defaultHeight);
       }
@@ -235,43 +159,48 @@ const DoorParameters = ({ selectedDoor, onParametersChange }) => {
     setDimensionType(e.target.value);
   };
 
-  const handleDoorHeightChange = (value) => {
-    setDoorHeight(value);
+  // Функция сохранения параметров двери
+  const handleSaveParameters = () => {
+    if (!suborderId) {
+      message.error("ID подзаказа не найден");
+      return;
+    }
+
+    if (!suborderProductId) {
+      message.error("Сначала выберите дверь в разделе 'Выбор полотна'");
+      return;
+    }
+
+    setSaving(true);
+
+    const parameterData = {
+      amount: doorQuantity,
+      doorSeal: doorSeal !== "none" ? doorSeal : null,
+      knobInsertion: handleCutout,
+      lockInsertion: lockCutout,
+      spindleInsertion: boltCutout,
+      thresholdInsertion: thresholdCutout,
+      sizes: {
+        height: doorHeight,
+        width: doorWidth,
+        thickness: wallThickness,
+        type: dimensionType
+      },
+      type: "door"
+    };
+
+    // Обновляем существующий SuborderProduct
+    updateSuborderProduct({
+      variables: {
+        documentId: suborderProductId,
+        data: parameterData
+      }
+    });
   };
 
-  const handleDoorWidthChange = (value) => {
-    setDoorWidth(value);
-  };
+  if (loadingSuborderProduct) return <Spin size="large" />;
 
-  const handleWallThicknessChange = (value) => {
-    setWallThickness(value);
-  };
-
-  const handleDoorQuantityChange = (value) => {
-    setDoorQuantity(value);
-  };
-
-  const handleHandleCutoutChange = (e) => {
-    setHandleCutout(e.target.value);
-  };
-
-  const handleBoltCutoutChange = (e) => {
-    setBoltCutout(e.target.value);
-  };
-
-  const handleThresholdCutoutChange = (e) => {
-    setThresholdCutout(e.target.value);
-  };
-
-  const handleDoorSealChange = (value) => {
-    setDoorSeal(value);
-  };
-
-  const handleLockCutoutChange = (value) => {
-    setLockCutout(value);
-  };
-
-  if (!selectedDoor) {
+  if (!selectedDoor && !suborderProductId) {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         <Title level={4}>Пожалуйста, выберите дверь</Title>
@@ -281,7 +210,17 @@ const DoorParameters = ({ selectedDoor, onParametersChange }) => {
 
   return (
     <div>
-      <Title level={4}>Параметры двери</Title>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Title level={4}>Параметры двери</Title>
+        <Button 
+          type="primary" 
+          onClick={handleSaveParameters} 
+          loading={saving}
+          disabled={!suborderProductId}
+        >
+          Сохранить
+        </Button>
+      </div>
       
       {/* Размеры */}
       <Divider orientation="left">Размеры</Divider>
@@ -290,10 +229,10 @@ const DoorParameters = ({ selectedDoor, onParametersChange }) => {
           <Form.Item label="Тип размеров">
             <Radio.Group
               value={dimensionType}
-              onChange={(e) => setDimensionType(e.target.value)}
+              onChange={handleDimensionTypeChange}
             >
-              <Radio value="door">Размер двери</Radio>
-              <Radio value="opening">Размер проема</Radio>
+              <Radio value="door">Размер полотна</Radio>
+              <Radio value="wall">Размер стены</Radio>
             </Radio.Group>
           </Form.Item>
         </Col>
@@ -319,7 +258,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange }) => {
             />
           </Form.Item>
         </Col>
-        {dimensionType === "opening" && (
+        {dimensionType === "wall" && (
           <Col span={8}>
             <Form.Item label="Толщина стены (мм)">
               <InputNumber
@@ -348,62 +287,70 @@ const DoorParameters = ({ selectedDoor, onParametersChange }) => {
       {/* Врезка и уплотнение */}
       <Divider orientation="left">Врезка и уплотнение</Divider>
       <Row gutter={[16, 16]}>
-        <Col span={12}>
-          <Form.Item label="Врезка ручки">
+        <Col span={6}>
+          <Form.Item label="Врезка ручки" style={{ marginBottom: 0 }}>
             <Radio.Group
               value={handleCutout}
-              onChange={handleHandleCutoutChange}
+              onChange={(e) => setHandleCutout(e.target.value)}
+              optionType="button"
+              buttonStyle="solid"
             >
-              <Radio value={false}>Нет</Radio>
-              <Radio value={true}>Да</Radio>
+              <Radio.Button value={false}>Нет</Radio.Button>
+              <Radio.Button value={true}>Да</Radio.Button>
             </Radio.Group>
           </Form.Item>
         </Col>
-        <Col span={12}>
-          <Form.Item label="Врезка замка">
-            <Select
+        <Col span={6}>
+          <Form.Item label="Врезка замка" style={{ marginBottom: 0 }}>
+            <Radio.Group
               value={lockCutout}
-              onChange={handleLockCutoutChange}
-              style={{ width: "100%" }}
+              onChange={(e) => setLockCutout(e.target.value)}
+              optionType="button"
+              buttonStyle="solid"
             >
-              <Option value="none">Нет</Option>
-              <Option value="standard">Стандартный</Option>
-              <Option value="magnetic">Магнитный</Option>
-            </Select>
+              <Radio.Button value={false}>Нет</Radio.Button>
+              <Radio.Button value={true}>Да</Radio.Button>
+            </Radio.Group>
           </Form.Item>
         </Col>
-        <Col span={8}>
-          <Form.Item label="Врезка шпингалета">
+        <Col span={6}>
+          <Form.Item label="Врезка шпингалета" style={{ marginBottom: 0 }}>
             <Radio.Group
               value={boltCutout}
-              onChange={handleBoltCutoutChange}
+              onChange={(e) => setBoltCutout(e.target.value)}
+              optionType="button"
+              buttonStyle="solid"
             >
-              <Radio value={false}>Нет</Radio>
-              <Radio value={true}>Да</Radio>
+              <Radio.Button value={false}>Нет</Radio.Button>
+              <Radio.Button value={true}>Да</Radio.Button>
             </Radio.Group>
           </Form.Item>
         </Col>
-        <Col span={8}>
-          <Form.Item label="Врезка порога">
+        <Col span={6}>
+          <Form.Item label="Врезка порога" style={{ marginBottom: 0 }}>
             <Radio.Group
               value={thresholdCutout}
-              onChange={handleThresholdCutoutChange}
+              onChange={(e) => setThresholdCutout(e.target.value)}
+              optionType="button"
+              buttonStyle="solid"
             >
-              <Radio value={false}>Нет</Radio>
-              <Radio value={true}>Да</Radio>
+              <Radio.Button value={false}>Нет</Radio.Button>
+              <Radio.Button value={true}>Да</Radio.Button>
             </Radio.Group>
           </Form.Item>
         </Col>
+      </Row>
+      <Row style={{ marginTop: 16 }}>
         <Col span={8}>
           <Form.Item label="Уплотнение">
             <Select
               value={doorSeal}
-              onChange={handleDoorSealChange}
+              onChange={setDoorSeal}
               style={{ width: "100%" }}
             >
               <Option value="none">Нет</Option>
-              <Option value="standard">Стандартное</Option>
-              <Option value="premium">Премиум</Option>
+              <Option value="black">black</Option>
+              <Option value="grey">grey</Option>
             </Select>
           </Form.Item>
         </Col>

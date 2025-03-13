@@ -1,138 +1,71 @@
-// // import React, { useState } from "react";
-// // import { Row, Col, Form, Radio } from "antd";
-// // import { Typography } from "antd";
+import React, { useState, useEffect, useContext } from "react";
+import { Form, Radio, Button, message, Space } from "antd";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
-// // const { Title } = Typography;
-
-// // const StartData = ({ selectedDoor }) => {
-// //   // Стартовые данные
-// //   const [isDoubleDoor, setIsDoubleDoor] = useState(false);
-// //   const [doorSide, setDoorSide] = useState("right");
-// //   const [doorOpening, setDoorOpening] = useState("universal");
-
-// //   if (!selectedDoor) {
-// //     return (
-// //       <div style={{ textAlign: "center", padding: "20px" }}>
-// //         <Title level={4}>Пожалуйста, выберите дверь</Title>
-// //       </div>
-// //     );
-// //   }
-
-// //   return (
-// //     <div>
-// //       <Title level={4}>Стартовые данные</Title>
-// //       <Row gutter={[16, 16]}>
-// //         <Col span={24}>
-// //           <Form.Item label="Двойная дверь">
-// //             <Radio.Group
-// //               value={isDoubleDoor}
-// //               onChange={(e) => setIsDoubleDoor(e.target.value)}
-// //             >
-// //               <Radio value={false}>Нет</Radio>
-// //               <Radio value={true}>Да</Radio>
-// //             </Radio.Group>
-// //           </Form.Item>
-// //         </Col>
-// //         <Col span={12}>
-// //           <Form.Item label="Сторона двери">
-// //             <Radio.Group
-// //               value={doorSide}
-// //               onChange={(e) => setDoorSide(e.target.value)}
-// //             >
-// //               <Radio value="left">Левая</Radio>
-// //               <Radio value="right">Правая</Radio>
-// //             </Radio.Group>
-// //           </Form.Item>
-// //         </Col>
-// //         <Col span={12}>
-// //           <Form.Item label="Открывание">
-// //             <Radio.Group
-// //               value={doorOpening}
-// //               onChange={(e) => setDoorOpening(e.target.value)}
-// //             >
-// //               <Radio value="in">Внутрь</Radio>
-// //               <Radio value="out">Наружу</Radio>
-// //               <Radio value="universal">Универсальное</Radio>
-// //             </Radio.Group>
-// //           </Form.Item>
-// //         </Col>
-// //       </Row>
-// //     </div>
-// //   );
-// // };
-
-// // export default StartData;
+// GraphQL запрос для обновления субордера
+const UPDATE_SUBORDER = gql`
+  mutation UpdateSuborder($documentId: ID!, $data: SuborderInput!) {
+    updateSuborder(documentId: $documentId, data: $data) {
+      documentId
+    }
+  }
+`;
 
 
-// import React, { useState } from "react";
-// import { Row, Col, Form, Radio } from "antd";
-// import { Typography } from "antd";
+// GraphQL запрос для получения данных субордера
+const GET_SUBORDER = gql`
+  query GetSuborder($documentId: ID!) {
+    suborder(documentId: $documentId) {
+      documentId
+      double_door
+      side
+      opening
+    }
+  }
+`;
 
-// const { Title } = Typography;
-
-// const StartData = ({ selectedDoor }) => {
-//   // Стартовые данные
-//   const [isDoubleDoor, setIsDoubleDoor] = useState(false);
-//   const [doorSide, setDoorSide] = useState("right");
-//   const [doorOpening, setDoorOpening] = useState("universal");
-
-//   return (
-//     <div>
-//       <Title level={4}>Стартовые данные</Title>
-//       <Row gutter={[16, 16]}>
-//         <Col span={24}>
-//           <Form.Item label="Двойная дверь">
-//             <Radio.Group
-//               value={isDoubleDoor}
-//               onChange={(e) => setIsDoubleDoor(e.target.value)}
-//             >
-//               <Radio value={false}>Нет</Radio>
-//               <Radio value={true}>Да</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//         <Col span={12}>
-//           <Form.Item label="Сторона двери">
-//             <Radio.Group
-//               value={doorSide}
-//               onChange={(e) => setDoorSide(e.target.value)}
-//             >
-//               <Radio value="left">Левая</Radio>
-//               <Radio value="right">Правая</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//         <Col span={12}>
-//           <Form.Item label="Открывание">
-//             <Radio.Group
-//               value={doorOpening}
-//               onChange={(e) => setDoorOpening(e.target.value)}
-//             >
-//               <Radio value="in">Внутрь</Radio>
-//               <Radio value="out">Наружу</Radio>
-//               <Radio value="universal">Универсальное</Radio>
-//             </Radio.Group>
-//           </Form.Item>
-//         </Col>
-//       </Row>
-//     </div>
-//   );
-// };
-
-// export default StartData;
-
-
-import React, { useState, useEffect } from "react";
-import { Row, Col, Form, Radio } from "antd";
-import { Typography } from "antd";
-
-const { Title } = Typography;
-
-const StartData = ({ onDataChange }) => {
-  // Стартовые данные
+const StartData = ({ onDataChange, suborderId }) => {
+  const [form] = Form.useForm();
+  const { translations } = useContext(LanguageContext);
+  
+  // Стартовые данные с измененными значениями по умолчанию
   const [isDoubleDoor, setIsDoubleDoor] = useState(false);
-  const [doorSide, setDoorSide] = useState("right");
-  const [doorOpening, setDoorOpening] = useState("universal");
+  const [doorSide, setDoorSide] = useState("left");  // Изменено с "right" на "left"
+  const [doorOpening, setDoorOpening] = useState("inside");  // Изменено с "universal" на "inside"
+  
+  // Запрос на получение данных субордера
+  const { data: suborderData, loading: loadingSuborder, refetch } = useQuery(GET_SUBORDER, {
+    variables: { documentId: suborderId },
+    skip: !suborderId,
+    onCompleted: (data) => {
+      if (data && data.suborder) {
+        // Устанавливаем значения из полученных данных
+        setIsDoubleDoor(data.suborder.double_door || false);
+        setDoorSide(data.suborder.side || "left");  // Изменено значение по умолчанию
+        setDoorOpening(data.suborder.opening || "inside");  // Изменено значение по умолчанию
+        
+        // Обновляем форму
+        form.setFieldsValue({
+          isDoubleDoor: data.suborder.double_door || false,
+          doorSide: data.suborder.side || "left",  // Изменено значение по умолчанию
+          doorOpening: data.suborder.opening || "inside"  // Изменено значение по умолчанию
+        });
+      }
+    }
+  });
+  
+  // Мутация для обновления субордера
+  const [updateSuborder, { loading: updating }] = useMutation(UPDATE_SUBORDER, {
+    onCompleted: () => {
+      message.success(translations.dataSaved);
+      // Выполняем повторный запрос для обновления данных
+      refetch();
+    },
+    onError: (error) => {
+      message.error(`${translations.saveError}: ${error.message}`);
+    }
+  });
 
   // Эффект для отправки изменений в родительский компонент
   useEffect(() => {
@@ -159,46 +92,92 @@ const StartData = ({ onDataChange }) => {
   const handleDoorOpeningChange = (e) => {
     setDoorOpening(e.target.value);
   };
+  
+  // Обработчик отправки формы
+  const handleSubmit = () => {
+    if (!suborderId) {
+      message.error(translations.suborderIdNotFound);
+      return;
+    }
+    
+    const data = {
+      double_door: isDoubleDoor,
+      side: doorSide,
+      opening: doorOpening
+    };
+    
+    updateSuborder({
+      variables: {
+        documentId: suborderId,
+        data: data
+      }
+    });
+  };
+
 
   return (
     <div>
-      <Title level={4}>Стартовые данные</Title>
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          <Form.Item label="Двойная дверь">
-            <Radio.Group
-              value={isDoubleDoor}
-              onChange={handleDoubleDoorChange}
+      {loadingSuborder ? (
+        <div>{translations.loading}</div>
+      ) : (
+        <Form form={form} initialValues={{ isDoubleDoor, doorSide, doorOpening }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', marginTop: '16px' }}>
+            <Space size="large">
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ marginRight: '16px' }}>{translations.doubleDoor}:</label>
+                <Radio.Group
+                  value={isDoubleDoor}
+                  onChange={handleDoubleDoorChange}
+                  optionType="button"
+                  buttonStyle="solid"
+                >
+                  <Radio.Button value={false}>{translations.no}</Radio.Button>
+                  <Radio.Button value={true}>{translations.yes}</Radio.Button>
+                </Radio.Group>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ marginRight: '16px' }}>{translations.doorSide}:</label>
+                <Radio.Group
+                  value={doorSide}
+                  onChange={handleDoorSideChange}
+                  optionType="button"
+                  buttonStyle="solid"
+                >
+                  <Radio.Button value="left">{translations.leftSide}</Radio.Button>
+                  <Radio.Button value="right">{translations.rightSide}</Radio.Button>
+                </Radio.Group>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ marginRight: '16px' }}>{translations.doorOpening}:</label>
+                <Radio.Group
+                  value={doorOpening}
+                  onChange={handleDoorOpeningChange}
+                  optionType="button"
+                  buttonStyle="solid"
+                >
+                  <Radio.Button value="inside">{translations.inside}</Radio.Button>
+                  <Radio.Button value="outside">{translations.outside}</Radio.Button>
+                  <Radio.Button value="universal">{translations.universal}</Radio.Button>
+                </Radio.Group>
+              </div>
+            </Space>
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+            <Button 
+              type="primary" 
+              onClick={handleSubmit} 
+              loading={updating}
+              disabled={!suborderId}
+              style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
             >
-              <Radio value={false}>Нет</Radio>
-              <Radio value={true}>Да</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item label="Сторона двери">
-            <Radio.Group
-              value={doorSide}
-              onChange={handleDoorSideChange}
-            >
-              <Radio value="left">Левая</Radio>
-              <Radio value="right">Правая</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item label="Открывание">
-            <Radio.Group
-              value={doorOpening}
-              onChange={handleDoorOpeningChange}
-            >
-              <Radio value="in">Внутрь</Radio>
-              <Radio value="out">Наружу</Radio>
-              <Radio value="universal">Универсальное</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-      </Row>
+              {translations.save}
+            </Button>
+          </div>
+        </Form>
+      )}
     </div>
   );
 };

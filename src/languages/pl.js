@@ -30,7 +30,25 @@ const pl = {
     chooseAgent: 'Wybierz agenta',
     client: 'Klient',
     chooseClient: 'Wybierz klienta',
-    comment: 'Komentarz'
+    comment: 'Komentarz',
+
+    // STARTDATA.JSX
+    startData: "Dane początkowe",
+    doubleDoor: "Drzwi podwójne",
+    doorSide: "Strona drzwi",
+    doorOpening: "Otwieranie",
+    leftSide: "Lewa",
+    rightSide: "Prawa",
+    inside: "Do wewnątrz",
+    outside: "Na zewnątrz",
+    universal: "Uniwersalne",
+    yes: "Tak",
+    no: "Nie",
+    save: "Zapisz",
+    dataSaved: "Dane zostały pomyślnie zapisane",
+    saveError: "Błąd podczas zapisywania danych",
+    loading: "Ładowanie danych...",
+    suborderIdNotFound: "Nie znaleziono ID podzamówienia",
   };
   
   export default pl;

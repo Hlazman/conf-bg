@@ -204,10 +204,13 @@ const Orders = () => {
           data: {
             hidden: false,
             order: record.documentId,
-            suborder_type: 1
+            suborder_type: 2
           }
         }
       });
+      
+      // Сохраняем ID субордера в localStorage для надежности
+      localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
       
       // После успешного создания Suborder переходим на страницу CreateProduct
       navigate(`/create-product`, { 
@@ -223,8 +226,20 @@ const Orders = () => {
     }
   };
 
-  const handleEditSuborder = (suborderId) => {
-    navigate(`/edit-suborder/${suborderId}`);
+
+  const handleEditSuborder = (suborderId, orderId) => {
+    // Сохраняем ID субордера в localStorage для надежности
+    localStorage.setItem('currentSuborderId', suborderId);
+    
+    // Переходим на страницу CreateProduct с передачей state
+    navigate(`/create-product`, { 
+      state: { 
+        orderId: orderId,
+        suborderId: suborderId,
+        type: "interior",
+        isEditing: true // Флаг для определения режима редактирования
+      } 
+    });
   };
 
   const handleCloneSuborder = (suborderId) => {
@@ -323,6 +338,12 @@ const Orders = () => {
 
     const suborderColumns = [
       { 
+        title: '№', 
+        key: 'subIndex', 
+        width: 60,
+        render: (_, __, index) => index + 1 
+      },
+      { 
         title: 'Тип подзаказа', 
         dataIndex: 'suborder_type', 
         key: 'typeName',
@@ -346,7 +367,8 @@ const Orders = () => {
               type="primary" 
               icon={<EditOutlined />} 
               size="small"
-              onClick={() => handleEditSuborder(suborder.documentId)}
+              // onClick={() => handleEditSuborder(suborder.documentId)}
+              onClick={() => handleEditSuborder(suborder.documentId, record.documentId)}
             >
               Изменить
             </Button>
@@ -389,7 +411,8 @@ const Orders = () => {
   };
 
   const columns = [
-    { title: "№ Order", dataIndex: "orderNumber", key: "orderNumber", fixed: "left" },
+    { title: "№", key: "index", width: 60, render: (_, __, index) => index + 1, fixed: "left"},
+    { title: "Order number", dataIndex: "orderNumber", key: "orderNumber", fixed: "left" },
     { title: "Стоимость Netto", dataIndex: "totalCostNetto", key: "totalCostNetto" },
     { title: "Стоимость Brutto", dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
     { title: "Налог", dataIndex: "taxRate", key: "taxRate" },

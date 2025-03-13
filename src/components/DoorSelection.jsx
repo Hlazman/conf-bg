@@ -1,68 +1,47 @@
-// import React from "react";
-// import { Tabs, Card, Row, Col, Typography, Spin, Empty } from "antd";
-
-// const { Title } = Typography;
-
-// const DoorSelection = ({ 
-//   collections, 
-//   doorsByCollection, 
-//   selectedDoor, 
-//   onDoorSelect, 
-//   loading 
-// }) => {
-//   if (loading) return <Spin size="large" />;
-  
-//   if (collections.length === 0) {
-//     return <Empty description="Нет доступных коллекций" />;
-//   }
-  
-//   const doorTabItems = collections.map(collection => ({
-//     label: collection.title,
-//     key: collection.documentId,
-//     children: (
-//       <Row gutter={[16, 16]}>
-//         {doorsByCollection[collection.documentId].map(door => (
-//           <Col span={4} key={door.documentId}>
-//             <Card
-//               hoverable
-//               cover={
-//                 door.image?.url ? 
-//                 <img 
-//                   alt={door.title} 
-//                   src={`https://dev.api.boki-groupe.com${door.image.url}`} 
-//                   style={{ height: 200, objectFit: 'cover' }}
-//                 /> : 
-//                 <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-//                   Нет изображения
-//                 </div>
-//               }
-//               onClick={() => onDoorSelect(door)}
-//               style={{ 
-//                 border: selectedDoor?.documentId === door.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0'
-//               }}
-//             >
-//               <Card.Meta title={door.title} />
-//             </Card>
-//           </Col>
-//         ))}
-//       </Row>
-//     )
-//   }));
-  
-//   return <Tabs type="card" items={doorTabItems} />;
-// };
-
-// export default DoorSelection;
-
-
 import React, { useState, useEffect } from "react";
-import { Tabs, Card, Row, Col, Typography, Spin, Empty } from "antd";
-import { useQuery } from "@apollo/client";
+import { Tabs, Card, Row, Col, Typography, Spin, Empty, Button, message } from "antd";
+import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_PRODUCTS } from '../api/queries';
 
 const { Title } = Typography;
 
-const DoorSelection = ({ selectedDoor, onDoorSelect }) => {
+// Мутация для создания SuborderProduct
+const CREATE_SUBORDER_PRODUCT = gql`
+  mutation CreateSuborderProduct($data: SuborderProductInput!) {
+    createSuborderProduct(data: $data) {
+      documentId
+    }
+  }
+`;
+
+// Мутация для обновления SuborderProduct
+const UPDATE_SUBORDER_PRODUCT = gql`
+  mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
+    updateSuborderProduct(documentId: $documentId, data: $data) {
+      documentId
+    }
+  }
+`;
+
+// Запрос для получения существующего SuborderProduct
+const GET_SUBORDER_PRODUCT = gql`
+  query GetSuborderProduct($filters: SuborderProductFiltersInput) {
+    suborderProducts(filters: $filters) {
+      documentId
+      product {
+        documentId
+        title
+      }
+      type
+    }
+  }
+`;
+
+const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
+  const [suborderProductId, setSuborderProductId] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  // Запрос на получение дверей
   const { loading, error, data } = useQuery(GET_PRODUCTS, {
     variables: {
       pagination: {
@@ -75,14 +54,58 @@ const DoorSelection = ({ selectedDoor, onDoorSelect }) => {
       }
     }
   });
-  
+
   // Обработка данных после загрузки
-  const doors = data?.products?.filter(product => 
-    product.type === "door" && 
-    product.collections && 
+  const doors = data?.products?.filter(product =>
+    product.type === "door" &&
+    product.collections &&
     product.collections.length > 0
   ) || [];
-  
+
+  const { data: suborderProductData, loading: loadingSuborderProduct, refetch } = useQuery(GET_SUBORDER_PRODUCT, {
+    variables: {
+      filters: {
+        suborder: {
+          documentId: {
+            eq: suborderId
+          }
+        },
+        type: {
+          eq: "door"
+        }
+      }
+    },
+    skip: !suborderId,
+    fetchPolicy: "network-only"
+  });
+
+  // Мутация для создания SuborderProduct
+  const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
+    onCompleted: (data) => {
+      setSuborderProductId(data.createSuborderProduct.documentId);
+      message.success("Дверь успешно сохранена");
+      setSaving(false);
+      refetch(); // Обновляем данные после успешного создания
+    },
+    onError: (error) => {
+      message.error(`Ошибка при сохранении: ${error.message}`);
+      setSaving(false);
+    }
+  });
+
+  // Мутация для обновления SuborderProduct
+  const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
+    onCompleted: () => {
+      message.success("Дверь успешно обновлена");
+      setSaving(false);
+      refetch(); // Обновляем данные после успешного обновления
+    },
+    onError: (error) => {
+      message.error(`Ошибка при обновлении: ${error.message}`);
+      setSaving(false);
+    }
+  });
+
   // Получаем уникальные коллекции из дверей
   const collections = doors.reduce((acc, door) => {
     door.collections.forEach(collection => {
@@ -92,10 +115,10 @@ const DoorSelection = ({ selectedDoor, onDoorSelect }) => {
     });
     return acc;
   }, []);
-  
+
   // Сортируем коллекции по алфавиту
   collections.sort((a, b) => a.title.localeCompare(b.title));
-  
+
   // Группируем двери по коллекциям и сортируем внутри каждой коллекции по title
   const doorsByCollection = collections.reduce((acc, collection) => {
     acc[collection.documentId] = doors
@@ -103,15 +126,73 @@ const DoorSelection = ({ selectedDoor, onDoorSelect }) => {
       .sort((a, b) => a.title.localeCompare(b.title));
     return acc;
   }, {});
-  
-  if (loading) return <Spin size="large" />;
-  
+
+  // Эффект для загрузки данных при изменении doors
+  useEffect(() => {
+    if (!loadingSuborderProduct && suborderProductData && doors.length > 0) {
+      if (suborderProductData.suborderProducts && suborderProductData.suborderProducts.length > 0) {
+        const suborderProduct = suborderProductData.suborderProducts[0];
+        setSuborderProductId(suborderProduct.documentId);
+        
+        // Если есть продукт и пользователь еще не выбрал дверь, устанавливаем её
+        if (suborderProduct.product && !selectedDoor) {
+          const doorFromProducts = doors.find(door => 
+            door.documentId === suborderProduct.product.documentId
+          );
+          if (doorFromProducts) {
+            onDoorSelect(doorFromProducts);
+          }
+        }
+      }
+    }
+  }, [doors, suborderProductData, loadingSuborderProduct, onDoorSelect, selectedDoor]);
+
+  // Функция сохранения выбранной двери
+  const handleSaveDoor = () => {
+    if (!selectedDoor) {
+      message.warning("Пожалуйста, выберите дверь");
+      return;
+    }
+
+    if (!suborderId) {
+      message.error("ID подзаказа не найден");
+      return;
+    }
+
+    setSaving(true);
+
+    const doorData = {
+      suborder: suborderId,
+      product: selectedDoor.documentId,
+      type: "door"
+    };
+
+    if (suborderProductId) {
+      // Обновляем существующий SuborderProduct
+      updateSuborderProduct({
+        variables: {
+          documentId: suborderProductId,
+          data: doorData
+        }
+      });
+    } else {
+      // Создаем новый SuborderProduct
+      createSuborderProduct({
+        variables: {
+          data: doorData
+        }
+      });
+    }
+  };
+
+  if (loading || loadingSuborderProduct) return <Spin size="large" />;
+
   if (error) return <Empty description={`Ошибка загрузки: ${error.message}`} />;
-  
+
   if (collections.length === 0) {
-    return <Empty description="Нет доступных коллекций" />;
+    return <Empty description="Нет доступных коллекций дверей" />;
   }
-  
+
   const doorTabItems = collections.map(collection => ({
     label: collection.title,
     key: collection.documentId,
@@ -132,8 +213,11 @@ const DoorSelection = ({ selectedDoor, onDoorSelect }) => {
                   Нет изображения
                 </div>
               }
-              onClick={() => onDoorSelect(door)}
-              style={{ 
+              onClick={() => {
+                onDoorSelect(door);
+                console.log("Выбрана дверь:", door.title);
+              }}
+              style={{
                 border: selectedDoor?.documentId === door.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0'
               }}
             >
@@ -144,8 +228,25 @@ const DoorSelection = ({ selectedDoor, onDoorSelect }) => {
       </Row>
     )
   }));
-  
-  return <Tabs type="card" items={doorTabItems} />;
+
+  return (
+    <div>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Title level={4}>Выбор двери</Title>
+        <Button 
+          type="primary" 
+          onClick={handleSaveDoor} 
+          disabled={!selectedDoor || saving}
+          loading={saving}
+        >
+          {suborderProductId ? "Обновить" : "Сохранить"}
+        </Button>
+      </div>
+      <Tabs type="card" items={doorTabItems} />
+    </div>
+  );
 };
 
 export default DoorSelection;
+
+

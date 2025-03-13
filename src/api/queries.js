@@ -80,4 +80,3 @@ export const GET_FRAMES = gql`
     }
   }
 `;
-
