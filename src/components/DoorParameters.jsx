@@ -247,6 +247,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
               value={doorHeight}
               onChange={setDoorHeight}
               style={{ width: "100%" }}
+              addonAfter={'mm'}
             />
           </Form.Item>
         </Col>
@@ -258,6 +259,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
               value={doorWidth}
               onChange={setDoorWidth}
               style={{ width: "100%" }}
+              addonAfter={'mm'}
             />
           </Form.Item>
         </Col>
@@ -270,6 +272,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
                 value={wallThickness}
                 onChange={setWallThickness}
                 style={{ width: "100%" }}
+                addonAfter={'mm'}
               />
             </Form.Item>
           </Col>

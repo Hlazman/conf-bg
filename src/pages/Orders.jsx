@@ -277,7 +277,8 @@ const handleSlidingDoorClick = async (record) => {
 
     // Сохраняем ID субордера в localStorage
     localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
-    localStorage.setItem('currentType', "sliding");
+    // localStorage.setItem('currentType', "sliding");
+    localStorage.setItem('currentType', "slidingDoor");
 
     // Переходим на страницу CreateProduct
     navigate(`/create-product`, {
@@ -321,18 +322,36 @@ const handleSlidingDoorClick = async (record) => {
     const suborder = order?.suborders?.find(sub => sub.documentId === suborderId);
     
     // Определяем тип подзаказа на основе suborder_type.typeName
+    // let type = "door"; // По умолчанию
+    // let currentType = "door"; // По умолчанию для localStorage
+    
+    // if (suborder?.suborder_type) {
+    //   const typeName = suborder.suborder_type.typeName?.toLowerCase();
+      
+    //   if (typeName.includes("скрыт") || typeName.includes("hidden")) {
+    //     type = "hiddenDoor";
+    //     currentType = "hiddenDoor";
+    //   } else if (typeName.includes("раздвиж") || typeName.includes("sliding")) {
+    //     type = "slidingDoor";
+    //     currentType = "sliding";
+    //   } else {
+    //     type = "door";
+    //     currentType = "door";
+    //   }
+
+    // Определяем тип подзаказа на основе suborder_type.typeName
     let type = "door"; // По умолчанию
     let currentType = "door"; // По умолчанию для localStorage
     
     if (suborder?.suborder_type) {
-      const typeName = suborder.suborder_type.typeName?.toLowerCase();
+      const typeName = suborder.suborder_type.typeName;
       
-      if (typeName.includes("скрыт") || typeName.includes("hidden")) {
+      if (typeName.includes("hidden")) {
         type = "hiddenDoor";
         currentType = "hiddenDoor";
-      } else if (typeName.includes("раздвиж") || typeName.includes("sliding")) {
+      } else if (typeName.includes("slidingDoor")) {
         type = "slidingDoor";
-        currentType = "sliding";
+        currentType = "slidingDoor";
       } else {
         type = "door";
         currentType = "door";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Card, Row, Col, Spin, Empty, Button, Radio, Typography, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_DECOR_TYPES, GET_DECORS } from '../api/queries';
@@ -142,100 +142,77 @@ const DecorSelection = ({
     skip: !selectedDecorType
   });
   
-  const decors = decorsData?.decors || [];
+  const decors = useMemo(() => {
+    return decorsData?.decors || [];
+  }, [decorsData]);
   
-  // Эффект для загрузки данных из SuborderProduct
+// Эффект для загрузки данных из SuborderProduct
 useEffect(() => {
-  if (!loadingSuborderProduct && suborderProductData) {
-    if (suborderProductData.suborderProducts && suborderProductData.suborderProducts.length > 0) {
-      const suborderProduct = suborderProductData.suborderProducts[0];
-      setSuborderProductId(suborderProduct.documentId);
-      
-      // Устанавливаем активную вкладку и данные только при первой загрузке
-      if (!activeDecorTabKey) {
-        if (isFrontSide && suborderProduct.decor_type) {
-          const decorType = decorTypes.find(dt => dt.documentId === suborderProduct.decor_type.documentId);
-          if (decorType) {
-            // Сначала устанавливаем тип декора и ждем загрузки декоров
-            setActiveDecorTabKey(suborderProduct.decor_type.documentId);
-            onDecorTypeSelect(decorType);
-            
-            // Остальные действия выполнятся в другом useEffect после загрузки декоров
+  if (!loadingSuborderProduct && suborderProductData && decorTypes.length > 0) {
+      if (suborderProductData.suborderProducts && suborderProductData.suborderProducts.length > 0) {
+          const suborderProduct = suborderProductData.suborderProducts[0];
+          setSuborderProductId(suborderProduct.documentId);
+          
+          // Определяем тип декора для текущей стороны
+          const decorTypeId = isFrontSide 
+              ? suborderProduct.decor_type?.documentId 
+              : suborderProduct.secondSideDecorType?.documentId;
+              
+          if (decorTypeId) {
+              // Находим тип декора в списке
+              const decorType = decorTypes.find(dt => dt.documentId === decorTypeId);
+              if (decorType) {
+                  // Устанавливаем активную вкладку
+                  setActiveDecorTabKey(decorTypeId);
+                  onDecorTypeSelect(decorType);
+                  
+                  // Загружаем соответствующие декоры после установки типа
+                  // Остальные действия будут выполнены в другом useEffect после загрузки декоров
+              }
           }
-        } else if (!isFrontSide && suborderProduct.secondSideDecorType) {
-          const decorType = decorTypes.find(dt => dt.documentId === suborderProduct.secondSideDecorType.documentId);
-          if (decorType) {
-            // Сначала устанавливаем тип декора и ждем загрузки декоров
-            setActiveDecorTabKey(suborderProduct.secondSideDecorType.documentId);
-            onDecorTypeSelect(decorType);
-            
-            // Остальные действия выполнятся в другом useEffect после загрузки декоров
-          }
-        }
       }
-    }
   }
-}, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect, activeDecorTabKey]);
+}, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect]);
 
 // Отдельный эффект для установки декора и других параметров после загрузки декоров
 useEffect(() => {
   // Если декоры загружены и есть данные о suborderProduct
   if (!decorsLoading && decors && decors.length > 0 && suborderProductData) {
-    const suborderProduct = suborderProductData.suborderProducts?.[0];
-    if (!suborderProduct) return;
-    
-    if (isFrontSide) {
-      // Установка ориентации шпона
-      if (selectedDecorType?.typeName === "Veneer" && suborderProduct.veneerDirection) {
-        setVeneerOrientation(suborderProduct.veneerDirection);
-      }
+      const suborderProduct = suborderProductData.suborderProducts?.[0];
+      if (!suborderProduct) return;
       
-      // Установка декора
-      if (suborderProduct.decor && selectedDecorType) {
-        const decorToSelect = decors.find(d => d.documentId === suborderProduct.decor.documentId);
-        if (decorToSelect) {
-          onDecorSelect(decorToSelect);
-        }
+      // Получаем ID декора для текущей стороны
+      const decorId = isFrontSide 
+          ? suborderProduct.decor?.documentId 
+          : suborderProduct.secondSideDecor?.documentId;
+          
+      if (decorId && selectedDecorType) {
+          // Находим декор в списке
+          const decorToSelect = decors.find(d => d.documentId === decorId);
+          if (decorToSelect) {
+              // Если это Veneer, устанавливаем категорию
+              if (selectedDecorType.typeName === "Veneer" && decorToSelect.category) {
+                  setSelectedCategory(decorToSelect.category);
+              }
+              
+              // Устанавливаем декор
+              onDecorSelect(decorToSelect);
+              
+              // Устанавливаем ориентацию шпона для Veneer
+              if (selectedDecorType.typeName === "Veneer") {
+                  const direction = isFrontSide 
+                      ? suborderProduct.veneerDirection 
+                      : suborderProduct.secondSideVeneerDirection;
+                  if (direction) {
+                      setVeneerOrientation(direction);
+                  }
+              }
+          }
       }
-      
-      // Установка цвета
-      if (isPaintType(selectedDecorType?.typeName) && suborderProduct.colorCode) {
-        onColorChange(suborderProduct.colorCode);
-      }
-    } else {
-      // Установка ориентации шпона
-      if (selectedDecorType?.typeName === "Veneer" && suborderProduct.secondSideVeneerDirection) {
-        setVeneerOrientation(suborderProduct.secondSideVeneerDirection);
-      }
-      
-      // Установка декора
-      if (suborderProduct.secondSideDecor && selectedDecorType) {
-        const decorToSelect = decors.find(d => d.documentId === suborderProduct.secondSideDecor.documentId);
-        if (decorToSelect) {
-          onDecorSelect(decorToSelect);
-        }
-      }
-      
-      // Установка цвета
-      if (isPaintType(selectedDecorType?.typeName) && suborderProduct.secondSideColorCode) {
-        onColorChange(suborderProduct.secondSideColorCode);
-      }
-    }
   }
 }, [decors, decorsLoading, suborderProductData, isFrontSide, selectedDecorType, onDecorSelect, onColorChange]);
 
-  
-  // Эффект для установки категории по умолчанию для Veneer
-  useEffect(() => {
-    if (selectedDecorType?.typeName === "Veneer" && decors && decors.length > 0) {
-      const categories = getVeneerCategories(decors);
-      if (categories.length > 0 && !selectedCategory) {
-        setSelectedCategory(categories[0]);
-      }
-    }
-  }, [selectedDecorType, decors, selectedCategory]);
-
-  // Отдельный эффект для установки цвета
+// Отдельный эффект для установки цвета
 useEffect(() => {
   if (suborderProductData?.suborderProducts?.[0]) {
     const suborderProduct = suborderProductData.suborderProducts[0];
@@ -315,57 +292,69 @@ useEffect(() => {
 // Функция сохранения декора
 const handleSaveDecor = () => {
   if (!suborderId) {
-    message.error("ID подзаказа не найден");
-    return;
+      message.error("ID подзаказа не найден");
+      return;
   }
 
   if (!suborderProductId) {
-    message.error(`Сначала выберите дверь в разделе 'Выбор полотна'`);
-    return;
+      message.error(`Сначала выберите дверь в разделе 'Выбор полотна'`);
+      return;
   }
 
   setSaving(true);
-
-  // Подготавливаем данные для обновления в зависимости от стороны
-  const decorData = {};
-
+  
+  // Подготавливаем базовые данные с явным сбросом всех полей
+  const decorData = {
+      // Общие поля
+      type: productType
+  };
+  
   if (isFrontSide) {
-    // Явно сбрасываем все значения
-    decorData.decor = selectedDecor ? selectedDecor.documentId : null;
-    decorData.colorCode = colorCode || null;
-    decorData.veneerDirection = null; // Сбрасываем по умолчанию
-    decorData.decor_type = selectedDecorType ? selectedDecorType.documentId : null;
-    
-    // Устанавливаем направление шпона только если выбран тип декора Veneer
-    if (selectedDecorType && selectedDecorType.typeName === "Veneer") {
-      decorData.veneerDirection = veneerOrientation;
-    }
+      // Сбрасываем все поля лицевой стороны
+      decorData.decor = null;
+      decorData.colorCode = null;
+      decorData.veneerDirection = null;
+      decorData.decor_type = null;
+      
+      // Затем устанавливаем только нужные поля в зависимости от типа декора
+      if (selectedDecorType) {
+          decorData.decor_type = selectedDecorType.documentId;
+          decorData.decor = selectedDecor ? selectedDecor.documentId : null;
+          
+          if (selectedDecorType.typeName === "Veneer") {
+              decorData.veneerDirection = veneerOrientation;
+          } else if (isPaintType(selectedDecorType.typeName)) {
+              decorData.colorCode = colorCode || null;
+          }
+      }
   } else {
-    // Явно сбрасываем все значения для тыльной стороны
-    decorData.secondSideDecor = selectedDecor ? selectedDecor.documentId : null;
-    decorData.secondSideColorCode = colorCode || null;
-    decorData.secondSideVeneerDirection = null; // Сбрасываем по умолчанию
-    decorData.secondSideDecorType = selectedDecorType ? selectedDecorType.documentId : null;
-    
-    // Устанавливаем направление шпона только если выбран тип декора Veneer
-    if (selectedDecorType && selectedDecorType.typeName === "Veneer") {
-      decorData.secondSideVeneerDirection = veneerOrientation;
-    }
+      // Сбрасываем все поля тыльной стороны
+      decorData.secondSideDecor = null;
+      decorData.secondSideColorCode = null;
+      decorData.secondSideVeneerDirection = null;
+      decorData.secondSideDecorType = null;
+      
+      // Затем устанавливаем только нужные поля в зависимости от типа декора
+      if (selectedDecorType) {
+          decorData.secondSideDecorType = selectedDecorType.documentId;
+          decorData.secondSideDecor = selectedDecor ? selectedDecor.documentId : null;
+          
+          if (selectedDecorType.typeName === "Veneer") {
+              decorData.secondSideVeneerDirection = veneerOrientation;
+          } else if (isPaintType(selectedDecorType.typeName)) {
+              decorData.secondSideColorCode = colorCode || null;
+          }
+      }
   }
-
-  // Добавляем тип продукта
-  decorData.type = productType;
-
+  
   // Обновляем существующий SuborderProduct
   updateSuborderProduct({
-    variables: {
-      documentId: suborderProductId,
-      data: decorData
-    }
+      variables: {
+          documentId: suborderProductId,
+          data: decorData
+      }
   });
 };
-
-
   
   if (decorTypesLoading || loadingSuborderProduct) return <Spin />;
   
@@ -464,7 +453,7 @@ const handleSaveDecor = () => {
                 </div>
               ) : veneerCategories.length > 0 ? (
                 <Tabs 
-                  type="card" 
+                  type="line" 
                   items={categoryTabItems}
                   onChange={(key) => handleCategorySelect(key)}
                   activeKey={selectedCategory}
