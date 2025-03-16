@@ -1,378 +1,22 @@
-// import React, { useState, useEffect, useMemo } from "react";
-// import { Card, Row, Col, Typography, Spin, Empty, Button, message, Input, InputNumber, Upload, Alert } from "antd";
-// import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
-// import { useQuery, useMutation, gql } from "@apollo/client";
-
-// const { Title } = Typography;
-
-// const GET_KNOBS = gql`
-// query GetKnobs($filters: ProductFiltersInput, $pagination: PaginationArg) {
-//   products(filters: $filters, pagination: $pagination) {
-//     documentId
-//     title
-//     type
-//     image {
-//       url
-//     }
-//   }
-// }`;
-
-// const CREATE_SUBORDER_PRODUCT = gql`
-// mutation CreateSuborderProduct($data: SuborderProductInput!) {
-//   createSuborderProduct(data: $data) {
-//     documentId
-//   }
-// }`;
-
-// const UPDATE_SUBORDER_PRODUCT = gql`
-// mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
-//   updateSuborderProduct(documentId: $documentId, data: $data) {
-//     documentId
-//   }
-// }`;
-
-// const DELETE_SUBORDER_PRODUCT = gql`
-// mutation DeleteSuborderProduct($documentId: ID!) {
-//   deleteSuborderProduct(documentId: $documentId) {
-//     documentId
-//   }
-// }`;
-
-// const GET_SUBORDER_PRODUCT = gql`
-// query GetSuborderProduct($filters: SuborderProductFiltersInput) {
-//   suborderProducts(filters: $filters) {
-//     documentId
-//     customTitle
-//     customImage{
-//       url
-//     }
-//     productCostNetto
-//     product {
-//       documentId
-//       title
-//       image {
-//         url
-//       }
-//       type
-//     }
-//   }
-// }`;
-
-// const KnobSelection = ({ suborderId, collectionId, selectedKnob, onKnobSelect }) => {
-//   const [knobProductId, setKnobProductId] = useState(null);
-//   const [customTitle, setCustomTitle] = useState("");
-//   const [customImage, setCustomImage] = useState(null);
-//   const [productCostNetto, setProductCostNetto] = useState(0);
-//   const [saving, setSaving] = useState(false);
-//   const [deleting, setDeleting] = useState(false);
-//   const [imagePreview, setImagePreview] = useState(null);
-
-//   const { loading, error, data } = useQuery(GET_KNOBS, {
-//     variables: {
-//       filters: {
-//         type: {
-//           eqi: "knob"
-//         }
-//       },
-//       pagination: {
-//         limit: 30
-//       }
-//     }
-//   });
-
-//   const { data: knobProductData, loading: loadingKnobProduct, refetch: refetchKnob } = useQuery(GET_SUBORDER_PRODUCT, {
-//     variables: {
-//       filters: {
-//         suborder: {
-//           documentId: {
-//             eq: suborderId
-//           }
-//         },
-//         type: {
-//           eq: "knob"
-//         }
-//       }
-//     },
-//     skip: !suborderId,
-//     fetchPolicy: "network-only"
-//   });
-
-//   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
-//     onCompleted: (data) => {
-//       message.success("Ручка успешно добавлена");
-//       setSaving(false);
-//       refetchKnob();
-//     },
-//     onError: (error) => {
-//       message.error(`Ошибка при сохранении: ${error.message}`);
-//       setSaving(false);
-//     }
-//   });
-
-//   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
-//     onCompleted: () => {
-//       message.success("Ручка успешно обновлена");
-//       setSaving(false);
-//       refetchKnob();
-//     },
-//     onError: (error) => {
-//       message.error(`Ошибка при обновлении: ${error.message}`);
-//       setSaving(false);
-//     }
-//   });
-
-//   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
-//     onCompleted: () => {
-//       message.success("Ручка успешно удалена");
-//       setDeleting(false);
-//       setKnobProductId(null);
-//       setCustomTitle("");
-//       setCustomImage(null);
-//       setImagePreview(null);
-//       setProductCostNetto(0);
-//       onKnobSelect(null);
-//       refetchKnob();
-//     },
-//     onError: (error) => {
-//       message.error(`Ошибка при удалении: ${error.message}`);
-//       setDeleting(false);
-//     }
-//   });
-
-//   const knobs = useMemo(() => {
-//     return data?.products || [];
-//   }, [data]);
-
-//   useEffect(() => {
-//     if (!loadingKnobProduct && knobProductData && knobs.length > 0) {
-//       if (knobProductData.suborderProducts && knobProductData.suborderProducts.length > 0) {
-//         const knobProduct = knobProductData.suborderProducts[0];
-//         setKnobProductId(knobProduct.documentId);
-//         setCustomTitle(knobProduct.customTitle || "");
-//         setProductCostNetto(knobProduct.productCostNetto || 0);
-        
-//         if (knobProduct.customImage) {
-//           setCustomImage(knobProduct.customImage);
-//           setImagePreview(`https://dev.api.boki-groupe.com${knobProduct.customImage}`);
-//         }
-        
-//         if (knobProduct.product && !selectedKnob) {
-//           const knobFromProducts = knobs.find(knob =>
-//             knob.documentId === knobProduct.product.documentId
-//           );
-//           if (knobFromProducts) {
-//             onKnobSelect(knobFromProducts);
-//           }
-//         }
-//       }
-//     }
-//   }, [knobs, knobProductData, loadingKnobProduct, onKnobSelect, selectedKnob]);
-
-//   const handleSave = async () => {
-//     if (!suborderId) {
-//       message.error("ID подзаказа не найден");
-//       return;
-//     }
-    
-//     if (!selectedKnob && !customTitle) {
-//       message.error("Выберите ручку или укажите название");
-//       return;
-//     }
-    
-//     setSaving(true);
-    
-//     try {
-//       const knobData = {
-//         suborder: suborderId,
-//         type: "knob",
-//         customTitle,
-//         customImage,
-//         productCostNetto
-//       };
-      
-//       if (selectedKnob) {
-//         knobData.product = selectedKnob.documentId;
-//       }
-      
-//       if (knobProductId) {
-//         await updateSuborderProduct({
-//           variables: {
-//             documentId: knobProductId,
-//             data: knobData
-//           }
-//         });
-//       } else {
-//         await createSuborderProduct({
-//           variables: {
-//             data: knobData
-//           }
-//         });
-//       }
-      
-//       message.success("Данные успешно сохранены");
-//       setSaving(false);
-//       refetchKnob();
-//     } catch (error) {
-//       message.error(`Произошла ошибка: ${error.message}`);
-//       setSaving(false);
-//     }
-//   };
-
-//   const handleDelete = async () => {
-//     if (!knobProductId) {
-//       message.error("Нет сохраненной ручки для удаления");
-//       return;
-//     }
-    
-//     setDeleting(true);
-    
-//     try {
-//       await deleteSuborderProduct({
-//         variables: {
-//           documentId: knobProductId
-//         }
-//       });
-//     } catch (error) {
-//       message.error(`Произошла ошибка при удалении: ${error.message}`);
-//       setDeleting(false);
-//     }
-//   };
-
-//   const handleImageUpload = ({ file }) => {
-//     if (file.status === 'done') {
-//       const imageUrl = file.response?.url;
-//       if (imageUrl) {
-//         setCustomImage(imageUrl);
-//         setImagePreview(`https://dev.api.boki-groupe.com${imageUrl}`);
-//         message.success(`${file.name} успешно загружен`);
-//       }
-//     } else if (file.status === 'error') {
-//       message.error(`Ошибка загрузки ${file.name}`);
-//     }
-//   };
-
-//   if (loading || loadingKnobProduct) return <Spin size="large" />;
-
-//   if (error) return <Alert message={`Ошибка загрузки данных: ${error.message}`} type="error" />;
-
-//   return (
-//     <div>
-//       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-//         <Title level={3}>Выбор ручки</Title>
-//         <div>
-//           <Button
-//             type="primary"
-//             onClick={handleSave}
-//             loading={saving}
-//             style={{ marginRight: 8 }}
-//           >
-//             Сохранить
-//           </Button>
-//           <Button
-//             type="danger"
-//             icon={<DeleteOutlined />}
-//             onClick={handleDelete}
-//             loading={deleting}
-//             disabled={!knobProductId}
-//           >
-//             Удалить
-//           </Button>
-//         </div>
-//       </div>
-      
-//       <div style={{ marginBottom: 16 }}>
-//         <Row gutter={16}>
-//           <Col span={8}>
-//             <Input 
-//               placeholder="Название ручки" 
-//               value={customTitle}
-//               onChange={(e) => setCustomTitle(e.target.value)}
-//               style={{ marginBottom: 8 }}
-//             />
-            
-//             <InputNumber 
-//               placeholder="Цена" 
-//               value={productCostNetto}
-//               onChange={(value) => setProductCostNetto(value || 0)}
-//               style={{ width: '100%', marginBottom: 8 }}
-//               addonAfter={'Netto'}
-//             />
-            
-//             <Upload
-//               name="image"
-//               action="/api/upload" // Замените на ваш эндпоинт для загрузки
-//               onChange={handleImageUpload}
-//               maxCount={1}
-//               showUploadList={false}
-//             >
-//               <Button icon={<UploadOutlined />} style={{ width: '100%' }}>
-//                 Загрузить изображение
-//               </Button>
-//             </Upload>
-//           </Col>
-          
-//           <Col span={16}>
-//             {imagePreview && (
-//               <div style={{ marginBottom: 16, textAlign: 'center' }}>
-//                 <img 
-//                   src={imagePreview} 
-//                   alt="Предпросмотр" 
-//                   style={{ maxHeight: 200, maxWidth: '100%', objectFit: 'contain' }}
-//                 />
-//               </div>
-//             )}
-//           </Col>
-//         </Row>
-//       </div>
-      
-//       {knobs.length === 0 ? (
-//         <Empty description="Нет доступных ручек" />
-//       ) : (
-//         <Row gutter={[16, 16]}>
-//           {knobs.map(knob => (
-//             <Col span={4} key={knob.documentId}>
-//               <Card
-//                 hoverable
-//                 cover={
-//                   knob.image?.url ? 
-//                   <img 
-//                     alt={knob.title} 
-//                     src={`https://dev.api.boki-groupe.com${knob.image.url}`} 
-//                     style={{ height: 200, objectFit: 'cover' }}
-//                   /> : 
-//                   <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-//                     Нет изображения
-//                   </div>
-//                 }
-//                 onClick={() => onKnobSelect(knob)}
-//                 style={{
-//                   border: selectedKnob?.documentId === knob.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0'
-//                 }}
-//               >
-//                 <Card.Meta title={knob.title} />
-//               </Card>
-//             </Col>
-//           ))}
-//         </Row>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default KnobSelection;
-
-// KnobSelection.jsx
 import React, { useState, useEffect } from "react";
-import { Card, Row, Col, Typography, Spin, Form, Input, InputNumber, Button, message, Alert } from "antd";
+import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import FileUploader from "./FileUploader";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
+// GraphQL запросы
 const CREATE_SUBORDER_PRODUCT = gql`
   mutation CreateSuborderProduct($data: SuborderProductInput!) {
     createSuborderProduct(data: $data) {
       documentId
+      customTitle
+      customImage {
+        url
+        documentId
+      }
+      productCostNetto
+      amount
     }
   }
 `;
@@ -381,6 +25,13 @@ const UPDATE_SUBORDER_PRODUCT = gql`
   mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
     updateSuborderProduct(documentId: $documentId, data: $data) {
       documentId
+      customTitle
+      customImage {
+        url
+        documentId
+      }
+      productCostNetto
+      amount
     }
   }
 `;
@@ -397,25 +48,30 @@ const GET_SUBORDER_PRODUCT = gql`
   query GetSuborderProduct($filters: SuborderProductFiltersInput) {
     suborderProducts(filters: $filters) {
       documentId
-      type
       customTitle
       customImage {
         url
+        documentId
       }
       productCostNetto
+      amount
     }
   }
 `;
 
-const KnobSelection = ({ suborderId, onKnobSelect }) => {
+const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
+  const [form] = Form.useForm();
   const [knobProductId, setKnobProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [customTitle, setCustomTitle] = useState("");
-  const [customImage, setCustomImage] = useState(null);
-  const [productCostNetto, setProductCostNetto] = useState(0);
-  const [form] = Form.useForm();
+  const [customImageId, setCustomImageId] = useState(null);
+  const [customImageUrl, setCustomImageUrl] = useState("");
+  const [productCostNetto, setProductCostNetto] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [amount, setAmount] = useState(1);
 
+  // Получаем данные о существующей ручке для подзаказа
   const { data: knobProductData, loading: loadingKnobProduct, refetch: refetchKnob } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {
       filters: {
@@ -433,8 +89,9 @@ const KnobSelection = ({ suborderId, onKnobSelect }) => {
     fetchPolicy: "network-only"
   });
 
+  // Мутация для создания ручки
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
-    onCompleted: () => {
+    onCompleted: (data) => {
       message.success("Ручка успешно добавлена");
       setSaving(false);
       refetchKnob();
@@ -445,6 +102,7 @@ const KnobSelection = ({ suborderId, onKnobSelect }) => {
     }
   });
 
+  // Мутация для обновления ручки
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
       message.success("Ручка успешно обновлена");
@@ -457,14 +115,16 @@ const KnobSelection = ({ suborderId, onKnobSelect }) => {
     }
   });
 
+  // Мутация для удаления ручки
   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
     onCompleted: () => {
       message.success("Ручка успешно удалена");
       setDeleting(false);
       setKnobProductId(null);
       setCustomTitle("");
-      setCustomImage(null);
-      setProductCostNetto(0);
+      setCustomImageId(null);
+      setCustomImageUrl("");
+      setProductCostNetto("");
       form.resetFields();
       refetchKnob();
     },
@@ -474,49 +134,149 @@ const KnobSelection = ({ suborderId, onKnobSelect }) => {
     }
   });
 
+  // Загружаем данные существующей ручки при загрузке компонента
   useEffect(() => {
     if (!loadingKnobProduct && knobProductData) {
       if (knobProductData.suborderProducts && knobProductData.suborderProducts.length > 0) {
         const knobProduct = knobProductData.suborderProducts[0];
         setKnobProductId(knobProduct.documentId);
         setCustomTitle(knobProduct.customTitle || "");
-        setCustomImage(knobProduct.customImage?.url || null);
-        setProductCostNetto(knobProduct.productCostNetto || 0);
+        setProductCostNetto(knobProduct.productCostNetto || "");
+        setAmount(knobProduct.amount || 1);
         
+        if (knobProduct.customImage) {
+          setCustomImageId(knobProduct.customImage.documentId);
+          // setCustomImageUrl(knobProduct.customImage.url);
+
+           // Проверяем формат URL и добавляем базовый URL, если путь относительный
+          const imageUrl = knobProduct.customImage.url;
+          if (imageUrl && imageUrl.startsWith('/')) {
+            const baseUrl = 'https://dev.api.boki-groupe.com';
+            setCustomImageUrl(baseUrl + imageUrl);
+          } else {
+            setCustomImageUrl(imageUrl);
+          }
+        }
+
         form.setFieldsValue({
           customTitle: knobProduct.customTitle || "",
-          productCostNetto: knobProduct.productCostNetto || 0
+          productCostNetto: knobProduct.productCostNetto || "",
+          amount: knobProduct.amount || 1 // Добавить в форму
         });
       }
     }
   }, [knobProductData, loadingKnobProduct, form]);
 
+  // Обработчик загрузки файла
   const handleFileUploaded = (file) => {
-    setCustomImage(file.url);
+    setCustomImageId(file.id);
+    setCustomImageUrl(file.url);
   };
+  // const handleFileUploaded = (file) => {
+  //   setCustomImageId(file.documentId); // Используем documentId вместо id
+    
+  //   // Проверяем формат URL и добавляем базовый URL, если путь относительный
+  //   if (file.url && file.url.startsWith('/')) {
+  //     // Добавляем базовый URL к относительному пути
+  //     const baseUrl = 'https://dev.api.boki-groupe.com';
+  //     setCustomImageUrl(baseUrl + file.url);
+  //   } else {
+  //     setCustomImageUrl(file.url);
+  //   }
+  // };
+
+  // Обработчик сохранения ручки
+  // const handleSave = async () => {
+  //   if (!suborderId) {
+  //     message.error("ID подзаказа не найден");
+  //     return;
+  //   }
+
+  //   try {
+  //     await form.validateFields();
+  //   } catch (error) {
+  //     return;
+  //   }
+
+  //   setSaving(true);
+
+  //   try {
+  //     const formValues = form.getFieldsValue();
+      
+  //     const knobData = {
+  //       suborder: suborderId,
+  //       type: "knob",
+  //       customTitle: formValues.customTitle,
+  //       productCostNetto: parseFloat(formValues.productCostNetto),
+  //       amount: parseInt(formValues.amount, 10) || 1
+  //     };
+
+  //     if (customImageId) {
+  //       knobData.customImage = customImageId;
+  //     }
+
+  //     if (knobProductId) {
+  //       await updateSuborderProduct({
+  //         variables: {
+  //           documentId: knobProductId,
+  //           data: knobData
+  //         }
+  //       });
+  //     } else {
+  //       await createSuborderProduct({
+  //         variables: {
+  //           data: knobData
+  //         }
+  //       });
+  //     }
+  //   } catch (error) {
+  //     message.error(`Произошла ошибка: ${error.message}`);
+  //     setSaving(false);
+  //   }
+  // };
 
   const handleSave = async () => {
     if (!suborderId) {
       message.error("ID подзаказа не найден");
       return;
     }
-
+  
     try {
       await form.validateFields();
     } catch (error) {
       return;
     }
-
+  
     setSaving(true);
+  
     try {
+      const formValues = form.getFieldsValue();
+      
       const knobData = {
         suborder: suborderId,
         type: "knob",
-        customTitle: customTitle,
-        customImage: customImage,
-        productCostNetto: productCostNetto
+        customTitle: formValues.customTitle,
+        productCostNetto: parseFloat(formValues.productCostNetto),
+        amount: parseInt(formValues.amount, 10) || 1
       };
-
+  
+      // Добавляем изображение в запрос только если:
+      // 1. Это новая ручка (knobProductId отсутствует) И есть customImageId
+      // 2. Это обновление ручки И пользователь загрузил новое изображение
+      
+      // Флаг, указывающий, было ли загружено новое изображение в текущей сессии
+      const isNewImageUploaded = document.querySelector('.ant-upload-list-item') !== null;
+      
+      if (!knobProductId && customImageId) {
+        // Для новой ручки с изображением
+        knobData.customImage = customImageId;
+      } else if (knobProductId && isNewImageUploaded && customImageId) {
+        // Для обновления ручки с новым изображением
+        knobData.customImage = customImageId;
+      }
+      // В остальных случаях не включаем поле customImage в запрос,
+      // чтобы сохранить существующее изображение
+  
       if (knobProductId) {
         await updateSuborderProduct({
           variables: {
@@ -531,23 +291,27 @@ const KnobSelection = ({ suborderId, onKnobSelect }) => {
           }
         });
       }
-
-      message.success("Данные успешно сохранены");
-      setSaving(false);
-      refetchKnob();
     } catch (error) {
       message.error(`Произошла ошибка: ${error.message}`);
       setSaving(false);
     }
   };
+  
 
+  // Обработчик удаления ручки
   const handleDelete = async () => {
     if (!knobProductId) {
       message.error("Ручка не найдена");
       return;
     }
 
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
     setDeleting(true);
+    setShowDeleteConfirm(false);
+    
     try {
       await deleteSuborderProduct({
         variables: {
@@ -560,110 +324,113 @@ const KnobSelection = ({ suborderId, onKnobSelect }) => {
     }
   };
 
-  if (loadingKnobProduct) return <Spin size="large" tip="Загрузка..." />;
+  if (loadingKnobProduct) {
+    return (
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <Spin size="large" />
+        <p>Загрузка данных о ручке...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <Title level={4}>Создать ручку</Title>
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={{
-          customTitle: customTitle,
-          productCostNetto: productCostNetto
-        }}
-      >
-        <Form.Item
-          name="customTitle"
-          label="Название ручки"
-          rules={[{ required: true, message: "Введите название ручки" }]}
-        >
-          <Input
-            placeholder="Введите название ручки"
-            value={customTitle}
-            onChange={(e) => setCustomTitle(e.target.value)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="productCostNetto"
-          label="Цена"
-          rules={[{ required: true, message: "Введите цену" }]}
-        >
-          <InputNumber
-            placeholder="Введите цену"
-            value={productCostNetto}
-            onChange={(value) => setProductCostNetto(value)}
-            min={0}
-            style={{ width: "100%" }}
-          />
-        </Form.Item>
-
-        <Form.Item label="Изображение ручки">
-          <FileUploader onFileUploaded={handleFileUploaded} />
-          {customImage && (
-            <Card
-                hoverable
-                cover={
-                <img
-                    alt="Изображение ручки"
-                    src={customImage}
-                    style={{ height: 200, objectFit: 'cover' }}
-                />
-                }
-            >
-                <Card.Meta title={customTitle} description={`Цена: ${productCostNetto}`} />
-            </Card>
-            )}
-        </Form.Item>
-
-        <Row gutter={16}>
-          <Col span={12}>
-            <Button
-              type="primary"
-              onClick={handleSave}
+      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
+        <Col>
+          <Title level={4}>Выбор ручки</Title>
+        </Col>
+        <Col>
+          <Space>
+            <Button 
+              type="primary" 
+              onClick={handleSave} 
               loading={saving}
-              block
             >
-              Сохранить
+              {knobProductId ? "Обновить" : "Сохранить"}
             </Button>
-          </Col>
-          {knobProductId && (
-            <Col span={12}>
-              <Button
-                type="primary"
-                danger
-                onClick={handleDelete}
+            
+            {knobProductId && (
+              <Button 
+                danger 
+                onClick={handleDelete} 
                 loading={deleting}
-                block
               >
                 Удалить
               </Button>
-            </Col>
-          )}
+            )}
+          </Space>
+        </Col>
+      </Row>
+      
+      <Form form={form} layout="vertical" initialValues={{ customTitle: "", productCostNetto: "" }}>
+        <Row gutter={16}>
+          <Col span={8}>
+            <Form.Item
+              name="customTitle"
+              label="Название ручки"
+              rules={[{ required: true, message: "Пожалуйста, введите название ручки" }]}
+            >
+              <Input 
+                placeholder="Введите название ручки" 
+                onChange={(e) => setCustomTitle(e.target.value)} 
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="productCostNetto"
+              label="Цена (Netto)"
+              rules={[{ required: true, message: "Пожалуйста, введите цену" }]}
+            >
+              <Input 
+                type="number" 
+                placeholder="Введите цену" 
+                onChange={(e) => setProductCostNetto(e.target.value)} 
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name="amount"
+              label="Количество"
+              rules={[{ required: true, message: "Пожалуйста, укажите количество" }]}
+            >
+              <Input 
+                type="number" 
+                placeholder="Количество" 
+                min={1}
+                onChange={(e) => setAmount(e.target.value)} 
+              />
+            </Form.Item>
+          </Col>
         </Row>
-      </Form>
-
-      {knobProductData?.suborderProducts && knobProductData.suborderProducts.length > 0 && (
-        <div style={{ marginTop: 24 }}>
-          <Title level={5}>Текущая ручка</Title>
-          <Card>
-            <Card.Meta
-              title={knobProductData.suborderProducts[0].customTitle}
-              description={`Цена: ${knobProductData.suborderProducts[0].productCostNetto}`}
-            />
-            {knobProductData.suborderProducts[0].customImage?.url && (
-              <div style={{ marginTop: 16 }}>
-                <img
-                  src={knobProductData.suborderProducts[0].customImage.url}
-                  alt="Изображение ручки"
-                  style={{ maxWidth: "100%", maxHeight: 200 }}
+        
+        <Form.Item label="Изображение ручки">
+          <div style={{ marginBottom: "10px" }}>
+            {customImageUrl && (
+              <div style={{ marginBottom: "10px" }}>
+                <img 
+                  src={customImageUrl} 
+                  alt="Изображение ручки" 
+                  style={{ maxWidth: "100%", maxHeight: "200px" }} 
                 />
               </div>
             )}
-          </Card>
-        </div>
-      )}
+            <FileUploader onFileUploaded={handleFileUploaded} />
+          </div>
+        </Form.Item>
+      </Form>
+      
+      <Modal
+        title="Подтверждение удаления"
+        open={showDeleteConfirm}
+        onOk={confirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        okText="Удалить"
+        cancelText="Отмена"
+      >
+        <p>Вы уверены, что хотите удалить эту ручку?</p>
+      </Modal>
     </div>
   );
 };

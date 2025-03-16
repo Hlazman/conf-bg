@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Spin, Empty, Collapse, Alert } from "antd";
 import { useLocation } from "react-router-dom";
-// import { useApolloClient } from "@apollo/client";
 import DoorSelection from '../components/DoorSelection';
 import DecorSelection from '../components/DecorSelection';
 import DoorParameters from '../components/DoorParameters';
@@ -14,22 +13,11 @@ import LockSelection from "../components/LockSelection";
 import KnobSelection from "../components/KnobSelection";
 import OptionSelection from "../components/OptionSelection";
 import CustomOptionSelection from "../components/CustomOptionSelection";
-import CommentSelection from "../components/CommentSelection";
-// import ErrorAlerts, { checkSuborderErrors } from "../components/ErrorAlerts";
-import ErrorAlerts from "../components/ErrorAlerts";
 
 const { Title } = Typography;
 
 const CreateProduct = () => {
   const location = useLocation();
-
-  // const client = useApolloClient();
-  //   // Функция для проверки ошибок после сохранения данных
-  //   const checkErrors = async () => {
-  //     if (suborderId) {
-  //       await checkSuborderErrors(client, suborderId);
-  //     }
-  //   };
   
   // Получаем данные из state или localStorage
   const locationState = location.state || {};
@@ -75,15 +63,60 @@ const CreateProduct = () => {
   // Состояние для аккордеона
   // const [activeKeys, setActiveKeys] = useState(['1', '2', '3', '4', '5', '6', '7']);
   const [activeKeys, setActiveKeys] = useState(['1', '2']);
+
+  // Состояние для отслеживания изменения коллекции двери
+  const [doorCollectionChanged, setDoorCollectionChanged] = useState(false);
+  const [previousDoorCollection, setPreviousDoorCollection] = useState(null);
+  
+  // Проверяем localStorage при инициализации компонента
+  useEffect(() => {
+    if (suborderId) {
+      const storedAlertState = localStorage.getItem(`doorCollectionChanged_${suborderId}`);
+      if (storedAlertState === 'true') {
+        setDoorCollectionChanged(true);
+      }
+      
+      const storedPrevCollection = localStorage.getItem(`previousDoorCollection_${suborderId}`);
+      if (storedPrevCollection) {
+        setPreviousDoorCollection(storedPrevCollection);
+      }
+    }
+  }, [suborderId]);
  
   // Обработчик выбора двери
   const handleDoorSelect = (door) => {
+    // Проверяем, изменилась ли коллекция И была ли выбрана рама ранее
+    if (selectedDoor && selectedFrame && door.collections && selectedDoor.collections) {
+      const previousCollectionId = selectedDoor.collections[0]?.documentId;
+      const newCollectionId = door.collections[0]?.documentId;
+      
+      if (previousCollectionId !== newCollectionId) {
+        setDoorCollectionChanged(true);
+        setPreviousDoorCollection(selectedDoor.collections[0]?.title || "предыдущей коллекции");
+        
+        // Сохраняем состояние в localStorage с привязкой к suborderId
+        if (suborderId) {
+          localStorage.setItem(`doorCollectionChanged_${suborderId}`, 'true');
+          localStorage.setItem(`previousDoorCollection_${suborderId}`, selectedDoor.collections[0]?.title || "предыдущей коллекции");
+        }
+      }
+    }
+    
     setSelectedDoor(door);
+    setSelectedFrame(null); // Сбрасываем выбор рамы
   };
     
   // Сбрасываем флаг изменения коллекции при выборе новой рамы
   const handleFrameSelect = (frame) => {
     setSelectedFrame(frame);
+    setDoorCollectionChanged(false);
+
+    // Сбрасываем флаг изменения двери при выборе нового расширителя
+    // Очищаем состояние в localStorage с привязкой к suborderId
+    if (suborderId) {
+      localStorage.removeItem(`doorCollectionChanged_${suborderId}`);
+      localStorage.removeItem(`previousDoorCollection_${suborderId}`);
+    }
   };
   
   // Обработчик изменения состояния аккордеона
@@ -121,6 +154,7 @@ const CreateProduct = () => {
       key: '2',
       label: (
         <Title level={5} style={{ margin: 0 }}>
+          {/* Выбор полотна  {selectedDoor ? `- ${selectedDoor.title}` : ""} */}
           Выбор полотна <span style={{ color: '#00A651' }}> {selectedDoor ? `- ${selectedDoor.title}` : ""} </span> 
         </Title>
       ),
@@ -343,6 +377,31 @@ const CreateProduct = () => {
         />
       )
     },
+    // {
+    //   key: '16',
+    //   label: <Title level={5} style={{ margin: 0 }}>Выбор петель</Title>,
+    //   children: (
+    //     <HingeSelection 
+    //     suborderId={suborderId}
+    //     collectionId={selectedDoor?.collections?.[0]?.documentId}
+    //     selectedHinge={selectedHinge}
+    //     onHingeSelect={handleHingeSelect}
+    //     />
+    //   )
+    // },
+    // {
+    //   key: '17',
+    //   label: <Title level={5} style={{ margin: 0 }}>Выбор замка </Title>,
+    //   children: (
+    //     <LockSelection 
+    //       suborderId={suborderId}
+    //       selectedLock={selectedLock}
+    //       onLockSelect={handleLockSelect}
+    //     />
+    //   )
+    // },
+    
+    // Добавляем условную логику для элементов выбора петель и замков
     ...(type !== 'slidingDoor' ? [
       {
         key: '16',
@@ -399,15 +458,6 @@ const CreateProduct = () => {
         />
       )
     },
-    {
-      key: '21',
-      label: <Title level={5} style={{ margin: 0 }}>Комментарий</Title>,
-      children: (
-        <CommentSelection 
-          suborderId={suborderId}
-        />
-      )
-    },
   ];
   
   return (
@@ -416,8 +466,22 @@ const CreateProduct = () => {
         {locationState.isEditing ? "Редактирование продукта" : "Создание продукта"}
       </Title>
 
-      {/* Компонент для отображения алертов об ошибках */}
-      <ErrorAlerts suborderId={suborderId} />
+    {/* Добавляем Alert с предупреждением */}
+      {doorCollectionChanged && (
+        <Alert
+          message="Внимание! Требуется замена рамы"
+          description={`Вы выбрали дверь из другой коллекции. Пожалуйста, выберите подходящую раму в разделе "Выбор рамы".`}
+          type="error"
+          showIcon
+          style={{
+            position: 'sticky',
+            top: 10,
+            zIndex: 1000,
+            width: '100%',
+            marginBottom: 16
+          }}
+        />
+      )}
       
       <Collapse 
         items={items}

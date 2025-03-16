@@ -1,3 +1,4 @@
+// TO CHECK ERRORS WITH CACHE
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
@@ -37,10 +38,25 @@ const authLink = setContext((_, { headers }) => {
 
 export const client = new ApolloClient({
   link: errorLink.concat(authLink.concat(httpLink)),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Suborder: {
+        keyFields: ["documentId"],
+        merge(existing, incoming) {
+          return { ...existing, ...incoming };
+        }
+      },
+      SuborderProduct: {
+        keyFields: ["documentId"],
+        merge(existing, incoming) {
+          return { ...existing, ...incoming };
+        }
+      }
+    }
+  }),
 });
 
-
+// TO MAIN
 // import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 // import { setContext } from "@apollo/client/link/context";
 
@@ -63,6 +79,20 @@ export const client = new ApolloClient({
 
 // export const client = new ApolloClient({
 //   link: authLink.concat(httpLink),
-//   cache: new InMemoryCache(),
+//   cache: new InMemoryCache({
+//     typePolicies: {
+//       Suborder: {
+//         keyFields: ["documentId"],
+//         merge(existing, incoming) {
+//           return { ...existing, ...incoming };
+//         }
+//       },
+//       SuborderProduct: {
+//         keyFields: ["documentId"],
+//         merge(existing, incoming) {
+//           return { ...existing, ...incoming };
+//         }
+//       }
+//     }
+//   }),
 // });
-

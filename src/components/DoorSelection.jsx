@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Card, Row, Col, Typography, Spin, Empty, Button, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_PRODUCTS } from '../api/queries';
+import { useApolloClient } from "@apollo/client";
 
 const { Title } = Typography;
 
@@ -38,12 +39,14 @@ const GET_SUBORDER_PRODUCT = gql`
 `;
 
 // const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
-const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
+const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
 
   const doorType = localStorage.getItem('currentType');
   const [activeTabKey, setActiveTabKey] = useState(null); // ДЛЯ ВКЛАДОК
+
+  const client = useApolloClient();
 
   // Запрос на получение дверей
   const { loading, error, data } = useQuery(GET_PRODUCTS, {
@@ -174,7 +177,45 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
   }, [doors, suborderProductData, loadingSuborderProduct, onDoorSelect, selectedDoor]);
 
   // Функция сохранения выбранной двери
-  const handleSaveDoor = () => {
+  // const handleSaveDoor = () => {
+  //   if (!selectedDoor) {
+  //     message.warning("Пожалуйста, выберите дверь");
+  //     return;
+  //   }
+
+  //   if (!suborderId) {
+  //     message.error("ID подзаказа не найден");
+  //     return;
+  //   }
+
+  //   setSaving(true);
+
+  //   const doorData = {
+  //     suborder: suborderId,
+  //     product: selectedDoor.documentId,
+  //     // type: "door"
+  //     type: doorType // Используем тип из localStorage
+  //   };
+
+  //   if (suborderProductId) {
+  //     // Обновляем существующий SuborderProduct
+  //     updateSuborderProduct({
+  //       variables: {
+  //         documentId: suborderProductId,
+  //         data: doorData
+  //       }
+  //     });
+  //   } else {
+  //     // Создаем новый SuborderProduct
+  //     createSuborderProduct({
+  //       variables: {
+  //         data: doorData
+  //       }
+  //     });
+  //   }
+  // };
+
+  const handleSaveDoor = async () => {
     if (!selectedDoor) {
       message.warning("Пожалуйста, выберите дверь");
       return;
@@ -196,7 +237,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
 
     if (suborderProductId) {
       // Обновляем существующий SuborderProduct
-      updateSuborderProduct({
+      await updateSuborderProduct({
         variables: {
           documentId: suborderProductId,
           data: doorData
@@ -204,11 +245,15 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
       });
     } else {
       // Создаем новый SuborderProduct
-      createSuborderProduct({
+      await createSuborderProduct({
         variables: {
           data: doorData
         }
       });
+    }
+
+    if (checkErrors) {
+      await checkErrors(client, suborderId);
     }
   };
 
@@ -242,7 +287,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
               }
               onClick={() => {
                 onDoorSelect(door);
-                console.log("Выбрана дверь:", door.title);
+                // console.log("Выбрана дверь:", door.title);
               }}
               style={{
                 border: selectedDoor?.documentId === door.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0'

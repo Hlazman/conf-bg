@@ -12,6 +12,7 @@ const UPDATE_SUBORDER = gql`
   }
 `;
 
+
 // GraphQL запрос для получения данных субордера
 const GET_SUBORDER = gql`
   query GetSuborder($documentId: ID!) {
@@ -30,31 +31,29 @@ const StartData = ({ onDataChange, suborderId }) => {
   
   // Стартовые данные с измененными значениями по умолчанию
   const [isDoubleDoor, setIsDoubleDoor] = useState(false);
-  const [doorSide, setDoorSide] = useState("left");
-  const [doorOpening, setDoorOpening] = useState("inside");
+  const [doorSide, setDoorSide] = useState("left");  // Изменено с "right" на "left"
+  const [doorOpening, setDoorOpening] = useState("inside");  // Изменено с "universal" на "inside"
   
   // Запрос на получение данных субордера
   const { data: suborderData, loading: loadingSuborder, refetch } = useQuery(GET_SUBORDER, {
     variables: { documentId: suborderId },
-    skip: !suborderId
-  });
-  
-  // Используем useEffect для обработки данных после получения
-  useEffect(() => {
-    if (suborderData && suborderData.suborder) {
-      // Устанавливаем значения из полученных данных
-      setIsDoubleDoor(suborderData.suborder.double_door || false);
-      setDoorSide(suborderData.suborder.side || "left");
-      setDoorOpening(suborderData.suborder.opening || "inside");
-      
-      // Обновляем форму
-      form.setFieldsValue({
-        isDoubleDoor: suborderData.suborder.double_door || false,
-        doorSide: suborderData.suborder.side || "left",
-        doorOpening: suborderData.suborder.opening || "inside"
-      });
+    skip: !suborderId,
+    onCompleted: (data) => {
+      if (data && data.suborder) {
+        // Устанавливаем значения из полученных данных
+        setIsDoubleDoor(data.suborder.double_door || false);
+        setDoorSide(data.suborder.side || "left");  // Изменено значение по умолчанию
+        setDoorOpening(data.suborder.opening || "inside");  // Изменено значение по умолчанию
+        
+        // Обновляем форму
+        form.setFieldsValue({
+          isDoubleDoor: data.suborder.double_door || false,
+          doorSide: data.suborder.side || "left",  // Изменено значение по умолчанию
+          doorOpening: data.suborder.opening || "inside"  // Изменено значение по умолчанию
+        });
+      }
     }
-  }, [suborderData, form]);
+  });
   
   // Мутация для обновления субордера
   const [updateSuborder, { loading: updating }] = useMutation(UPDATE_SUBORDER, {
@@ -114,6 +113,7 @@ const StartData = ({ onDataChange, suborderId }) => {
       }
     });
   };
+
 
   return (
     <div>
