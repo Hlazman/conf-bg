@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import FileUploader from "./FileUploader";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title, Text } = Typography;
 
@@ -70,6 +71,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
   const [productCostNetto, setProductCostNetto] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [amount, setAmount] = useState(1);
+  const { translations } = useContext(LanguageContext);
 
   // Получаем данные о существующей ручке для подзаказа
   const { data: knobProductData, loading: loadingKnobProduct, refetch: refetchKnob } = useQuery(GET_SUBORDER_PRODUCT, {
@@ -345,8 +347,9 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
               type="primary" 
               onClick={handleSave} 
               loading={saving}
+              style={!knobProductId? {} : { backgroundColor: '#52C41A' }}
             >
-              {knobProductId ? "Обновить" : "Сохранить"}
+              {knobProductId ? translations.update : translations.save}
             </Button>
             
             {knobProductId && (

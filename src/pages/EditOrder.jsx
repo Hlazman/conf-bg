@@ -164,16 +164,16 @@ const EditOrder = () => {
       });
 
       api.success({
-        message: translations.success || "Success",
-        description: translations.orderUpdated || "Order updated successfully",
+        message: translations.success,
+        description: translations.orderUpdatedSuc,
         placement: "topRight",
       });
       
       navigate("/orders");
     } catch (error) {
       api.error({
-        message: translations.err || "Error",
-        description: translations.failedOrderUpdate || "Failed to update order",
+        message: translations.err,
+        description: translations.failedOrderUpdate,
         placement: "topRight",
       });
     } finally {
@@ -184,7 +184,7 @@ const EditOrder = () => {
   return (
     <>
       {contextHolder}
-      <h2>{translations.editOrder || "Edit Order"}</h2>
+      <h2>{translations.editOrder}</h2>
       <Form 
         form={form} 
         layout="vertical" 
@@ -212,17 +212,17 @@ const EditOrder = () => {
               label={translations.tax}
               rules={[{ required: true, message: translations.requiredField }]}
             >
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
             </Form.Item>
           </Col>
           <Col span={6}>
             <Form.Item name="deliveryCost" label={translations.deliveryCost}>
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'???'}/>
             </Form.Item>
           </Col>
           <Col span={6}>
             <Form.Item name="clientDiscount" label={translations.discount}>
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
             </Form.Item>
           </Col>
         </Row>
@@ -230,7 +230,7 @@ const EditOrder = () => {
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item name="clientExtraPay" label={translations.extraCharge}>
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
             </Form.Item>
           </Col>
           <Col span={6}>
@@ -269,7 +269,7 @@ const EditOrder = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading} block>
-            {translations.saveChanges || "Save Changes"}
+            {translations.save}
           </Button>
         </Form.Item>
       </Form>

@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, Checkbox, Button, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_FRAMES } from '../api/queries';
+import { LanguageContext } from "../context/LanguageContext";
+
 
 const { Title } = Typography;
 
@@ -54,7 +56,7 @@ const FrameSelection = ({
   const [hasThreshold, setHasThreshold] = useState(false);
   const [saving, setSaving] = useState(false);
   const [thresholdChanged, setThresholdChanged] = useState(false);
-
+  const { translations } = useContext(LanguageContext);
   const doorType = localStorage.getItem('currentType');
 
   // Запрос для получения рам
@@ -317,8 +319,10 @@ const FrameSelection = ({
           onClick={handleSave}
           loading={saving}
           disabled={!selectedFrame && !thresholdChanged}
+          style={!frameProductId? {} : { backgroundColor: '#52C41A' }}
         >
-          Сохранить
+          {/* Сохранить */}
+          {frameProductId? translations.update : translations.save}
         </Button>
       </div>
 

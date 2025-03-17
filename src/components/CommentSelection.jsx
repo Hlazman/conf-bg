@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Typography, Spin, Button, message, Input, Form } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -28,6 +29,7 @@ const CommentSelection = ({ suborderId }) => {
   const [form] = Form.useForm();
   const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
+  const { translations } = useContext(LanguageContext);
 
   // Запрос для получения данных о субордере
   const { data: suborderData, loading: loadingSuborder, refetch: refetchSuborder } = useQuery(GET_SUBORDER, {
@@ -114,8 +116,10 @@ const CommentSelection = ({ suborderId }) => {
             type="primary" 
             onClick={handleSave} 
             loading={saving}
+            style={!comment ? {} : { backgroundColor: '#52C41A' }}
           >
-            Сохранить
+            {/* Сохранить  */}
+            {comment ? translations.update : translations.save}
           </Button>
         </Col>
       </Row>

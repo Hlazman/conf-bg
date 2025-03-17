@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Empty, Button, message, Typography } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -40,12 +41,16 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const doorType = localStorage.getItem('currentType');
+  const { translations } = useContext(LanguageContext);
 
   // Размеры
   const [dimensionType, setDimensionType] = useState("door");
-  const [doorHeight, setDoorHeight] = useState(2000);
-  const [doorWidth, setDoorWidth] = useState(800);
-  const [wallThickness, setWallThickness] = useState(100);
+  // const [doorHeight, setDoorHeight] = useState(2000);
+  // const [doorWidth, setDoorWidth] = useState(800);
+  // const [wallThickness, setWallThickness] = useState(100);
+  const [doorHeight, setDoorHeight] = useState();
+  const [doorWidth, setDoorWidth] = useState();
+  const [wallThickness, setWallThickness] = useState();
   const [doorQuantity, setDoorQuantity] = useState(1);
 
   // Врезка и уплотнение
@@ -95,9 +100,12 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
         
         // Заполняем состояние данными из suborderProduct
         if (suborderProduct.sizes) {
-          setDoorHeight(suborderProduct.sizes.height || 2000);
-          setDoorWidth(suborderProduct.sizes.width || 800);
-          setWallThickness(suborderProduct.sizes.thickness || 100);
+          // setDoorHeight(suborderProduct.sizes.height || 2000);
+          // setDoorWidth(suborderProduct.sizes.width || 800);
+          // setWallThickness(suborderProduct.sizes.thickness || 100);
+          setDoorHeight(suborderProduct.sizes.height);
+          setDoorWidth(suborderProduct.sizes.width);
+          setWallThickness(suborderProduct.sizes.thickness);
           setDimensionType(suborderProduct.sizes.type || "door");
         }
         
@@ -220,8 +228,10 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
           onClick={handleSaveParameters} 
           loading={saving}
           disabled={!suborderProductId}
+          style={!doorHeight ? {} : { backgroundColor: '#52C41A' }}
         >
-          Сохранить
+          {/* Сохранить */}
+          {doorHeight? translations.update : translations.save}
         </Button>
       </div>
       
@@ -240,10 +250,13 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
           </Form.Item>
         </Col>
         <Col span={dimensionType === "door" ? 12 : 8}>
-          <Form.Item label="Высота (мм)">
+          <Form.Item 
+            label="Высота" 
+            rules={[{ required: true, message: translations.isRequired }]}
+            >
             <InputNumber
-              min={1000}
-              max={3000}
+              // min={1000}
+              // max={3000}
               value={doorHeight}
               onChange={setDoorHeight}
               style={{ width: "100%" }}
@@ -252,10 +265,10 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
           </Form.Item>
         </Col>
         <Col span={dimensionType === "door" ? 12 : 8}>
-          <Form.Item label="Ширина (мм)">
+          <Form.Item label="Ширина">
             <InputNumber
-              min={500}
-              max={1500}
+              // min={500}
+              // max={1500}
               value={doorWidth}
               onChange={setDoorWidth}
               style={{ width: "100%" }}
@@ -265,10 +278,10 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
         </Col>
         {dimensionType === "wall" && (
           <Col span={8}>
-            <Form.Item label="Толщина стены (мм)">
+            <Form.Item label="Толщина стены">
               <InputNumber
-                min={50}
-                max={500}
+                // min={50}
+                // max={500}
                 value={wallThickness}
                 onChange={setWallThickness}
                 style={{ width: "100%" }}

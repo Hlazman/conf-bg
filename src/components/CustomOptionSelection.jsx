@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal, Card } from "antd";
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { useQuery, useMutation, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title, Text } = Typography;
 
@@ -52,6 +53,7 @@ const CustomOptionSelection = ({ suborderId }) => {
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [optionToDelete, setOptionToDelete] = useState(null);
+  const { translations } = useContext(LanguageContext);
 
   // Получаем данные о существующих кастомных опциях для подзаказа
   const { data: customOptionsData, loading: loadingOptions, refetch: refetchOptions } = useQuery(GET_SUBORDER_PRODUCTS, {
@@ -268,8 +270,9 @@ const CustomOptionSelection = ({ suborderId }) => {
                 icon={<SaveOutlined />}
                 onClick={() => handleSaveOption(index)}
                 loading={loading}
+                style={!option.id ? {} : { backgroundColor: '#52C41A' }}
               >
-                {option.id ? "Обновить" : "Сохранить"}
+                {option.id ? translations.update : translations.save}
               </Button>
               <Button
                 danger

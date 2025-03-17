@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Checkbox, Button, message, InputNumber, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
+
 
 const { Title, Text } = Typography;
 
@@ -73,6 +75,7 @@ const OptionSelection = ({ selectedDoor, suborderId }) => {
   const [optionAmounts, setOptionAmounts] = useState({});
   const [suborderProducts, setSuborderProducts] = useState({});
   const [saving, setSaving] = useState(false);
+  const { translations } = useContext(LanguageContext);
 
   // Запрос для получения опций, совместимых с выбранной дверью
   const { loading, error, data } = useQuery(GET_OPTIONS, {
@@ -317,7 +320,7 @@ const OptionSelection = ({ selectedDoor, suborderId }) => {
             onClick={handleSave} 
             loading={saving}
           >
-            Сохранить
+            {translations.save}
           </Button>
         </Col>
       </Row>

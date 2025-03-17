@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Tabs, Card, Row, Col, Spin, Empty, Button, Radio, Typography, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_DECOR_TYPES, GET_DECORS } from '../api/queries';
 import ColorPicker from '../components/ColorPicker';
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 
@@ -60,6 +61,7 @@ const DecorSelection = ({
 }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const { translations } = useContext(LanguageContext);
   
   // Состояние для хранения ориентации Veneer
   const [veneerOrientation, setVeneerOrientation] = useState("vertical");
@@ -119,7 +121,11 @@ const DecorSelection = ({
     skip: !doorId
   });
   
-  const decorTypes = decorTypesData?.decorTypes || [];
+  // const decorTypes = decorTypesData?.decorTypes || [];
+  const decorTypes = useMemo(() => {
+    return decorTypesData?.decorTypes || [];
+  }, [decorTypesData]);
+
   
   // Запрос декоров для выбранного типа декора
   const { 
@@ -562,8 +568,10 @@ const handleSaveDecor = () => {
             onClick={handleSaveDecor} 
             loading={saving}
             disabled={!suborderProductId}
+            style={!selectedDecor ? {} : { backgroundColor: '#52C41A' }}
           >
-            Сохранить
+            {/* Сохранить */}
+             {selectedDecor ? translations.update : translations.save}
           </Button>
         </div>
       </div>

@@ -80,15 +80,31 @@ const AppLayout = ({ children }) => {
       return pathParts[1] ? `${translations.order} #${pathParts[1]}` : translations.orders;
     }
     if (pathParts[0] === "create-order") return translations.createOrder;
-    if (pathParts[0] === "edit-order" && pathParts[1]) return `${translations.editOrder || "Edit Order"} #${pathParts[1]}`;
-    if (pathParts[0] === "product" && pathParts[1]) return `${translations.product} #${pathParts[1]}`;
+    // if (pathParts[0] === "edit-order" && pathParts[1]) return `${translations.editOrder} #${pathParts[1]}`;
+    // if (pathParts[0] === "edit-client" && pathParts[1]) return `${translations.editClient} #${pathParts[1]}`;
+    // if (pathParts[0] === "edit-agent" && pathParts[1]) return `${translations.editAgent} #${pathParts[1]}`;
+    if (pathParts[0] === "edit-order") return `${translations.editOrder}`;
+    if (pathParts[0] === "edit-client") return `${translations.editClient}`;
+    if (pathParts[0] === "edit-agent") return `${translations.editAgent}`;
+    if (pathParts[0] === "create-client") return `${translations.createClient}`;
+    if (pathParts[0] === "create-agent") return `${translations.createAgent}`;
+    if (pathParts[0] === "clients") return `${translations.clients}`;
+    if (pathParts[0] === "agents") return `${translations.agents}`;
+    if (pathParts[0] === "create-product") {
+      const currentType = localStorage.getItem('currentType');
+      if (currentType === "door") return translations.inDoor;
+      if (currentType === "slidingDoor") return translations.sliDoor;
+      if (currentType === "hiddenDoor") return translations.hiDoor;
+    }
+    
     return translations.dashboard;
   }, [location.pathname, translations]);
 
   const menuItems = [
     { key: "createOrder", icon: <FileAddOutlined />, label: <Link to="/create-order">{translations.createOrder}</Link> },
     { key: "orders", icon: <UnorderedListOutlined />, label: <Link to="/orders">{translations.orders}</Link> },
-    { key: "test", icon: <UnorderedListOutlined />, label: <Link to="/create-product">{'temp'}</Link> }, // TEMP
+    { key: "clients", icon: <UnorderedListOutlined />, label: <Link to="/clients">{translations.clients}</Link> },
+    { key: "Agents", icon: <UnorderedListOutlined />, label: <Link to="/agents">{translations.agents}</Link> },
   ];
 
   const languageMenu = {

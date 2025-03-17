@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, Button, message, InputNumber, Alert } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 
@@ -67,6 +68,7 @@ const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect
   const [hingeAmount, setHingeAmount] = useState(0);
   const [saving, setSaving] = useState(false);
   const doorType = localStorage.getItem('currentType');
+  const { translations } = useContext(LanguageContext);
 
 const { loading, error, data } = useQuery(GET_HINGES, {
     variables: {
@@ -249,8 +251,10 @@ const { loading, error, data } = useQuery(GET_HINGES, {
             onClick={handleSave} 
             loading={saving}
             disabled={!selectedHinge}
+            style={!hingeProductId? {} : { backgroundColor: '#52C41A' }}
           >
-            Сохранить
+            {/* Сохранить */}
+            {hingeProductId? translations.update : translations.save}
           </Button>
         </Col>
       </Row>

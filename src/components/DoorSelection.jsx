@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Tabs, Card, Row, Col, Typography, Spin, Empty, Button, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { GET_PRODUCTS } from '../api/queries';
 import { useApolloClient } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 
@@ -42,6 +43,7 @@ const GET_SUBORDER_PRODUCT = gql`
 const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const { translations } = useContext(LanguageContext);
 
   const doorType = localStorage.getItem('currentType');
   const [activeTabKey, setActiveTabKey] = useState(null); // ДЛЯ ВКЛАДОК
@@ -310,8 +312,9 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors }) 
           onClick={handleSaveDoor} 
           disabled={!selectedDoor || saving}
           loading={saving}
+          style={!suborderProductId ? {} : { backgroundColor: '#52C41A' }}
         >
-          {suborderProductId ? "Обновить" : "Сохранить"}
+          {suborderProductId ? translations.update : translations.save}
         </Button>
       </div>
       {/* ДЛЯ ВКЛАДОК */}

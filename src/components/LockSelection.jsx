@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, Button, message, Alert } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 
@@ -48,6 +49,7 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
 const LockSelection = ({ suborderId, selectedLock, onLockSelect }) => {
   const [lockProductId, setLockProductId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const { translations } = useContext(LanguageContext);
 
   const { loading, error, data } = useQuery(GET_LOCKS, {
     variables: {
@@ -182,8 +184,10 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect }) => {
             onClick={handleSave}
             loading={saving}
             disabled={!selectedLock}
+            style={!lockProductId? {} : { backgroundColor: '#52C41A' }}
             >
-            Сохранить
+            {/* Сохранить */}
+            {lockProductId? translations.update : translations.save}
             </Button>
         </div>
       

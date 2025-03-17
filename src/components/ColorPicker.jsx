@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Input } from "antd";
 import ralToHex from 'ral-to-hex';
 import ncsColor from 'ncs-color';
+import { LanguageContext } from "../context/LanguageContext";
 
 // Компонент для выбора цвета по коду RAL или NCS
 const ColorPicker = ({ value, onChange }) => {
     const [colorCode, setColorCode] = useState(value || "");
     const [colorHex, setColorHex] = useState(null);
+    const { translations } = useContext(LanguageContext);
   
     useEffect(() => {
       // Обновляем цвет при изменении кода

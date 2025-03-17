@@ -30,13 +30,14 @@ const StartData = ({ onDataChange, suborderId }) => {
   
   // Стартовые данные с измененными значениями по умолчанию
   const [isDoubleDoor, setIsDoubleDoor] = useState(false);
-  const [doorSide, setDoorSide] = useState("left");
-  const [doorOpening, setDoorOpening] = useState("inside");
+  const [doorSide, setDoorSide] = useState();
+  const [doorOpening, setDoorOpening] = useState();
   
   // Запрос на получение данных субордера
   const { data: suborderData, loading: loadingSuborder, refetch } = useQuery(GET_SUBORDER, {
     variables: { documentId: suborderId },
-    skip: !suborderId
+    skip: !suborderId,
+    fetchPolicy: "network-only" // Добавляем fetchPolicy для обновления данных с сервера
   });
   
   // Используем useEffect для обработки данных после получения
@@ -44,14 +45,14 @@ const StartData = ({ onDataChange, suborderId }) => {
     if (suborderData && suborderData.suborder) {
       // Устанавливаем значения из полученных данных
       setIsDoubleDoor(suborderData.suborder.double_door || false);
-      setDoorSide(suborderData.suborder.side || "left");
-      setDoorOpening(suborderData.suborder.opening || "inside");
+      setDoorSide(suborderData.suborder.side);
+      setDoorOpening(suborderData.suborder.opening);
       
       // Обновляем форму
       form.setFieldsValue({
         isDoubleDoor: suborderData.suborder.double_door || false,
-        doorSide: suborderData.suborder.side || "left",
-        doorOpening: suborderData.suborder.opening || "inside"
+        doorSide: suborderData.suborder.side,
+        doorOpening: suborderData.suborder.opening
       });
     }
   }, [suborderData, form]);
@@ -101,6 +102,17 @@ const StartData = ({ onDataChange, suborderId }) => {
       return;
     }
     
+    // Проверяем обязательные поля
+    if (!doorSide) {
+      message.error(`${translations.doorSide} ${translations.isRequired}`);
+      return;
+    }
+    
+    if (!doorOpening) {
+      message.error(`${translations.doorOpening} ${translations.isRequired}`);
+      return;
+    }
+    
     const data = {
       double_door: isDoubleDoor,
       side: doorSide,
@@ -137,7 +149,7 @@ const StartData = ({ onDataChange, suborderId }) => {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <label style={{ marginRight: '16px' }}>{translations.doorSide}:</label>
+                <label style={{ marginRight: '16px', color: doorSide ? 'inherit' : 'red' }}>{translations.doorSide}:*</label>
                 <Radio.Group
                   value={doorSide}
                   onChange={handleDoorSideChange}
@@ -150,7 +162,7 @@ const StartData = ({ onDataChange, suborderId }) => {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <label style={{ marginRight: '16px' }}>{translations.doorOpening}:</label>
+                <label style={{ marginRight: '16px', color: doorOpening ? 'inherit' : 'red' }}>{translations.doorOpening}:*</label>
                 <Radio.Group
                   value={doorOpening}
                   onChange={handleDoorOpeningChange}
@@ -171,9 +183,10 @@ const StartData = ({ onDataChange, suborderId }) => {
               onClick={handleSubmit} 
               loading={updating}
               disabled={!suborderId}
-              style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+              style={!doorSide && !doorOpening ? {} : { backgroundColor: '#52C41A' }}
             >
-              {translations.save}
+              {/* {translations.save} */}
+              {doorSide && doorOpening ? translations.update : translations.save}
             </Button>
           </div>
         </Form>
@@ -183,3 +196,5 @@ const StartData = ({ onDataChange, suborderId }) => {
 };
 
 export default StartData;
+
+

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Upload, Button, message, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { LanguageContext } from "../context/LanguageContext";
 
 const FileUploader = ({ onFileUploaded }) => {
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const { translations } = useContext(LanguageContext);
 
   const handleUpload = async (file) => {
     setLoading(true);

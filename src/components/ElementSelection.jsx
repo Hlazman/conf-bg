@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Divider, Tabs } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
+import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 
@@ -92,6 +93,7 @@ const ElementSelection = ({
   const [sizes, setSizes] = useState(defaultSizes);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
+  const { translations } = useContext(LanguageContext);
 
   // Состояние для лицевой стороны декора
   const [selectedFrontDecorType, setSelectedFrontDecorType] = useState(null);
@@ -525,9 +527,14 @@ const ElementSelection = ({
             onClick={handleSave}
             loading={saving}
             disabled={!selectedProduct}
-            style={{ marginRight: 8 }}
+            // style={{ marginRight: 8 }}
+            style={{
+              ...{ marginRight: 8 },
+              ...(!productId ? {} : { backgroundColor: '#52C41A' })
+            }}
           >
-            Сохранить
+            {/* Сохранить */}
+            {productId? translations.update : translations.save}
           </Button>
           {/* {productId && ( */}
           {(productId || productData?.suborderProducts[0]?.documentId) && (

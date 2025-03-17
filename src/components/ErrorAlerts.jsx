@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Alert, Space } from "antd";
 import { useQuery, gql } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 // GraphQL запрос для получения данных о субордере
 const GET_SUBORDER_ERRORS = gql`
@@ -63,6 +64,7 @@ export const checkSuborderErrors = async (client, suborderId) => {
 // Компонент для отображения алертов об ошибках
 const ErrorAlerts = ({ suborderId }) => {
   const [errorMessages, setErrorMessages] = useState([]);
+  const { translations } = useContext(LanguageContext);
   
   // Запрос для получения данных о субордере
   const { data, loading, error, refetch } = useQuery(GET_SUBORDER_ERRORS, {

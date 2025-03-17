@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Dropdown, Button, Modal, message, Space, Popconfirm } from "antd";
 import { 
   MenuOutlined, 
@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
+import { LanguageContext } from "../context/LanguageContext";
 
 export const GET_ORDERS = gql`
   query GetOrders($filters: OrderFiltersInput, $pagination: PaginationArg, $suborderFilters: SuborderProductFiltersInput) {
@@ -77,6 +78,7 @@ const Orders = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedCompany = JSON.parse(localStorage.getItem("selectedCompany"));
+  const { translations } = useContext(LanguageContext);
   
   const { data, loading, refetch } = useQuery(GET_ORDERS, {
     variables: { 
@@ -225,12 +227,11 @@ const Orders = () => {
         } 
       });
     } catch (error) {
-      message.error("Ошибка при создании подзаказа");
+      message.error(translations.errCreateSubOrder);
       console.error("Error creating suborder:", error);
     }
   };
 
-////////////////////////////////////////// HIDDEN DOORS //////////////////////////////////////////
   const handleHiddenDoorClick = async (record) => {
     try {
       const { data: suborderData } = await createSuborder({
@@ -256,13 +257,11 @@ const Orders = () => {
         }
       });
     } catch (error) {
-      message.error("Ошибка при создании подзаказа");
+      message.error(translations.errCreateSubOrder);
       console.error("Error creating suborder:", error);
     }
   };
-////////////////////////////////////////// HIDDEN DOORS //////////////////////////////////////////
 
-////////////////////////////////////////// SLIDING DOORS //////////////////////////////////////////
 const handleSlidingDoorClick = async (record) => {
   try {
     const { data: suborderData } = await createSuborder({
@@ -289,27 +288,10 @@ const handleSlidingDoorClick = async (record) => {
       }
     });
   } catch (error) {
-    message.error("Ошибка при создании подзаказа");
+    message.error(translations.errCreateSubOrder);
     console.error("Error creating suborder:", error);
   }
 };
-////////////////////////////////////////// SLIDING DOORS //////////////////////////////////////////
-
-  // const handleEditSuborder = (suborderId, orderId) => {
-  //   // Сохраняем ID субордера в localStorage для надежности
-  //   localStorage.setItem('currentSuborderId', suborderId);
-    
-  //   // Переходим на страницу CreateProduct с передачей state
-  //   navigate(`/create-product`, { 
-  //     state: { 
-  //       orderId: orderId,
-  //       suborderId: suborderId,
-  //       // type: "interior",
-  //       type: "door",
-  //       isEditing: true // Флаг для определения режима редактирования
-  //     } 
-  //   });
-  // };
 
   const handleEditSuborder = (suborderId, orderId) => {
     // Сохраняем ID субордера в localStorage для надежности
@@ -320,24 +302,6 @@ const handleSlidingDoorClick = async (record) => {
     
     // Находим подзаказ по suborderId
     const suborder = order?.suborders?.find(sub => sub.documentId === suborderId);
-    
-    // Определяем тип подзаказа на основе suborder_type.typeName
-    // let type = "door"; // По умолчанию
-    // let currentType = "door"; // По умолчанию для localStorage
-    
-    // if (suborder?.suborder_type) {
-    //   const typeName = suborder.suborder_type.typeName?.toLowerCase();
-      
-    //   if (typeName.includes("скрыт") || typeName.includes("hidden")) {
-    //     type = "hiddenDoor";
-    //     currentType = "hiddenDoor";
-    //   } else if (typeName.includes("раздвиж") || typeName.includes("sliding")) {
-    //     type = "slidingDoor";
-    //     currentType = "sliding";
-    //   } else {
-    //     type = "door";
-    //     currentType = "door";
-    //   }
 
     // Определяем тип подзаказа на основе suborder_type.typeName
     let type = "door"; // По умолчанию
@@ -384,9 +348,9 @@ const handleSlidingDoorClick = async (record) => {
           documentId: suborderId
         }
       });
-      message.success("Подзаказ успешно удален");
+      message.success(translations.suborderSucDel);
     } catch (error) {
-      message.error("Ошибка при удалении подзаказа");
+      message.error(translations.errDeleteSubOrder);
       console.error("Error deleting suborder:", error);
     }
   };
@@ -415,58 +379,57 @@ const handleSlidingDoorClick = async (record) => {
         }
       });
       
-      message.success("Заказ и все его подзаказы успешно удалены");
+      message.success(translations.ordersNsubordersDel);
       refetch();
     } catch (error) {
-      message.error("Ошибка при удалении заказа");
+      message.error(translations.errDeleteOrder);
       console.error("Error deleting order:", error);
     }
   };
 
   const menu = (record) => ({
     items: [
-      { key: "view", label: "Посмотреть", icon: <EyeOutlined /> },
-      { key: "edit", label: "Изменить", icon: <EditOutlined />, onClick: () => handleEdit(record) },
+      { key: "view", label: translations.view, icon: <EyeOutlined /> },
+      { key: "edit", label: translations.edit, icon: <EditOutlined />, onClick: () => handleEdit(record) },
       {
         key: "add",
-        label: "Добавить",
+        label: translations.add,
         icon: <PlusOutlined />,
         children: [
-          // { key: "hidden", label: "Скрытые двери" },
           { 
             key: "hiddenDoor", 
-            label: "Скрытые двери", 
-            icon: <FileTextOutlined />, 
+            label: translations.hiDoor, 
+            // icon: <FileTextOutlined />, 
             onClick: () => handleHiddenDoorClick(record) 
           },
           { 
             // key: "interior", 
             key: "door", 
-            label: "Межкомнатные двери", 
+            label: translations.inDoor, 
             onClick: () => handleInteriorClick(record)
           },
           { 
             key: "slidingDoor", 
-            label: "Раздвижные двери", 
-            icon: <FileTextOutlined />, 
+            label: translations.sliDoor, 
+            // icon: <FileTextOutlined />, 
             onClick: () => handleSlidingDoorClick(record) 
           },
-          { key: "wall_panels", label: "Настенные панели" },
+          { key: "wall_panels", label: translations.wallPanels },
         ],
       },
       { 
         key: "delete", 
         label: (
           <Popconfirm
-            title="Вы уверены, что хотите удалить этот заказ?"
-            description="При удалении заказа будут также удалены все связанные с ним подзаказы"
+            title={translations.sureToDelOrder}
+            description={translations.sureToDelInfo}
             onConfirm={() => handleDeleteOrder(record.documentId)}
-            okText="Да"
-            cancelText="Нет"
+            okText={translations.yes}
+            cancelText={translations.no}
             okButtonProps={{ danger: true }}
           >
             <span>
-              <DeleteOutlined /> Удалить
+              <DeleteOutlined /> {translations.delete}
             </span>
           </Popconfirm>
         ),
@@ -477,7 +440,7 @@ const handleSlidingDoorClick = async (record) => {
 
   const expandedRowRender = (record) => {
     if (!record.suborders || record.suborders.length === 0) {
-      return <p>Нет подзаказов</p>;
+      return <p> {translations.noSuborders} </p>;
     }
 
     const suborderColumns = [
@@ -488,13 +451,13 @@ const handleSlidingDoorClick = async (record) => {
         render: (_, __, index) => index + 1 
       },
       { 
-        title: 'Тип подзаказа', 
+        title: translations.suborderType, 
         dataIndex: 'suborder_type', 
         key: 'typeName',
         render: (suborder_type) => suborder_type?.typeName || '-'
       },
       { 
-        title: 'Продукты', 
+        title: translations.products, 
         dataIndex: 'suborder_products', 
         key: 'products',
         render: (suborder_products) => {
@@ -503,7 +466,7 @@ const handleSlidingDoorClick = async (record) => {
         }
       },
       {
-        title: 'Действия',
+        title: translations.action,
         key: 'action',
         render: (_, suborder) => (
           <Space size="middle">
@@ -511,23 +474,22 @@ const handleSlidingDoorClick = async (record) => {
               type="primary" 
               icon={<EditOutlined />} 
               size="small"
-              // onClick={() => handleEditSuborder(suborder.documentId)}
               onClick={() => handleEditSuborder(suborder.documentId, record.documentId)}
             >
-              Изменить
+              {translations.update}
             </Button>
             <Button 
               icon={<CopyOutlined />} 
               size="small"
               onClick={() => handleCloneSuborder(suborder.documentId)}
             >
-              Клонировать
+              {translations.clone}
             </Button>
             <Popconfirm
-              title="Вы уверены, что хотите удалить этот подзаказ?"
+              title={translations.sureToDelSubOrder}
               onConfirm={() => handleDeleteSuborder(suborder.documentId)}
-              okText="Да"
-              cancelText="Нет"
+              okText={translations.yes}
+              cancelText={translations.no}
               okButtonProps={{ danger: true }}
             >
               <Button 
@@ -536,7 +498,7 @@ const handleSlidingDoorClick = async (record) => {
                 size="small"
                 loading={deletingSuborder}
               >
-                Удалить
+                {translations.delete}
               </Button>
             </Popconfirm>
           </Space>
@@ -556,27 +518,27 @@ const handleSlidingDoorClick = async (record) => {
 
   const columns = [
     { title: "№", key: "index", width: 60, render: (_, __, index) => index + 1, fixed: "left"},
-    { title: "Order number", dataIndex: "orderNumber", key: "orderNumber", fixed: "left" },
-    { title: "Стоимость Netto", dataIndex: "totalCostNetto", key: "totalCostNetto" },
-    { title: "Стоимость Brutto", dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
-    { title: "Налог", dataIndex: "taxRate", key: "taxRate" },
-    { title: "Доставка", dataIndex: "deliveryCost", key: "deliveryCost" },
-    { title: "Скидка", dataIndex: "clientDiscount", key: "clientDiscount" },
-    { title: "Доп. плата клиента", dataIndex: "clientExtraPay", key: "clientExtraPay" },
+    { title: translations.orderNumber, dataIndex: "orderNumber", key: "orderNumber", fixed: "left" },
+    { title: translations.priceNetto, dataIndex: "totalCostNetto", key: "totalCostNetto" },
+    { title: translations.priceBrutto, dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
+    { title: translations.tax, dataIndex: "taxRate", key: "taxRate" },
+    { title: translations.deliveryCost, dataIndex: "deliveryCost", key: "deliveryCost" },
+    { title: translations.discount, dataIndex: "clientDiscount", key: "clientDiscount" },
+    { title: translations.extraCharge, dataIndex: "clientExtraPay", key: "clientExtraPay" },
     { 
-      title: "Агент", 
+      title: translations.agent, 
       dataIndex: "agent", 
       key: "agent",
       render: (agent) => agent?.name || "-"
     },
     { 
-      title: "Клиент", 
+      title: translations.client, 
       dataIndex: "client", 
       key: "client",
       render: (client) => client?.name || "-"
     },
     {
-      title: "Комментарий",
+      title: translations.comment,
       dataIndex: "comment",
       key: "comment",
       render: (text) =>
@@ -585,7 +547,7 @@ const handleSlidingDoorClick = async (record) => {
         ) : null,
     },
     {
-      title: "Действия",
+      title: translations.ation,
       key: "actions",
       fixed: "right",
       render: (record) => (
@@ -606,7 +568,7 @@ const handleSlidingDoorClick = async (record) => {
   return (
     <>
       <Button onClick={() => refetch()} style={{ marginBottom: 16 }}>
-        Обновить данные
+        {translations.update}
       </Button>
       <Table 
         dataSource={orders} 

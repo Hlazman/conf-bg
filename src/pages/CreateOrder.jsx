@@ -135,17 +135,17 @@ const CreateOrder = () => {
               label={translations.tax}
               rules={[{ required: true, message: translations.requiredField }]}
             >
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'} />
             </Form.Item>
           </Col>
           <Col span={6}>
             <Form.Item name="deliveryCost" label={translations.deliveryCost}>
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'???'}/>
             </Form.Item>
           </Col>
           <Col span={6}>
             <Form.Item name="clientDiscount" label={translations.discount}>
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
             </Form.Item>
           </Col>
         </Row>
@@ -153,7 +153,7 @@ const CreateOrder = () => {
         <Row gutter={16}>
           <Col span={6}>
             <Form.Item name="clientExtraPay" label={translations.extraCharge}>
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
             </Form.Item>
           </Col>
           <Col span={6}>
