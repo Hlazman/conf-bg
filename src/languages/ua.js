@@ -26,7 +26,7 @@ const ua = {
     agents: "Агенти",
     editOrder: 'Змінити замовлення',
 
-    // CreateOrder, EditOrder
+    // CreateOrder, EditOrder, Orders
     err: 'Помилка',
     orderNumber: 'Номер замовлення',
     requiredField: 'Це поле є обов’язковим',
@@ -41,6 +41,27 @@ const ua = {
     comment: 'Коментар',
     orderUpdatedSuc: "Замовлення успішно оновлено",
     failedOrderUpdate: "Не вдалося оновити замовлення",
+    errCreateSubOrder: "Помилка при створенні підзамовлення:",
+    errDeleteSubOrder: "Помилка при видаленні підзамовлення:",
+    errDeleteOrder: "Помилка при видаленні замовлення:",
+    view: "Переглянути",
+    add: "Додати",
+    wallPanels: "Настінні панелі",
+    noSuborders: "Немає підзамовлень",
+    suborderType: "Тип підзамовлення",
+    products: "Продукти",
+    priceNetto: "Ціна нетто",
+    priceBrutto: "Ціна брутто",
+    suborderSucDel: "Підзамовлення успішно видалено",
+    ordersNsubordersDel: "Замовлення та всі його підзамовлення успішно видалені",
+    sureToDelOrder: "Ви впевнені, що хочете видалити це замовлення?",
+    sureToDelInfo: "Видалення замовлення також видалить всі пов'язані з ним підзамовлення",
+    sureToDelSubOrder: "Ви впевнені, що хочете видалити це підзамовлення?",
+    clone: "Клонувати",
+    errorFetchingSuborder: 'Помилка отримання даних підзамовлення',
+    suborderNotFound: 'Підзамовлення не знайдено',
+    suborderCloneSuccess: 'Підзамовлення успішно клоновано',
+    errorCloningSuborder: 'Помилка клонування підзамовлення',
 
     // STARTDATA.JSX
     startData: "Стартові дані",
@@ -95,24 +116,27 @@ const ua = {
     failedAgentUpdate: "Не вдалося оновити агента",
     editAgent: "Редагувати агента",
 
-    // Orders Component
-    errCreateSubOrder: "Помилка при створенні підзамовлення:",
-    errDeleteSubOrder: "Помилка при видаленні підзамовлення:",
-    errDeleteOrder: "Помилка при видаленні замовлення:",
-    view: "Переглянути",
-    add: "Додати",
-    wallPanels: "Настінні панелі",
-    noSuborders: "Немає підзамовлень",
-    suborderType: "Тип підзамовлення",
-    products: "Продукти",
-    priceNetto: "Ціна нетто",
-    priceBrutto: "Ціна брутто",
-    suborderSucDel: "Підзамовлення успішно видалено",
-    ordersNsubordersDel: "Замовлення та всі його підзамовлення успішно видалені",
-    sureToDelOrder: "Ви впевнені, що хочете видалити це замовлення?",
-    sureToDelInfo: "Видалення замовлення також видалить всі пов'язані з ним підзамовлення",
-    sureToDelSubOrder: "Ви впевнені, що хочете видалити це підзамовлення?",
-    clone: "Клонувати"
+    // CreateProduct
+    doorCanvas: "Дверне полотно",
+    doorParameters: "Параметри дверей",
+    decorFront: "Декор (лицьова сторона)",
+    decorBack: "Декор (тильна сторона)",
+    slidingFrame: "Розсувна система",
+    frame: "Рама",
+    extender: "Добір",
+    kapitel: "Капітель",
+    platband: "Лиштва",
+    platbandThread: "Лиштва з різьбленням",
+    platbandFront: "Лиштва лицьова (Alum line)",
+    platbandBack: "Лиштва тильна (Alum line)",
+    aluminumMolding: "Алюмінієвий молдинг",
+    aluminumFrame: "Алюмінієва рамка",
+    aluminumCladding: "Алюмінієва накладка",
+    hinge: "Петлі",
+    lock: "Замок",
+    knob: "Ручка",
+    options: "Опції",
+    customOption: "Додаткові опція"
   };
   
   export default ua;

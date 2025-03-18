@@ -6,7 +6,6 @@ import CreateOrder from "./pages/CreateOrder";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import EditOrder from "./pages/EditOrder";
-import './App.css';
 import CreateProduct from "./pages/CreateProduct";
 import CreateClient from "./pages/CreateClient";
 import EditClient from "./pages/EditClient";
@@ -14,6 +13,7 @@ import Clients from "./pages/Clients";
 import CreateAgent from "./pages/CreateAgent";
 import EditAgent from "./pages/EditAgent";
 import Agents from "./pages/Agents";
+import './App.css';
 
 const App = () => {
   const { user } = React.useContext(AuthContext);

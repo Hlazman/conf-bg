@@ -181,6 +181,22 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
       return;
     }
 
+    if (!doorHeight) {
+      message.error("Сначала выберите высоту двери ");
+      return;
+    }
+
+    if (!doorWidth) {
+      message.error("Сначала выберите ширину двери ");
+      return;
+    }
+
+    if (!wallThickness && dimensionType === "wall") {
+      message.error("Сначала выберите толщину стены ");
+      return;
+    }
+    
+
     setSaving(true);
 
     const parameterData = {
@@ -235,147 +251,147 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
         </Button>
       </div>
       
-      {/* Размеры */}
-      <Divider orientation="left">Размеры</Divider>
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          <Form.Item label="Тип размеров">
-            <Radio.Group
-              value={dimensionType}
-              onChange={handleDimensionTypeChange}
-            >
-              <Radio value="door">Размер полотна</Radio>
-              <Radio value="wall">Размер стены</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col span={dimensionType === "door" ? 12 : 8}>
-          <Form.Item 
-            label="Высота" 
-            rules={[{ required: true, message: translations.isRequired }]}
-            >
-            <InputNumber
-              // min={1000}
-              // max={3000}
-              value={doorHeight}
-              onChange={setDoorHeight}
-              style={{ width: "100%" }}
-              addonAfter={'mm'}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={dimensionType === "door" ? 12 : 8}>
-          <Form.Item label="Ширина">
-            <InputNumber
-              // min={500}
-              // max={1500}
-              value={doorWidth}
-              onChange={setDoorWidth}
-              style={{ width: "100%" }}
-              addonAfter={'mm'}
-            />
-          </Form.Item>
-        </Col>
-        {dimensionType === "wall" && (
-          <Col span={8}>
-            <Form.Item label="Толщина стены">
+      <Form>
+        {/* Размеры */}
+        <Divider orientation="left">Размеры</Divider>
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Form.Item label="Тип размеров">
+              <Radio.Group
+                value={dimensionType}
+                onChange={handleDimensionTypeChange}
+              >
+                <Radio value="door">Размер полотна</Radio>
+                <Radio value="wall">Размер стены</Radio>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={dimensionType === "door" ? 12 : 8}>
+            <Form.Item label="Высота" required>
               <InputNumber
-                // min={50}
-                // max={500}
-                value={wallThickness}
-                onChange={setWallThickness}
+                // min={1000}
+                // max={3000}
+                value={doorHeight}
+                onChange={setDoorHeight}
                 style={{ width: "100%" }}
                 addonAfter={'mm'}
               />
             </Form.Item>
           </Col>
-        )}
-        <Col span={8}>
-          <Form.Item label="Количество">
-            <InputNumber
-              min={1}
-              max={100}
-              value={doorQuantity}
-              onChange={setDoorQuantity}
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
+          <Col span={dimensionType === "door" ? 12 : 8}>
+            <Form.Item label="Ширина" required>
+              <InputNumber
+                // min={500}
+                // max={1500}
+                value={doorWidth}
+                onChange={setDoorWidth}
+                style={{ width: "100%" }}
+                addonAfter={'mm'}
+              />
+            </Form.Item>
+          </Col>
+          {dimensionType === "wall" && (
+            <Col span={8}>
+              <Form.Item label="Толщина стены" required>
+                <InputNumber
+                  // min={50}
+                  // max={500}
+                  value={wallThickness}
+                  onChange={setWallThickness}
+                  style={{ width: "100%" }}
+                  addonAfter={'mm'}
+                />
+              </Form.Item>
+            </Col>
+          )}
+          <Col span={8}>
+            <Form.Item label="Количество">
+              <InputNumber
+                min={1}
+                max={100}
+                value={doorQuantity}
+                onChange={setDoorQuantity}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
 
-      {/* Врезка и уплотнение */}
-      <Divider orientation="left">Врезка и уплотнение</Divider>
-      <Row gutter={[16, 16]}>
-        <Col span={6}>
-          <Form.Item label="Врезка ручки" style={{ marginBottom: 0 }}>
-            <Radio.Group
-              value={handleCutout}
-              onChange={(e) => setHandleCutout(e.target.value)}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value={false}>Нет</Radio.Button>
-              <Radio.Button value={true}>Да</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item label="Врезка замка" style={{ marginBottom: 0 }}>
-            <Radio.Group
-              value={lockCutout}
-              onChange={(e) => setLockCutout(e.target.value)}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value={false}>Нет</Radio.Button>
-              <Radio.Button value={true}>Да</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item label="Врезка шпингалета" style={{ marginBottom: 0 }}>
-            <Radio.Group
-              value={boltCutout}
-              onChange={(e) => setBoltCutout(e.target.value)}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value={false}>Нет</Radio.Button>
-              <Radio.Button value={true}>Да</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-        <Col span={6}>
-          <Form.Item label="Врезка порога" style={{ marginBottom: 0 }}>
-            <Radio.Group
-              value={thresholdCutout}
-              onChange={(e) => setThresholdCutout(e.target.value)}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value={false}>Нет</Radio.Button>
-              <Radio.Button value={true}>Да</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row style={{ marginTop: 16 }}>
-        <Col span={8}>
-          <Form.Item label="Уплотнение">
-            <Select
-              value={doorSeal}
-              onChange={setDoorSeal}
-              style={{ width: "100%" }}
-            >
-              <Option value="none">Нет</Option>
-              <Option value="black">black</Option>
-              <Option value="grey">grey</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
+        {/* Врезка и уплотнение */}
+        <Divider orientation="left">Врезка и уплотнение</Divider>
+        <Row gutter={[16, 16]}>
+          <Col span={6}>
+            <Form.Item label="Врезка ручки" style={{ marginBottom: 0 }}>
+              <Radio.Group
+                value={handleCutout}
+                onChange={(e) => setHandleCutout(e.target.value)}
+                optionType="button"
+                buttonStyle="solid"
+              >
+                <Radio.Button value={false}>Нет</Radio.Button>
+                <Radio.Button value={true}>Да</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="Врезка замка" style={{ marginBottom: 0 }}>
+              <Radio.Group
+                value={lockCutout}
+                onChange={(e) => setLockCutout(e.target.value)}
+                optionType="button"
+                buttonStyle="solid"
+              >
+                <Radio.Button value={false}>Нет</Radio.Button>
+                <Radio.Button value={true}>Да</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="Врезка шпингалета" style={{ marginBottom: 0 }}>
+              <Radio.Group
+                value={boltCutout}
+                onChange={(e) => setBoltCutout(e.target.value)}
+                optionType="button"
+                buttonStyle="solid"
+              >
+                <Radio.Button value={false}>Нет</Radio.Button>
+                <Radio.Button value={true}>Да</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="Врезка порога" style={{ marginBottom: 0 }}>
+              <Radio.Group
+                value={thresholdCutout}
+                onChange={(e) => setThresholdCutout(e.target.value)}
+                optionType="button"
+                buttonStyle="solid"
+              >
+                <Radio.Button value={false}>Нет</Radio.Button>
+                <Radio.Button value={true}>Да</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row style={{ marginTop: 16 }}>
+          <Col span={8}>
+            <Form.Item label="Уплотнение">
+              <Select
+                value={doorSeal}
+                onChange={setDoorSeal}
+                style={{ width: "100%" }}
+              >
+                <Option value="none">Нет</Option>
+                <Option value="black">black</Option>
+                <Option value="grey">grey</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
     </div>
   );
 };
 
 export default DoorParameters;
+

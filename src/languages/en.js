@@ -26,7 +26,7 @@ const en = {
     agents: "Agents",
     editOrder: 'Edit Order',
 
-    // CreateOrder, EditOrder
+    // CreateOrder, EditOrder, Orders
     err: 'Error',
     orderNumber: 'Order Number',
     requiredField: 'This field is required',
@@ -41,6 +41,27 @@ const en = {
     comment: 'Comment',
     orderUpdatedSuc: "Order updated successfully",
     failedOrderUpdate: "Failed to update order",
+    errCreateSubOrder: "Error creating suborder:",
+    errDeleteSubOrder: "Error deleting suborder:",
+    errDeleteOrder: "Error deleting order:",
+    view: "View",
+    add: "Add",
+    wallPanels: "Wall panels",
+    noSuborders: "No suborders",
+    suborderType: "Suborder type",
+    products: "Products",
+    priceNetto: "Price Netto",
+    priceBrutto: "Price Brutto",
+    suborderSucDel: "Suborder successfully deleted",
+    ordersNsubordersDel: "Order and all its suborders successfully deleted",
+    sureToDelOrder: "Are you sure you want to delete this order?",
+    sureToDelInfo: "Deleting an order will also delete all its associated suborders",
+    sureToDelSubOrder: "Are you sure you want to delete this suborder?",
+    clone: "Clone",
+    errorFetchingSuborder: 'Error fetching suborder data',
+    suborderNotFound: 'Suborder not found',
+    suborderCloneSuccess: 'Suborder cloned successfully',
+    errorCloningSuborder: 'Error cloning suborder',
 
     // STARTDATA.JSX
     startData: "Start Data",
@@ -95,24 +116,28 @@ const en = {
     failedAgentUpdate: "Failed to update agent",
     editAgent: "Edit Agent",
 
-    // Orders Component
-    errCreateSubOrder: "Error creating suborder:",
-    errDeleteSubOrder: "Error deleting suborder:",
-    errDeleteOrder: "Error deleting order:",
-    view: "View",
-    add: "Add",
-    wallPanels: "Wall panels",
-    noSuborders: "No suborders",
-    suborderType: "Suborder type",
-    products: "Products",
-    priceNetto: "Price Netto",
-    priceBrutto: "Price Brutto",
-    suborderSucDel: "Suborder successfully deleted",
-    ordersNsubordersDel: "Order and all its suborders successfully deleted",
-    sureToDelOrder: "Are you sure you want to delete this order?",
-    sureToDelInfo: "Deleting an order will also delete all its associated suborders",
-    sureToDelSubOrder: "Are you sure you want to delete this suborder?",
-    clone: "Clone"
+    // CreateProduct
+    doorCanvas: "Door canvas", 
+    doorParameters: "Door parameters",      
+    decorFront: "Decor (front side)",
+    decorBack: "Decor (back side)",  
+    slidingFrame: "Sliding system",  
+    frame: "Frame",  
+    extender: "Extender",  
+    kapitel: "Kapitel",  
+    platband: "Platband",  
+    platbandThread: "Platband Thread",  
+    platbandFront: "Platband Front (Alum line)",  
+    platbandBack: "Platband Back (Alum line)",  
+    aluminumMolding: "Aluminum molding",  
+    aluminumFrame: "Aluminum frame",  
+    aluminumCladding: "Aluminum cladding",  
+    hinge: "Hinge",
+    lock: "Lock",
+    knob: "Knob",  
+    options: "Options",  
+    customOption: "Custom option"  
+
   };
   
   export default en;

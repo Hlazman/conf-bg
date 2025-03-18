@@ -12,9 +12,6 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-import { useApolloClient } from "@apollo/client";
-import { deleteSuborderWithProducts, deleteOrderWithSuborders } from "../api/deleteProducts";
-import { cloneSuborderWithProducts } from "../api/cloneSuborder";
 
 export const GET_ORDERS = gql`
   query GetOrders($filters: OrderFiltersInput, $pagination: PaginationArg, $suborderFilters: SuborderProductFiltersInput) {
@@ -59,13 +56,29 @@ const CREATE_SUBORDER = gql`
   }
 `;
 
+const DELETE_SUBORDER = gql`
+  mutation DeleteSuborder($documentId: ID!) {
+    deleteSuborder(documentId: $documentId) {
+      documentId
+    }
+  }
+`;
+
+const DELETE_ORDER = gql`
+  mutation DeleteOrder($documentId: ID!) {
+    deleteOrder(documentId: $documentId) {
+      documentId
+    }
+  }
+`;
+
+
 const Orders = () => {
   const [commentModal, setCommentModal] = useState({ open: false, text: "" });
   const navigate = useNavigate();
   const location = useLocation();
   const selectedCompany = JSON.parse(localStorage.getItem("selectedCompany"));
   const { translations } = useContext(LanguageContext);
-  const client = useApolloClient();
   
   const { data, loading, refetch } = useQuery(GET_ORDERS, {
     variables: { 
@@ -122,6 +135,61 @@ const Orders = () => {
       }
     ]
   });
+
+  const [deleteSuborder, { loading: deletingSuborder }] = useMutation(DELETE_SUBORDER, {
+    refetchQueries: [
+      {
+        query: GET_ORDERS,
+        variables: { 
+          filters: { 
+            company: { 
+              documentId: { 
+                eqi: selectedCompany?.documentId 
+              } 
+            } 
+          },
+          pagination: {
+            limit: 1000
+          },
+          suborderFilters: {
+            product: {
+              type: {
+                in: ["door", "hiddenDoor", "samples", "slidingDoor", "wallPanel"]
+              }
+            }
+          }
+        }
+      }
+    ]
+  });
+  
+  const [deleteOrder, { loading: deletingOrder }] = useMutation(DELETE_ORDER, {
+    refetchQueries: [
+      {
+        query: GET_ORDERS,
+        variables: { 
+          filters: { 
+            company: { 
+              documentId: { 
+                eqi: selectedCompany?.documentId 
+              } 
+            } 
+          },
+          pagination: {
+            limit: 1000
+          },
+          suborderFilters: {
+            product: {
+              type: {
+                in: ["door", "hiddenDoor", "samples", "slidingDoor", "wallPanel"]
+              }
+            }
+          }
+        }
+      }
+    ]
+  });
+
   
   const orders = React.useMemo(() => {
     if (!data?.orders) return [];
@@ -268,43 +336,54 @@ const handleSlidingDoorClick = async (record) => {
     });
   };
 
-  const handleCloneSuborder = async (suborderId) => {
-    const newSuborderId = await cloneSuborderWithProducts(
-      suborderId, 
-      client, 
-      message, 
-      translations
-    );
-    
-    if (newSuborderId) {
-      refetch(); // Обновляем список заказов, чтобы отобразить новый подзаказ
-    }
+  const handleCloneSuborder = (suborderId) => {
+    // Логика клонирования suborder
+    console.log("Clone suborder:", suborderId);
   };
 
   const handleDeleteSuborder = async (suborderId) => {
-    const success = await deleteSuborderWithProducts(
-      suborderId, 
-      client, 
-      message, 
-      translations
-    );
-    
-    if (success) {
-      refetch();
+    try {
+      await deleteSuborder({
+        variables: {
+          documentId: suborderId
+        }
+      });
+      message.success(translations.suborderSucDel);
+    } catch (error) {
+      message.error(translations.errDeleteSubOrder);
+      console.error("Error deleting suborder:", error);
     }
   };
-   
+  
+  
   const handleDeleteOrder = async (orderId) => {
-    const success = await deleteOrderWithSuborders(
-      orderId, 
-      orders, 
-      client, 
-      message, 
-      translations
-    );
-    
-    if (success) {
+    try {
+      // Получаем все субордеры для этого ордера
+      const orderToDelete = orders.find(order => order.documentId === orderId);
+      
+      // Сначала удаляем все субордеры
+      if (orderToDelete && orderToDelete.suborders && orderToDelete.suborders.length > 0) {
+        for (const suborder of orderToDelete.suborders) {
+          await deleteSuborder({
+            variables: {
+              documentId: suborder.documentId
+            }
+          });
+        }
+      }
+      
+      // Затем удаляем сам ордер
+      await deleteOrder({
+        variables: {
+          documentId: orderId
+        }
+      });
+      
+      message.success(translations.ordersNsubordersDel);
       refetch();
+    } catch (error) {
+      message.error(translations.errDeleteOrder);
+      console.error("Error deleting order:", error);
     }
   };
 
@@ -417,6 +496,7 @@ const handleSlidingDoorClick = async (record) => {
                 danger 
                 icon={<DeleteOutlined />} 
                 size="small"
+                loading={deletingSuborder}
               >
                 {translations.delete}
               </Button>
@@ -472,7 +552,7 @@ const handleSlidingDoorClick = async (record) => {
       fixed: "right",
       render: (record) => (
         <Dropdown menu={menu(record)} trigger={["click"]}>
-          <Button loading={creatingSuborder}>
+          <Button loading={creatingSuborder || deletingOrder}>
             <MenuOutlined />
           </Button>
         </Dropdown>

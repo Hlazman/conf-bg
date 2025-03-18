@@ -329,6 +329,26 @@ const ElementSelection = ({
       return;
     }
 
+    if (availableSizes.height && !sizes.height ) {
+      message.error(`Выберите высоту`);
+      return;
+    }
+
+    if (availableSizes.width && !sizes.width ) {
+      message.error(`Выберите ширину`);
+      return;
+    }
+
+    if (availableSizes.length && !sizes.length ) {
+      message.error(`Выберите длину`);
+      return;
+    }
+
+    if (availableSizes.thickness && !sizes.thickness ) {
+      message.error(`Выберите толщину`);
+      return;
+    }
+
     setSaving(true);
     try {
       const productData = {

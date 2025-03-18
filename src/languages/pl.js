@@ -26,7 +26,7 @@ const pl = {
     agents: "Agenci",
     editOrder: 'Zmień zamówienie',
 
-    // CreateOrder, EditOrder
+    // CreateOrder, EditOrder. Orders
     err: 'Błąd',
     orderNumber: 'Numer zamówienia',
     requiredField: 'To pole jest wymagane',
@@ -41,6 +41,27 @@ const pl = {
     comment: 'Komentarz',
     orderUpdatedSuc: "Zamówienie zaktualizowane pomyślnie",
     failedOrderUpdate: "Nie udało się zaktualizować zamówienia",
+    errCreateSubOrder: "Błąd podczas tworzenia podzamówienia:",
+    errDeleteSubOrder: "Błąd podczas usuwania podzamówienia:",
+    errDeleteOrder: "Błąd podczas usuwania zamówienia:",
+    view: "Zobacz",
+    add: "Dodaj",
+    wallPanels: "Panele ścienne",
+    noSuborders: "Brak podzamówień",
+    suborderType: "Typ podzamówienia",
+    products: "Produkty",
+    priceNetto: "Cena netto",
+    priceBrutto: "Cena brutto",
+    suborderSucDel: "Podzamówienie zostało pomyślnie usunięte",
+    ordersNsubordersDel: "Zamówienie i wszystkie jego podzamówienia zostały pomyślnie usunięte",
+    sureToDelOrder: "Czy na pewno chcesz usunąć to zamówienie?",
+    sureToDelInfo: "Usunięcie zamówienia spowoduje również usunięcie wszystkich powiązanych podzamówień",
+    sureToDelSubOrder: "Czy na pewno chcesz usunąć to podzamówienie?",
+    clone: "Klon",
+    errorFetchingSuborder: 'Błąd podczas pobierania podzamówienia',
+    suborderNotFound: 'Nie znaleziono podzamówienia',
+    suborderCloneSuccess: 'Podzamówienie zostało pomyślnie sklonowane',
+    errorCloningSuborder: 'Błąd podczas klonowania podzamówienia',
 
     // STARTDATA.JSX
     startData: "Dane początkowe",
@@ -95,24 +116,28 @@ const pl = {
     failedAgentUpdate: "Nie udało się zaktualizować agenta",
     editAgent: "Edytuj agenta",
 
-    // Orders Component
-    errCreateSubOrder: "Błąd podczas tworzenia podzamówienia:",
-    errDeleteSubOrder: "Błąd podczas usuwania podzamówienia:",
-    errDeleteOrder: "Błąd podczas usuwania zamówienia:",
-    view: "Zobacz",
-    add: "Dodaj",
-    wallPanels: "Panele ścienne",
-    noSuborders: "Brak podzamówień",
-    suborderType: "Typ podzamówienia",
-    products: "Produkty",
-    priceNetto: "Cena netto",
-    priceBrutto: "Cena brutto",
-    suborderSucDel: "Podzamówienie zostało pomyślnie usunięte",
-    ordersNsubordersDel: "Zamówienie i wszystkie jego podzamówienia zostały pomyślnie usunięte",
-    sureToDelOrder: "Czy na pewno chcesz usunąć to zamówienie?",
-    sureToDelInfo: "Usunięcie zamówienia spowoduje również usunięcie wszystkich powiązanych podzamówień",
-    sureToDelSubOrder: "Czy na pewno chcesz usunąć to podzamówienie?",
-    clone: "Klon"
+    // CreateProduct
+    doorCanvas: "Skrzydło drzwiowe",
+    doorParameters: "Parametry drzwi",
+    decorFront: "Dekor (strona przednia)",
+    decorBack: "Dekor (strona tylna)",
+    slidingFrame: "System przesuwny",
+    frame: "Ościeżnica",
+    extender: "Dobór",
+    kapitel: "Kapitel",
+    platband: "Listwa",
+    platbandThread: "Listwa z rzeźbą",
+    platbandFront: "Listwa przednia (Alum line)",
+    platbandBack: "Listwa tylna (Alum line)",
+    aluminumMolding: "Aluminiowy molding",
+    aluminumFrame: "Aluminiowa ramka",
+    aluminumCladding: "Aluminiowa nakładka",
+    hinge: "Zawias",
+    lock: "Zamek",
+    knob: "Klamka",
+    options: "Opcje",
+    customOption: "Opcja niestandardowa",
+
   };
   
   export default pl;
