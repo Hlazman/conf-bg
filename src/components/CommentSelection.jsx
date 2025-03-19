@@ -25,7 +25,7 @@ const GET_SUBORDER = gql`
   }
 `;
 
-const CommentSelection = ({ suborderId }) => {
+const CommentSelection = ({ suborderId, onAfterSubmit }) => {
   const [form] = Form.useForm();
   const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
@@ -90,6 +90,12 @@ const CommentSelection = ({ suborderId }) => {
           }
         }
       });
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
+      }
+
     } catch (error) {
       message.error(`Произошла ошибка: ${error.message}`);
       setSaving(false);

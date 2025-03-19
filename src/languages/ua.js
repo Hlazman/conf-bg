@@ -62,6 +62,8 @@ const ua = {
     suborderNotFound: 'Підзамовлення не знайдено',
     suborderCloneSuccess: 'Підзамовлення успішно клоновано',
     errorCloningSuborder: 'Помилка клонування підзамовлення',
+    skirting: 'Плінтус',
+    samples: 'Зразки',
 
     // STARTDATA.JSX
     startData: "Стартові дані",

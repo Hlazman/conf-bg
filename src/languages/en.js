@@ -62,6 +62,8 @@ const en = {
     suborderNotFound: 'Suborder not found',
     suborderCloneSuccess: 'Suborder cloned successfully',
     errorCloningSuborder: 'Error cloning suborder',
+    skirting: 'Skirting',
+    samples: 'Samples',
 
     // STARTDATA.JSX
     startData: "Start Data",

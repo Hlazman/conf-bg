@@ -49,7 +49,8 @@ const FrameSelection = ({
   collectionId,
   selectedFrame,
   onFrameSelect,
-  suborderId
+  suborderId, 
+  onAfterSubmit
 }) => {
   const [frameProductId, setFrameProductId] = useState(null);
   const [thresholdProductId, setThresholdProductId] = useState(null);
@@ -58,23 +59,6 @@ const FrameSelection = ({
   const [thresholdChanged, setThresholdChanged] = useState(false);
   const { translations } = useContext(LanguageContext);
   const doorType = localStorage.getItem('currentType');
-
-  // Запрос для получения рам
-  // const { loading, error, data } = useQuery(GET_FRAMES, {
-  //   variables: {
-  //     filters: {
-  //       type: {
-  //         eqi: "frame"
-  //       },
-  //       collections: collectionId ? {
-  //         documentId: {
-  //           eq: collectionId
-  //         }
-  //       } : undefined
-  //     }
-  //   },
-  //   skip: !collectionId
-  // });
 
   // Запрос для получения рам
   const { loading, error, data } = useQuery(GET_FRAMES, {
@@ -292,6 +276,11 @@ const FrameSelection = ({
           }
         }
         setThresholdChanged(false);
+      }
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
       }
 
       message.success("Все данные успешно сохранены");

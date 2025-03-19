@@ -37,7 +37,7 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
-const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
+const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const doorType = localStorage.getItem('currentType');
@@ -170,7 +170,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
   };
 
   // Функция сохранения параметров двери
-  const handleSaveParameters = () => {
+  const handleSaveParameters = async () => {
     if (!suborderId) {
       message.error("ID подзаказа не найден");
       return;
@@ -217,12 +217,17 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId }) => {
     };
 
     // Обновляем существующий SuborderProduct
-    updateSuborderProduct({
+    await updateSuborderProduct({
       variables: {
         documentId: suborderProductId,
         data: parameterData
       }
     });
+
+    // Update title in collapse
+    if (onAfterSubmit) {
+      await onAfterSubmit();
+    }
   };
 
   if (loadingSuborderProduct) return <Spin size="large" />;

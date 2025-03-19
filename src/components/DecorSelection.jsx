@@ -57,7 +57,8 @@ const DecorSelection = ({
   isFrontSide = true, // Параметр для определения стороны
   onClearSelection = null, // Функция для очистки выбора (для тыльной стороны)
   suborderId, // ID подзаказа для сохранения
-  productType
+  productType,
+  onAfterSubmit
 }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -296,7 +297,7 @@ useEffect(() => {
   };
   
 // Функция сохранения декора
-const handleSaveDecor = () => {
+const handleSaveDecor = async () => {
   if (!suborderId) {
       message.error("ID подзаказа не найден");
       return;
@@ -354,12 +355,17 @@ const handleSaveDecor = () => {
   }
   
   // Обновляем существующий SuborderProduct
-  updateSuborderProduct({
+  await updateSuborderProduct({
       variables: {
           documentId: suborderProductId,
           data: decorData
       }
   });
+
+  // Update title in collapse
+  if (onAfterSubmit) {
+    await onAfterSubmit();
+  }
 };
   
   if (decorTypesLoading || loadingSuborderProduct) return <Spin />;

@@ -48,7 +48,7 @@ const GET_SUBORDER_PRODUCTS = gql`
   }
 `;
 
-const CustomOptionSelection = ({ suborderId }) => {
+const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
   const [customOptions, setCustomOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -182,6 +182,12 @@ const CustomOptionSelection = ({ suborderId }) => {
           }
         });
       }
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
+      }
+
     } catch (error) {
       message.error(`Произошла ошибка: ${error.message}`);
     } finally {

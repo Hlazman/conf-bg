@@ -62,6 +62,8 @@ const pl = {
     suborderNotFound: 'Nie znaleziono podzamówienia',
     suborderCloneSuccess: 'Podzamówienie zostało pomyślnie sklonowane',
     errorCloningSuborder: 'Błąd podczas klonowania podzamówienia',
+    skirting: 'Brzeżny',
+    samples: 'Próbki',
 
     // STARTDATA.JSX
     startData: "Dane początkowe",

@@ -17,6 +17,11 @@ query Suborder($documentId: ID!) {
       product {
         documentId
         title
+        brand
+        image {
+          documentId
+          url
+        }
       }
       sizes {
         height
@@ -27,6 +32,7 @@ query Suborder($documentId: ID!) {
       secondSideDecorType {
         documentId
         typeName
+        documentId
       }
       customTitle
       type
@@ -74,7 +80,10 @@ export const fetchSuborderData = async (client, suborderId) => {
       knobSelection: formatKnobTitle(products),
       optionSelection: formatOptionCount(products, 'option'),
       customOptionSelection: formatOptionCount(products, 'customOption'),
-      commentSelection: formatComment(suborder)
+      commentSelection: formatComment(suborder),
+      wallPanelSelection: formatWallPanelSelection(products),
+      // skirtingSelection: formatProductTitle(products, 'skirting'),
+      // sampleslSelection: formatProductTitle(products, 'samples'),
     };
     
     return formattedTitles;
@@ -95,6 +104,23 @@ const formatStartData = (suborder) => {
   if (suborder.opening) parts.push(suborder.opening);
   
   return parts.join(', ');
+};
+
+// Форматирование данных для WallPanelSelection по брендам
+const formatWallPanelSelection = (products) => {
+  const wallPanelProducts = products.filter(p => p.type === 'wallPanel');
+  const brandTitles = {
+    Danapris: null,
+    CharmWood: null
+  };
+  
+  wallPanelProducts.forEach(product => {
+    if (product.product?.brand && product.product?.title) {
+      brandTitles[product.product.brand] = product.product.title;
+    }
+  });
+  
+  return brandTitles;
 };
 
 // Форматирование данных для DoorSelection
@@ -124,7 +150,6 @@ const formatDoorParameters = (products) => {
   return parts.join(', ');
 };
 
-// Форматирование данных для лицевого декора
 const formatFrontDecorSelection = (products) => {
   const doorProduct = products.find(p => 
     p.type === 'door' || p.type === 'slidingDoor' || p.type === 'hiddenDoor'
@@ -142,11 +167,12 @@ const formatBackDecorSelection = (products) => {
   return doorProduct?.secondSideDecorType?.typeName || null;
 };
 
-// Форматирование заголовка для продукта по типу
+// // Форматирование заголовка для продукта по типу
 const formatProductTitle = (products, type) => {
   const product = products.find(p => p.type === type);
   return product?.product?.title || null;
 };
+
 
 // Форматирование заголовка для ручки
 const formatKnobTitle = (products) => {

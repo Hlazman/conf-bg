@@ -92,6 +92,15 @@ const formatItemLabel = (baseLabel, additionalInfo) => {
     </span>
   );
 };
+
+const updateFormattedTitles = async () => {
+  if (suborderId) {
+    const titles = await fetchSuborderData(client, suborderId);
+    if (titles) {
+      setFormattedTitles(titles);
+    }
+  }
+};
   
 const items = [
   {
@@ -99,6 +108,7 @@ const items = [
     label: formatItemLabel(translations.startData, formattedTitles.startData),
     children: <StartData 
       suborderId={suborderId}
+      onAfterSubmit={updateFormattedTitles} 
     />
   },
   {
@@ -109,6 +119,7 @@ const items = [
         selectedDoor={selectedDoor} 
         onDoorSelect={handleDoorSelect} 
         suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles} 
     />
   },
   {
@@ -118,6 +129,7 @@ const items = [
       <DoorParameters 
         selectedDoor={selectedDoor} 
         suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -135,7 +147,8 @@ const items = [
         onColorChange={setFrontColorCode}
         isFrontSide={true}
         suborderId={suborderId}
-        productType={doorType} 
+        productType={doorType}
+        onAfterSubmit={updateFormattedTitles}
       />
     )
   },
@@ -155,6 +168,7 @@ const items = [
         onClearSelection={clearBackSelection}
         suborderId={suborderId}
         productType={doorType}
+        onAfterSubmit={updateFormattedTitles}
       />
     )
   },
@@ -168,6 +182,7 @@ const items = [
     children: type === 'slidingDoor' ? (
       <SlidingSelection 
         suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles} 
       />
     ) : (
       <FrameSelection
@@ -176,6 +191,7 @@ const items = [
         selectedFrame={selectedFrame}
         onFrameSelect={handleFrameSelect}
         suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -190,6 +206,7 @@ const items = [
         productType="extender"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -204,6 +221,7 @@ const items = [
         productType="platband"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -218,6 +236,7 @@ const items = [
         productType="platbandThread"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -232,6 +251,7 @@ const items = [
         productType="platbandFront"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -246,6 +266,7 @@ const items = [
         productType="platbandBack"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -260,6 +281,7 @@ const items = [
         productType="kapitel"
         availableSizes={{ width: false, height: true, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -274,6 +296,7 @@ const items = [
         productType="aluminumMolding"
         availableSizes={{ width: false, height: false, length: true, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -288,6 +311,7 @@ const items = [
         productType="aluminumFrame"
         availableSizes={{ width: false, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -302,6 +326,7 @@ const items = [
         productType="aluminumCladding"
         availableSizes={{ width: false, height: false, length: false, thickness: false }}
         defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -315,6 +340,7 @@ const items = [
           collectionId={selectedDoor?.collections?.[0]?.documentId}
           selectedHinge={selectedHinge}
           onHingeSelect={handleHingeSelect}
+          onAfterSubmit={updateFormattedTitles} 
         />
       )
     },
@@ -326,6 +352,7 @@ const items = [
           suborderId={suborderId}
           selectedLock={selectedLock}
           onLockSelect={handleLockSelect}
+          onAfterSubmit={updateFormattedTitles}
         />
       )
     }
@@ -339,6 +366,7 @@ const items = [
         collectionId={selectedDoor?.collections?.[0]?.documentId}
         selectedKnob={selectedKnob}
         onKnobSelect={handleKnobSelect}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -349,6 +377,7 @@ const items = [
       <OptionSelection 
         suborderId={suborderId}
         selectedDoor={selectedDoor}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -358,6 +387,7 @@ const items = [
     children: (
       <CustomOptionSelection 
         suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles} 
       />
     )
   },
@@ -367,6 +397,7 @@ const items = [
     children: (
       <CommentSelection 
         suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles}
       />
     )
   },

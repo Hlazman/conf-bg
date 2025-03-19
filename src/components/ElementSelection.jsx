@@ -87,6 +87,7 @@ const ElementSelection = ({
   productType, // тип продукта (extender, и т.д.)
   availableSizes = { height: true, length: true, width: true, thickness: true }, // какие размеры доступны
   defaultSizes = { height: 0, length: 0, width: 100, thickness: 0 }, // значения по умолчанию
+  onAfterSubmit
 }) => {
   const [productId, setProductId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -380,6 +381,12 @@ const ElementSelection = ({
           }
         });
       }
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
+      }
+
     } catch (error) {
       message.error(`Произошла ошибка: ${error.message}`);
       setSaving(false);

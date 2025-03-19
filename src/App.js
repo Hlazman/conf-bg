@@ -7,6 +7,9 @@ import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import EditOrder from "./pages/EditOrder";
 import CreateProduct from "./pages/CreateProduct";
+import CreateWallPanel from "./pages/CreateWallPanel";
+// import CreateSkirting from "./pages/CreateSkirting";
+// import CreateSamples from "./pages/CreateSamples";
 import CreateClient from "./pages/CreateClient";
 import EditClient from "./pages/EditClient";
 import Clients from "./pages/Clients";
@@ -46,6 +49,9 @@ const App = () => {
                 <Route path="/create-order" element={<CreateOrder />} />
                 <Route path="/edit-order/:documentId" element={<EditOrder />} />
                 <Route path="/create-product" element={<CreateProduct />} />
+                <Route path="/create-wallpanel" element={<CreateWallPanel />} />
+                {/* <Route path="/create-skirting" element={<CreateSkirting />} /> */}
+                {/* <Route path="/create-samples" element={<CreateSamples />} /> */}
                 <Route path="/create-client" element={<CreateClient />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/edit-client/:documentId" element={<EditClient />} />

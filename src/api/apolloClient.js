@@ -2,6 +2,13 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
+
+// Включите подробные сообщения об ошибках в режиме разработки
+if (process.env.NODE_ENV !== "production") {
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors) {

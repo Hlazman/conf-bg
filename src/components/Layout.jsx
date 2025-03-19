@@ -96,6 +96,9 @@ const AppLayout = ({ children }) => {
       if (currentType === "slidingDoor") return translations.sliDoor;
       if (currentType === "hiddenDoor") return translations.hiDoor;
     }
+    if (pathParts[0] === "create-wallpanel") return `${translations.wallPanels}`;
+    if (pathParts[0] === "create-skirting") return `${translations.skirting}`;
+    if (pathParts[0] === "create-samples") return `${translations.samples}`;
     
     return translations.dashboard;
   }, [location.pathname, translations]);

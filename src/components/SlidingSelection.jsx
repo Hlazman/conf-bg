@@ -65,7 +65,7 @@ const DELETE_SUBORDER_PRODUCT = gql`
   }
 `;
 
-const SlidingSelection = ({ suborderId }) => {
+const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   const [slidingFrameProductId, setSlidingFrameProductId] = useState(null);
   const [selectedSlidingFrame, setSelectedSlidingFrame] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -209,6 +209,11 @@ const SlidingSelection = ({ suborderId }) => {
             data: slidingFrameData
           }
         });
+      }
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
       }
     } catch (error) {
       message.error(`Произошла ошибка: ${error.message}`);

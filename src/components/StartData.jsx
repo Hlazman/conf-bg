@@ -24,7 +24,7 @@ const GET_SUBORDER = gql`
   }
 `;
 
-const StartData = ({ onDataChange, suborderId }) => {
+const StartData = ({ onDataChange, suborderId, onAfterSubmit }) => {
   const [form] = Form.useForm();
   const { translations } = useContext(LanguageContext);
   
@@ -96,7 +96,7 @@ const StartData = ({ onDataChange, suborderId }) => {
   };
   
   // Обработчик отправки формы
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!suborderId) {
       message.error(translations.suborderIdNotFound);
       return;
@@ -119,12 +119,17 @@ const StartData = ({ onDataChange, suborderId }) => {
       opening: doorOpening
     };
     
-    updateSuborder({
+    await updateSuborder({
       variables: {
         documentId: suborderId,
         data: data
       }
     });
+
+    // Update title in collapse
+    if (onAfterSubmit) {
+      await onAfterSubmit();
+    }
   };
 
   return (

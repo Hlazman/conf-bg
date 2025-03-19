@@ -63,7 +63,7 @@ const GET_SUBORDER = gql`
   }
 `;
 
-const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect }) => {
+const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect, onAfterSubmit }) => {
   const [hingeProductId, setHingeProductId] = useState(null);
   const [hingeAmount, setHingeAmount] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -220,6 +220,11 @@ const { loading, error, data } = useQuery(GET_HINGES, {
             data: hingeData
           }
         });
+      }
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
       }
 
       message.success("Данные успешно сохранены");

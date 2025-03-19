@@ -46,7 +46,7 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
   }
 }`;
 
-const LockSelection = ({ suborderId, selectedLock, onLockSelect }) => {
+const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }) => {
   const [lockProductId, setLockProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const { translations } = useContext(LanguageContext);
@@ -161,6 +161,11 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect }) => {
           }
         });
       }
+
+    // Update title in collapse
+    if (onAfterSubmit) {
+      await onAfterSubmit();
+    }
       
       message.success("Данные успешно сохранены");
       setSaving(false);

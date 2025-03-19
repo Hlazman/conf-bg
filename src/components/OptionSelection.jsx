@@ -70,7 +70,7 @@ const GET_SUBORDER_PRODUCTS = gql`
   }
 `;
 
-const OptionSelection = ({ selectedDoor, suborderId }) => {
+const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [optionAmounts, setOptionAmounts] = useState({});
   const [suborderProducts, setSuborderProducts] = useState({});
@@ -263,6 +263,11 @@ const OptionSelection = ({ selectedDoor, suborderId }) => {
           }
         });
       }
+
+    // Update title in collapse
+    if (onAfterSubmit) {
+      await onAfterSubmit();
+    }
 
       message.success("Опции успешно сохранены");
     } catch (error) {

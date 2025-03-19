@@ -40,7 +40,7 @@ const GET_SUBORDER_PRODUCT = gql`
 `;
 
 // const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
-const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors }) => {
+const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const { translations } = useContext(LanguageContext);
@@ -178,45 +178,6 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors }) 
     }
   }, [doors, suborderProductData, loadingSuborderProduct, onDoorSelect, selectedDoor]);
 
-  // Функция сохранения выбранной двери
-  // const handleSaveDoor = () => {
-  //   if (!selectedDoor) {
-  //     message.warning("Пожалуйста, выберите дверь");
-  //     return;
-  //   }
-
-  //   if (!suborderId) {
-  //     message.error("ID подзаказа не найден");
-  //     return;
-  //   }
-
-  //   setSaving(true);
-
-  //   const doorData = {
-  //     suborder: suborderId,
-  //     product: selectedDoor.documentId,
-  //     // type: "door"
-  //     type: doorType // Используем тип из localStorage
-  //   };
-
-  //   if (suborderProductId) {
-  //     // Обновляем существующий SuborderProduct
-  //     updateSuborderProduct({
-  //       variables: {
-  //         documentId: suborderProductId,
-  //         data: doorData
-  //       }
-  //     });
-  //   } else {
-  //     // Создаем новый SuborderProduct
-  //     createSuborderProduct({
-  //       variables: {
-  //         data: doorData
-  //       }
-  //     });
-  //   }
-  // };
-
   const handleSaveDoor = async () => {
     if (!selectedDoor) {
       message.warning("Пожалуйста, выберите дверь");
@@ -256,6 +217,11 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors }) 
 
     if (checkErrors) {
       await checkErrors(client, suborderId);
+    }
+
+    // Update title in collapse
+    if (onAfterSubmit) {
+      await onAfterSubmit();
     }
   };
 

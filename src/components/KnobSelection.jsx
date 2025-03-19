@@ -60,7 +60,7 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
-const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
+const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }) => {
   const [form] = Form.useForm();
   const [knobProductId, setKnobProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -174,68 +174,6 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
     setCustomImageId(file.id);
     setCustomImageUrl(file.url);
   };
-  // const handleFileUploaded = (file) => {
-  //   setCustomImageId(file.documentId); // Используем documentId вместо id
-    
-  //   // Проверяем формат URL и добавляем базовый URL, если путь относительный
-  //   if (file.url && file.url.startsWith('/')) {
-  //     // Добавляем базовый URL к относительному пути
-  //     const baseUrl = 'https://dev.api.boki-groupe.com';
-  //     setCustomImageUrl(baseUrl + file.url);
-  //   } else {
-  //     setCustomImageUrl(file.url);
-  //   }
-  // };
-
-  // Обработчик сохранения ручки
-  // const handleSave = async () => {
-  //   if (!suborderId) {
-  //     message.error("ID подзаказа не найден");
-  //     return;
-  //   }
-
-  //   try {
-  //     await form.validateFields();
-  //   } catch (error) {
-  //     return;
-  //   }
-
-  //   setSaving(true);
-
-  //   try {
-  //     const formValues = form.getFieldsValue();
-      
-  //     const knobData = {
-  //       suborder: suborderId,
-  //       type: "knob",
-  //       customTitle: formValues.customTitle,
-  //       productCostNetto: parseFloat(formValues.productCostNetto),
-  //       amount: parseInt(formValues.amount, 10) || 1
-  //     };
-
-  //     if (customImageId) {
-  //       knobData.customImage = customImageId;
-  //     }
-
-  //     if (knobProductId) {
-  //       await updateSuborderProduct({
-  //         variables: {
-  //           documentId: knobProductId,
-  //           data: knobData
-  //         }
-  //       });
-  //     } else {
-  //       await createSuborderProduct({
-  //         variables: {
-  //           data: knobData
-  //         }
-  //       });
-  //     }
-  //   } catch (error) {
-  //     message.error(`Произошла ошибка: ${error.message}`);
-  //     setSaving(false);
-  //   }
-  // };
 
   const handleSave = async () => {
     if (!suborderId) {
@@ -262,22 +200,13 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
         amount: parseInt(formValues.amount, 10) || 1
       };
   
-      // Добавляем изображение в запрос только если:
-      // 1. Это новая ручка (knobProductId отсутствует) И есть customImageId
-      // 2. Это обновление ручки И пользователь загрузил новое изображение
-      
-      // Флаг, указывающий, было ли загружено новое изображение в текущей сессии
       const isNewImageUploaded = document.querySelector('.ant-upload-list-item') !== null;
       
       if (!knobProductId && customImageId) {
-        // Для новой ручки с изображением
         knobData.customImage = customImageId;
       } else if (knobProductId && isNewImageUploaded && customImageId) {
-        // Для обновления ручки с новым изображением
         knobData.customImage = customImageId;
       }
-      // В остальных случаях не включаем поле customImage в запрос,
-      // чтобы сохранить существующее изображение
   
       if (knobProductId) {
         await updateSuborderProduct({
@@ -293,6 +222,12 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect }) => {
           }
         });
       }
+
+      // Update title in collapse
+      if (onAfterSubmit) {
+        await onAfterSubmit();
+      }
+
     } catch (error) {
       message.error(`Произошла ошибка: ${error.message}`);
       setSaving(false);
