@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import { GET_ORDERS } from "./Orders"; // Импортируем запрос для обновления списка
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const GET_ORDER = gql`
   query GetOrder($documentId: ID!) {
@@ -60,37 +61,39 @@ const EditOrder = () => {
   const { translations } = useContext(LanguageContext);
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
+
+  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
   
   const [updateOrder] = useMutation(UPDATE_ORDER);
 
   // Получаем данные заказа
   const { data: orderData, loading: orderLoading } = useQuery(GET_ORDER, {
     variables: { documentId },
-    skip: !documentId,
-    onCompleted: (data) => {
-      // Заполняем форму данными с сервера
-      if (data?.order) {
-        form.setFieldsValue({
-          orderNumber: data.order.orderNumber,
-          deliveryCost: data.order.deliveryCost,
-          clientDiscount: data.order.clientDiscount,
-          taxRate: data.order.taxRate,
-          clientExtraPay: data.order.clientExtraPay,
-          comment: data.order.comment,
-          agent: data.order.agent?.documentId,
-          client: data.order.client?.documentId,
-        });
-        
-        // Устанавливаем компанию
-        if (data.order.company?.documentId) {
-          const companyData = {
-            documentId: data.order.company.documentId
-          };
-          setSelectedCompany(companyData);
-        }
+    skip: !documentId
+  });
+
+  useEffect(() => {
+    if (orderData?.order) {
+      form.setFieldsValue({
+        orderNumber: orderData.order.orderNumber,
+        deliveryCost: convertFromEUR(orderData.order.deliveryCost),
+        clientDiscount: orderData.order.clientDiscount,
+        taxRate: orderData.order.taxRate,
+        clientExtraPay: orderData.order.clientExtraPay,
+        comment: orderData.order.comment,
+        agent: orderData.order.agent?.documentId,
+        client: orderData.order.client?.documentId,
+      });
+      
+      // Устанавливаем компанию
+      if (orderData.order.company?.documentId) {
+        const companyData = {
+          documentId: orderData.order.company.documentId
+        };
+        setSelectedCompany(companyData);
       }
     }
-  });
+  }, [orderData, form, convertFromEUR]);
 
   useEffect(() => {
     if (!selectedCompany) {
@@ -99,7 +102,7 @@ const EditOrder = () => {
         setSelectedCompany(companyData);
       }
     }
-  }, []);
+  }, [selectedCompany]);
 
   // Получаем список агентов и клиентов
   const { data: agentsClientsData, loading: queryLoading } = useQuery(GET_AGENTS_AND_CLIENTS, {
@@ -125,12 +128,67 @@ const EditOrder = () => {
   const agents = agentsClientsData?.agents || [];
   const clients = agentsClientsData?.clients || [];
 
+  // const onFinish = async (values) => {
+  //   if (!selectedCompany?.documentId || !documentId) return;
+
+  //   const orderUpdateData = {
+  //     orderNumber: values.orderNumber,
+  //     deliveryCost: convertToEUR(values.deliveryCost) || 0,
+  //     clientDiscount: values.clientDiscount || 0,
+  //     taxRate: values.taxRate,
+  //     clientExtraPay: values.clientExtraPay || 0,
+  //     comment: values.comment || "",
+  //     company: selectedCompany.documentId,
+  //     agent: values.agent || null,
+  //     client: values.client || null,
+  //   };
+
+  //   try {
+  //     setLoading(true);
+  //     await updateOrder({
+  //       variables: { 
+  //         documentId: documentId,
+  //         data: orderUpdateData 
+  //       },
+  //       refetchQueries: [
+  //         {
+  //           query: GET_ORDERS,
+  //           variables: { 
+  //             filters: { 
+  //               company: { 
+  //                 documentId: { 
+  //                   eqi: selectedCompany?.documentId 
+  //                 } 
+  //               } 
+  //             } 
+  //           }
+  //         }
+  //       ]
+  //     });
+  //     api.success({
+  //       message: translations.success,
+  //       description: translations.orderUpdatedSuc,
+  //       placement: "topRight",
+  //     });
+      
+  //     navigate("/orders");
+  //   } catch (error) {
+  //     api.error({
+  //       message: translations.err,
+  //       description: translations.failedOrderUpdate,
+  //       placement: "topRight",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const onFinish = async (values) => {
     if (!selectedCompany?.documentId || !documentId) return;
-
+  
     const orderUpdateData = {
       orderNumber: values.orderNumber,
-      deliveryCost: values.deliveryCost || 0,
+      deliveryCost: convertToEUR(values.deliveryCost) || 0,
       clientDiscount: values.clientDiscount || 0,
       taxRate: values.taxRate,
       clientExtraPay: values.clientExtraPay || 0,
@@ -139,7 +197,7 @@ const EditOrder = () => {
       agent: values.agent || null,
       client: values.client || null,
     };
-
+  
     try {
       setLoading(true);
       await updateOrder({
@@ -159,10 +217,13 @@ const EditOrder = () => {
                 } 
               } 
             }
+          },
+          {
+            query: GET_ORDER,
+            variables: { documentId }
           }
         ]
       });
-
       api.success({
         message: translations.success,
         description: translations.orderUpdatedSuc,
@@ -180,7 +241,7 @@ const EditOrder = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       {contextHolder}
@@ -217,7 +278,10 @@ const EditOrder = () => {
           </Col>
           <Col span={6}>
             <Form.Item name="deliveryCost" label={translations.deliveryCost}>
-              <InputNumber style={{ width: "100%" }} addonAfter={'???'}/>
+              <InputNumber 
+                style={{ width: "100%" }} 
+                addonAfter={getCurrencySymbol()} 
+              />
             </Form.Item>
           </Col>
           <Col span={6}>

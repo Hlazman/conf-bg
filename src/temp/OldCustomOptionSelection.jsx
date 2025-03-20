@@ -3,7 +3,6 @@ import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal,
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-import { CurrencyContext } from "../context/CurrencyContext";
 
 const { Title, Text } = Typography;
 
@@ -55,8 +54,6 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [optionToDelete, setOptionToDelete] = useState(null);
   const { translations } = useContext(LanguageContext);
-
-  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   // Получаем данные о существующих кастомных опциях для подзаказа
   const { data: customOptionsData, loading: loadingOptions, refetch: refetchOptions } = useQuery(GET_SUBORDER_PRODUCTS, {
@@ -114,8 +111,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         const options = customOptionsData.suborderProducts.map(option => ({
           id: option.documentId,
           customTitle: option.customTitle || "",
-          // productCostNetto: option.productCostNetto || "",
-          productCostNetto: convertFromEUR(option.productCostNetto) || "",
+          productCostNetto: option.productCostNetto || "",
           amount: option.amount || 1,
           isNew: false
         }));
@@ -125,8 +121,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         addNewOption();
       }
     }
-  // }, [customOptionsData, loadingOptions]);
-  }, [customOptionsData, loadingOptions, convertFromEUR]);
+  }, [customOptionsData, loadingOptions]);
 
   // Добавление новой пустой опции
   const addNewOption = () => {
@@ -167,8 +162,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         suborder: suborderId,
         type: "customOption",
         customTitle: option.customTitle,
-        // productCostNetto: parseFloat(option.productCostNetto),
-        productCostNetto: convertToEUR(parseFloat(option.productCostNetto)),
+        productCostNetto: parseFloat(option.productCostNetto),
         amount: parseInt(option.amount, 10) || 1
       };
 
@@ -297,8 +291,8 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
             </Space>
           }
         >
-          <Row gutter={20}>
-            <Col span={8}>
+          <Row gutter={16}>
+            <Col span={10}>
               <Form.Item
                 label="Название опции"
                 required
@@ -310,7 +304,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={7}>
               <Form.Item
                 label="Цена (Netto)"
                 required
@@ -320,11 +314,10 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
                   placeholder="Введите цену"
                   value={option.productCostNetto}
                   onChange={(e) => handleOptionChange(index, "productCostNetto", e.target.value)}
-                  addonAfter={getCurrencySymbol()}
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={7}>
               <Form.Item
                 label="Количество"
               >

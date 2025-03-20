@@ -1,10 +1,11 @@
 import React, { useContext, useMemo, useEffect, useState } from "react";
 import { Layout, Menu, Button, Dropdown, Select } from "antd";
-import { UserOutlined, LogoutOutlined, GlobalOutlined, FileAddOutlined, UnorderedListOutlined, DownOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, GlobalOutlined, FileAddOutlined, UnorderedListOutlined, DownOutlined, DollarOutlined } from "@ant-design/icons";
 import { AuthContext } from "../context/AuthContext";
 import { LanguageContext } from "../context/LanguageContext";
 import { Link, useLocation } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,6 +23,8 @@ const AppLayout = ({ children }) => {
   const { setLanguage, translations } = useContext(LanguageContext);
   const location = useLocation();
   const [selectedCompany, setSelectedCompany] = useState(null);
+
+  const { currency, setCurrency, getCurrencySymbol } = useContext(CurrencyContext);
 
   const isEditOrderPage = useMemo(() => {
     const pathParts = location.pathname.split("/").filter(Boolean);
@@ -126,6 +129,14 @@ const AppLayout = ({ children }) => {
     ],
   };
 
+    // Добавим меню для валют
+    const currencyMenu = {
+      items: [
+        { key: "EUR", label: "Euro (€)", onClick: () => setCurrency("EUR") },
+        { key: "Zloty", label: "Złoty (zł)", onClick: () => setCurrency("Zloty") },
+      ],
+    };
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider theme="dark" width={220}>
@@ -133,9 +144,17 @@ const AppLayout = ({ children }) => {
           {"Configurator"}
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["orders"]} items={menuItems} />
-        <Dropdown menu={languageMenu} placement="bottomLeft">
-          <Button type="text" icon={<GlobalOutlined />} style={{ color: "white", width: "100%", textAlign: "left" }}>
+        
+        <Dropdown menu={languageMenu}>
+          <Button type="text" icon={<GlobalOutlined />} style={{ color: "white", textAlign: "left" }}>
             {translations.language} <DownOutlined />
+          </Button>
+        </Dropdown>
+
+        <Dropdown menu={currencyMenu}>
+          {/* <Button type="text" icon={<span>{getCurrencySymbol()}</span>} style={{ color: "white", textAlign: "left" }}> */}
+          <Button type="text" icon={<DollarOutlined />} style={{ color: "white", textAlign: "left", marginTop: 15 }}>
+            {currency} <DownOutlined />
           </Button>
         </Dropdown>
       </Sider>

@@ -3,7 +3,6 @@ import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal 
 import { useQuery, useMutation, gql } from "@apollo/client";
 import FileUploader from "./FileUploader";
 import { LanguageContext } from "../context/LanguageContext";
-import { CurrencyContext } from "../context/CurrencyContext";
 
 const { Title, Text } = Typography;
 
@@ -73,8 +72,6 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [amount, setAmount] = useState(1);
   const { translations } = useContext(LanguageContext);
-
-  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   // Получаем данные о существующей ручке для подзаказа
   const { data: knobProductData, loading: loadingKnobProduct, refetch: refetchKnob } = useQuery(GET_SUBORDER_PRODUCT, {
@@ -146,8 +143,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
         const knobProduct = knobProductData.suborderProducts[0];
         setKnobProductId(knobProduct.documentId);
         setCustomTitle(knobProduct.customTitle || "");
-        // setProductCostNetto(knobProduct.productCostNetto || "");
-        setProductCostNetto(convertFromEUR(knobProduct.productCostNetto) || "");
+        setProductCostNetto(knobProduct.productCostNetto || "");
         setAmount(knobProduct.amount || 1);
         
         if (knobProduct.customImage) {
@@ -166,14 +162,12 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
 
         form.setFieldsValue({
           customTitle: knobProduct.customTitle || "",
-          // productCostNetto: knobProduct.productCostNetto || "",
-          productCostNetto: convertFromEUR(knobProduct.productCostNetto) || "",
+          productCostNetto: knobProduct.productCostNetto || "",
           amount: knobProduct.amount || 1 // Добавить в форму
         });
       }
     }
-  // }, [knobProductData, loadingKnobProduct, form]);
-  }, [knobProductData, loadingKnobProduct, form, convertFromEUR]);
+  }, [knobProductData, loadingKnobProduct, form]);
 
   // Обработчик загрузки файла
   const handleFileUploaded = (file) => {
@@ -202,8 +196,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
         suborder: suborderId,
         type: "knob",
         customTitle: formValues.customTitle,
-        // productCostNetto: parseFloat(formValues.productCostNetto),
-        productCostNetto: convertToEUR(parseFloat(formValues.productCostNetto)),
+        productCostNetto: parseFloat(formValues.productCostNetto),
         amount: parseInt(formValues.amount, 10) || 1
       };
   
@@ -330,8 +323,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
               <Input 
                 type="number" 
                 placeholder="Введите цену" 
-                onChange={(e) => setProductCostNetto(e.target.value)}
-                addonAfter={getCurrencySymbol()} 
+                onChange={(e) => setProductCostNetto(e.target.value)} 
               />
             </Form.Item>
           </Col>

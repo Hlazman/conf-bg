@@ -15,6 +15,7 @@ import { LanguageContext } from "../context/LanguageContext";
 import { useApolloClient } from "@apollo/client";
 import { deleteSuborderWithProducts, deleteOrderWithSuborders } from "../api/deleteProducts";
 import { cloneSuborderWithProducts } from "../api/cloneSuborder";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 export const GET_ORDERS = gql`
   query GetOrders($filters: OrderFiltersInput, $pagination: PaginationArg, $suborderFilters: SuborderProductFiltersInput) {
@@ -65,6 +66,7 @@ const Orders = () => {
   const location = useLocation();
   const selectedCompany = JSON.parse(localStorage.getItem("selectedCompany"));
   const { translations } = useContext(LanguageContext);
+  const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
   const client = useApolloClient();
   
   const { data, loading, refetch } = useQuery(GET_ORDERS, {
@@ -580,10 +582,28 @@ const handleSampleClick = async (record) => {
   const columns = [
     { title: "№", key: "index", width: 60, render: (_, __, index) => index + 1, fixed: "left"},
     { title: translations.orderNumber, dataIndex: "orderNumber", key: "orderNumber", fixed: "left" },
-    { title: translations.priceNetto, dataIndex: "totalCostNetto", key: "totalCostNetto" },
-    { title: translations.priceBrutto, dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
     { title: translations.tax, dataIndex: "taxRate", key: "taxRate" },
-    { title: translations.deliveryCost, dataIndex: "deliveryCost", key: "deliveryCost" },
+    // { title: translations.priceNetto, dataIndex: "totalCostNetto", key: "totalCostNetto" },
+    // { title: translations.priceBrutto, dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
+    // { title: translations.deliveryCost, dataIndex: "deliveryCost", key: "deliveryCost" },
+    {
+      title: translations.priceNetto,
+      dataIndex: 'totalCostNetto',
+      key: 'totalCostNetto',
+      render: (totalCostNetto) => `${convertFromEUR(totalCostNetto)} ${getCurrencySymbol()}`
+    },
+    {
+      title: translations.priceBrutto,
+      dataIndex: 'totalCostBrutto',
+      key: 'totalCostBrutto',
+      render: (totalCostBrutto) => `${convertFromEUR(totalCostBrutto)} ${getCurrencySymbol()}`
+    },
+    {
+      title: translations.deliveryCost,
+      dataIndex: 'deliveryCost',
+      key: 'deliveryCost',
+      render: (deliveryCost) => `${convertFromEUR(deliveryCost)} ${getCurrencySymbol()}`
+    },
     { title: translations.discount, dataIndex: "clientDiscount", key: "clientDiscount" },
     { title: translations.extraCharge, dataIndex: "clientExtraPay", key: "clientExtraPay" },
     { 
