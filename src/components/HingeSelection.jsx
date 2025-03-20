@@ -44,9 +44,11 @@ const GET_SUBORDER_PRODUCT = gql`
       amount
       product {
         documentId
+        brand
         title
         image {
           url
+          documentId
         }
       }
       type

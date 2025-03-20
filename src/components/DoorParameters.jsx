@@ -31,6 +31,7 @@ const GET_SUBORDER_PRODUCT = gql`
         width
         thickness
         type
+        length
       }
       type
     }

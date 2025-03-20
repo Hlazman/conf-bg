@@ -4,7 +4,8 @@ import { useApolloClient } from "@apollo/client";
 import ErrorAlerts from "../components/ErrorAlerts";
 import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
-import WallPanelSelection from '../components/WallPanelSelection';
+import SampleSelection from '../components/SampleSelection';
+import CommentSelection from '../components/CommentSelection';
 
 const { Title } = Typography;
 
@@ -53,21 +54,21 @@ const CreateSamples = () => {
   const items = [
     {
       key: '1',
-    //   label: formatItemLabel("Danapris", formattedTitles.wallPanelSelection?.Danapris),
-    //   children: <WallPanelSelection 
-    //               suborderId={suborderId} 
-    //               onAfterSubmit={updateFormattedTitles}
-    //               brand="Danapris" 
-    //             />
+      label: formatItemLabel(translations.samples, formattedTitles.sampleslSelection),
+      children: <SampleSelection 
+                  suborderId={suborderId}
+                  onAfterSubmit={updateFormattedTitles}
+                />
     },
     {
       key: '2',
-    //   label: formatItemLabel("CharmWood", formattedTitles.wallPanelSelection?.CharmWood),
-    //   children: <WallPanelSelection 
-    //               suborderId={suborderId} 
-    //               onAfterSubmit={updateFormattedTitles}
-    //               brand="CharmWood" 
-    //             />
+      label: formatItemLabel(translations.comment, formattedTitles.commentSelection),
+      children: (
+        <CommentSelection 
+          suborderId={suborderId}
+          onAfterSubmit={updateFormattedTitles}
+        />
+      )
     },
   ];
 

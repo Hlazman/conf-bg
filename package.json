@@ -12,6 +12,7 @@
     "antd": "^5.24.2",
     "axios": "^1.8.1",
     "graphql": "^16.10.0",
+    "html2pdf.js": "^0.10.3",
     "ncs-color": "^1.0.1",
     "ral-colors": "^1.0.1",
     "ral-to-hex": "^0.0.0",

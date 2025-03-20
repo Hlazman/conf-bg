@@ -205,7 +205,7 @@ const items = [
         suborderId={suborderId}
         productType="extender"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -220,7 +220,7 @@ const items = [
         suborderId={suborderId}
         productType="platband"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -235,7 +235,7 @@ const items = [
         suborderId={suborderId}
         productType="platbandThread"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -250,7 +250,7 @@ const items = [
         suborderId={suborderId}
         productType="platbandFront"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -265,7 +265,7 @@ const items = [
         suborderId={suborderId}
         productType="platbandBack"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -280,7 +280,7 @@ const items = [
         suborderId={suborderId}
         productType="kapitel"
         availableSizes={{ width: false, height: true, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -295,7 +295,7 @@ const items = [
         suborderId={suborderId}
         productType="aluminumMolding"
         availableSizes={{ width: false, height: false, length: true, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -310,7 +310,7 @@ const items = [
         suborderId={suborderId}
         productType="aluminumFrame"
         availableSizes={{ width: false, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )
@@ -325,7 +325,7 @@ const items = [
         suborderId={suborderId}
         productType="aluminumCladding"
         availableSizes={{ width: false, height: false, length: false, thickness: false }}
-        defaultSizes={{ width: 0, height: 0, length: 0, thickness: 0 }}
+        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
       />
     )

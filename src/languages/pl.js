@@ -64,6 +64,7 @@ const pl = {
     errorCloningSuborder: 'Błąd podczas klonowania podzamówienia',
     skirting: 'Brzeżny',
     samples: 'Próbki',
+    factory: 'Fabryka',
 
     // STARTDATA.JSX
     startData: "Dane początkowe",
@@ -118,7 +119,7 @@ const pl = {
     failedAgentUpdate: "Nie udało się zaktualizować agenta",
     editAgent: "Edytuj agenta",
 
-    // CreateProduct
+    // CreateProduct, CreateSkirting
     doorCanvas: "Skrzydło drzwiowe",
     doorParameters: "Parametry drzwi",
     decorFront: "Dekor (strona przednia)",
@@ -139,6 +140,13 @@ const pl = {
     knob: "Klamka",
     options: "Opcje",
     customOption: "Opcja niestandardowa",
+    skirtingInsert: "Wkładka do listwy przypodłogowej", 
+
+    // Presentation, ClientPresentation, FactoryPresentation
+    faildData: "Nie udało się załadować danych zamówienia", 
+    noData: "Nie znaleziono danych", 
+    noOrder: "Zamówienie nie zostało znalezione lub jest niedostępne", 
+    presentation: "Prezentacja",
 
   };
   

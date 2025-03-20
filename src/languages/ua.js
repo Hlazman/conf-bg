@@ -64,6 +64,7 @@ const ua = {
     errorCloningSuborder: 'Помилка клонування підзамовлення',
     skirting: 'Плінтус',
     samples: 'Зразки',
+    factory: 'Фабрика',
 
     // STARTDATA.JSX
     startData: "Стартові дані",
@@ -118,7 +119,7 @@ const ua = {
     failedAgentUpdate: "Не вдалося оновити агента",
     editAgent: "Редагувати агента",
 
-    // CreateProduct
+    // CreateProduct, CreateSkirting
     doorCanvas: "Дверне полотно",
     doorParameters: "Параметри дверей",
     decorFront: "Декор (лицьова сторона)",
@@ -138,7 +139,14 @@ const ua = {
     lock: "Замок",
     knob: "Ручка",
     options: "Опції",
-    customOption: "Додаткові опція"
+    customOption: "Додаткові опція",
+    skirtingInsert: "Вставка для плінтусу", 
+    
+    // Presentation, ClientPresentation, FactoryPresentation
+    faildData: "Неможливо завантажити дані замовлення", 
+    noData: "Дані не знайдені", 
+    noOrder: "Замовлення не знайдено або недоступне",
+    presentation: "Презентація",
   };
   
   export default ua;

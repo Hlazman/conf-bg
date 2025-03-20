@@ -4,7 +4,9 @@ import { useApolloClient } from "@apollo/client";
 import ErrorAlerts from "../components/ErrorAlerts";
 import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
-import WallPanelSelection from '../components/WallPanelSelection';
+import CommentSelection from '../components/CommentSelection';
+import SkirtingSelection from '../components/SkirtingSelection';
+import SkirtingInsertSelection from '../components/SkirtingInsertSelection';
 
 const { Title } = Typography;
 
@@ -13,8 +15,13 @@ const CreateSkirting = () => {
   const { translations } = useContext(LanguageContext);
   const suborderId = localStorage.getItem('currentSuborderId');
   
-  const [activeKeys, setActiveKeys] = useState(['1']);
+  const [activeKeys, setActiveKeys] = useState(['1', '2']);
   const [formattedTitles, setFormattedTitles] = useState({});
+  const [selectedSkirting, setSelectedSkirting] = useState(null);
+
+  const handleSkirtingSelect = (skirting) => {
+    setSelectedSkirting(skirting);
+  };
 
   const onCollapseChange = (keys) => {
     setActiveKeys(keys);
@@ -53,21 +60,32 @@ const CreateSkirting = () => {
   const items = [
     {
       key: '1',
-    //   label: formatItemLabel("Danapris", formattedTitles.wallPanelSelection?.Danapris),
-    //   children: <WallPanelSelection 
-    //               suborderId={suborderId} 
-    //               onAfterSubmit={updateFormattedTitles}
-    //               brand="Danapris" 
-    //             />
+      label: formatItemLabel(translations.skirting, formattedTitles.skirtingSelection),
+      children: <SkirtingSelection 
+                  suborderId={suborderId} 
+                  onAfterSubmit={updateFormattedTitles}
+                  onSkirtingSelect={handleSkirtingSelect} // Добавляем обработчик выбора плинтуса
+                />
     },
     {
       key: '2',
-    //   label: formatItemLabel("CharmWood", formattedTitles.wallPanelSelection?.CharmWood),
-    //   children: <WallPanelSelection 
-    //               suborderId={suborderId} 
-    //               onAfterSubmit={updateFormattedTitles}
-    //               brand="CharmWood" 
-    //             />
+      label: formatItemLabel(translations.skirtingInsert, formattedTitles.skirtingDecorSelection),
+      children: <SkirtingInsertSelection 
+                  suborderId={suborderId} 
+                  onAfterSubmit={updateFormattedTitles}
+                  selectedSkirting={selectedSkirting}
+                  productType={'skirtingInsert'}
+                />
+    },
+    {
+      key: '3',
+      label: formatItemLabel(translations.comment, formattedTitles.commentSelection),
+      children: (
+        <CommentSelection 
+          suborderId={suborderId}
+          onAfterSubmit={updateFormattedTitles}
+        />
+      )
     },
   ];
 

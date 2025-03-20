@@ -1,4 +1,4 @@
-///////////////////////////////////////////////// TO CHECK ERRORS  /////////////////////////////////////////////
+///////////////////////////////////////////////// TO CHECK ERRORS OLD  /////////////////////////////////////////////
 // import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 // import { setContext } from "@apollo/client/link/context";
 // import { onError } from "@apollo/client/link/error";
@@ -41,7 +41,50 @@
 //   cache: new InMemoryCache(),
 // });
 
-///////////////////////////////////////////// TO MAIN /////////////////////////////////////////////
+
+///////////////////////////////////////////// MAIN OLD 1 /////////////////////////////////////////////
+// import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+// import { setContext } from "@apollo/client/link/context";
+
+// const httpLink = createHttpLink({
+//   uri: "https://dev.api.boki-groupe.com/graphql", 
+// });
+
+// const authLink = setContext((_, { headers }) => {
+//   const userStr = localStorage.getItem("user");
+//   const user = userStr ? JSON.parse(userStr) : null;
+//   const token = user?.jwt;
+  
+//   return {
+//     headers: {
+//       ...headers,
+//       authorization: token ? `Bearer ${token}` : "",
+//     }
+//   };
+// });
+
+// export const client = new ApolloClient({
+//   link: authLink.concat(httpLink),
+//   cache: new InMemoryCache({
+//     typePolicies: {
+//       Suborder: {
+//         keyFields: ["documentId"],
+//         merge(existing, incoming) {
+//           return { ...existing, ...incoming };
+//         }
+//       },
+//       SuborderProduct: {
+//         keyFields: ["documentId"],
+//         merge(existing, incoming) {
+//           return { ...existing, ...incoming };
+//         }
+//       }
+//     }
+//   }),
+// });
+
+
+///////////////////////////////////////////// MAIN OLD 2 /////////////////////////////////////////////
 // import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 // import { setContext } from "@apollo/client/link/context";
 

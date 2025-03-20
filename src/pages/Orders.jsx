@@ -128,6 +128,14 @@ const Orders = () => {
     return [...data.orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [data]);
 
+  const handleViewPresentation = (record) => {
+    navigate(`/presentation/${record.documentId}/client`);
+  };
+  
+  const handleViewFactoryPresentation = (record) => {
+    navigate(`/presentation/${record.documentId}/factory`);
+  };
+
   const handleEdit = (record) => {
     navigate(`/edit-order/${record.documentId}`);
   };
@@ -291,7 +299,7 @@ const handleSampleClick = async (record) => {
 
     // Сохраняем ID субордера в localStorage
     localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
-    navigate(`/create-sample`);
+    navigate(`/create-samples`);
   } catch (error) {
     message.error(translations.errCreateSubOrder);
     console.error("Error creating suborder:", error);
@@ -362,7 +370,7 @@ const handleSampleClick = async (record) => {
         navigationPath = "/create-wallpanel";
       } else if (typeName.includes("samples")) {
         currentType = "samples";
-        navigationPath = "/create-sample";
+        navigationPath = "/create-samples";
       } else if (typeName.includes("skirting")) {
         currentType = "skirting";
         navigationPath = "/create-skirting";
@@ -420,7 +428,16 @@ const handleSampleClick = async (record) => {
 
   const menu = (record) => ({
     items: [
-      { key: "view", label: translations.view, icon: <EyeOutlined /> },
+      { key: "view", label: translations.view, icon: <EyeOutlined />, onClick: () => handleViewPresentation(record) },
+      ...(selectedCompany?.documentId === 'ssl7a2m8avygknizy1ms496y' || 
+        selectedCompany?.documentId === 'hcpjgh4exp1pxv3ozozzeqpt' 
+      ? [{ 
+          key: "viewFactory", 
+          label: translations.factory, 
+          icon: <EyeOutlined />,
+          onClick: () => handleViewFactoryPresentation(record)
+        }] 
+      : []),
       { key: "edit", label: translations.edit, icon: <EditOutlined />, onClick: () => handleEdit(record) },
       {
         key: "add",

@@ -52,6 +52,11 @@ const GET_SUBORDER_PRODUCT = gql`
         documentId
         title
         description
+        brand
+        image {
+        url
+        documentId
+        }
       }
     }
   }

@@ -31,7 +31,7 @@ const ColorPicker = ({ value, onChange }) => {
       if (/^\d{4}$/.test(code)) {
         try {
           const hex = ralToHex(parseInt(code));
-          console.log('RAL code:', code, 'HEX:', hex);
+          // console.log('RAL code:', code, 'HEX:', hex);
           return hex;
         } catch (error) {
           console.error('Ошибка при конвертации RAL кода:', error);
@@ -43,7 +43,7 @@ const ColorPicker = ({ value, onChange }) => {
       if (/^NCS/i.test(code)) {
         try {
           const ncsHex = ncsColor.hex(code);
-          console.log('NCS code:', code, 'HEX:', ncsHex);
+          // console.log('NCS code:', code, 'HEX:', ncsHex);
           return ncsHex;
         } catch (error) {
           console.error('Ошибка при конвертации NCS кода:', error);

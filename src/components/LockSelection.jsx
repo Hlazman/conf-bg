@@ -37,9 +37,11 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
     documentId
     product {
       documentId
+      brand
       title
       image {
         url
+        documentId
       }
       type
     }

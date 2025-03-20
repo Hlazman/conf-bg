@@ -82,8 +82,9 @@ export const fetchSuborderData = async (client, suborderId) => {
       customOptionSelection: formatOptionCount(products, 'customOption'),
       commentSelection: formatComment(suborder),
       wallPanelSelection: formatWallPanelSelection(products),
-      // skirtingSelection: formatProductTitle(products, 'skirting'),
-      // sampleslSelection: formatProductTitle(products, 'samples'),
+      skirtingSelection: formatProductTitle(products, 'skirting'),
+      skirtingDecorSelection: formatSkirtingDecorSelection(products),
+      sampleslSelection: formatSamplesSelection(products),
     };
     
     return formattedTitles;
@@ -104,6 +105,40 @@ const formatStartData = (suborder) => {
   if (suborder.opening) parts.push(suborder.opening);
   
   return parts.join(', ');
+};
+
+// Форматирование данных для SampleSelection
+// const formatSamplesSelection = (products) => {
+//   const sampleProducts = products.filter(p => p.type === 'sample');
+  
+//   if (sampleProducts.length === 0) return null;
+  
+//   // Собираем заголовки всех образцов в массив
+//   const sampleTitles = sampleProducts
+//     .map(product => product.product?.title)
+//     .filter(title => title); // Фильтруем пустые значения
+  
+//   // Объединяем заголовки через запятую
+//   return sampleTitles.join(', ');
+// };
+
+// Форматирование данных для SampleSelection (до скобок)
+const formatSamplesSelection = (products) => {
+  const sampleProducts = products.filter(p => p.type === 'sample');
+  
+  if (sampleProducts.length === 0) return null;
+  
+  // Собираем заголовки всех образцов в массив
+  const sampleTitles = sampleProducts
+    .map(product => {
+      // Получаем текст до скобок и удаляем лишние пробелы
+      const title = product.product?.title || '';
+      return title.split('(')[0].trim();
+    })
+    .filter(title => title); // Фильтруем пустые значения
+  
+  // Объединяем заголовки через запятую
+  return sampleTitles.join(', ');
 };
 
 // Форматирование данных для WallPanelSelection по брендам
@@ -165,6 +200,13 @@ const formatBackDecorSelection = (products) => {
   );
   
   return doorProduct?.secondSideDecorType?.typeName || null;
+};
+
+// Форматирование данных для декора плинтуса
+const formatSkirtingDecorSelection = (products) => {
+  const doorProduct = products.find(p => p.type === 'skirtingInsert');
+  
+  return doorProduct?.decor_type?.typeName || null;
 };
 
 // // Форматирование заголовка для продукта по типу

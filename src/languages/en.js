@@ -64,6 +64,7 @@ const en = {
     errorCloningSuborder: 'Error cloning suborder',
     skirting: 'Skirting',
     samples: 'Samples',
+    factory: 'Faktory',
 
     // STARTDATA.JSX
     startData: "Start Data",
@@ -118,7 +119,7 @@ const en = {
     failedAgentUpdate: "Failed to update agent",
     editAgent: "Edit Agent",
 
-    // CreateProduct
+    // CreateProduct, CreateSkirting
     doorCanvas: "Door canvas", 
     doorParameters: "Door parameters",      
     decorFront: "Decor (front side)",
@@ -138,7 +139,14 @@ const en = {
     lock: "Lock",
     knob: "Knob",  
     options: "Options",  
-    customOption: "Custom option"  
+    customOption: "Custom option",
+    skirtingInsert: "Insert for skirting", 
+    
+    // Presentation, ClientPresentation, FactoryPresentation
+    faildData: "Failed to load order data", 
+    noData: "Data not found", 
+    noOrder: "Order not found or unavailable",
+    presentation: "Presentation", 
 
   };
   
