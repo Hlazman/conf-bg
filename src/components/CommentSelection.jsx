@@ -31,7 +31,6 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
   const [saving, setSaving] = useState(false);
   const { translations } = useContext(LanguageContext);
 
-  // Запрос для получения данных о субордере
   const { data: suborderData, loading: loadingSuborder, refetch: refetchSuborder } = useQuery(GET_SUBORDER, {
     variables: {
       documentId: suborderId
@@ -43,12 +42,12 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
   // Мутация для обновления комментария
   const [updateSuborder] = useMutation(UPDATE_SUBORDER, {
     onCompleted: () => {
-      message.success("Комментарий успешно сохранен");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchSuborder();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.saveError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -67,7 +66,7 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
   // Обработчик сохранения комментария
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
@@ -91,13 +90,12 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
         }
       });
 
-      // Update title in collapse
       if (onAfterSubmit) {
         await onAfterSubmit();
       }
 
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
@@ -106,7 +104,7 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         <Spin size="large" />
-        <p>Загрузка данных...</p>
+        <p>{translations.loading}</p>
       </div>
     );
   }
@@ -115,7 +113,7 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={4}>Комментарий</Title>
+          <Title level={4}>{translations.comment}</Title>
         </Col>
         <Col>
           <Button 
@@ -136,7 +134,7 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
           rules={[{ required: false }]}
         >
           <TextArea 
-            placeholder="Введите комментарий к заказу" 
+            placeholder={translations.comment} 
             onChange={(e) => setComment(e.target.value)} 
             rows={4}
             style={{ width: '100%' }}

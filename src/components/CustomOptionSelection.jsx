@@ -79,31 +79,31 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
   // Мутации
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Опция успешно добавлена");
+      message.success(translations.dataSaved);
       refetchOptions();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     }
   });
 
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Опция успешно обновлена");
+      message.success(translations.editError);
       refetchOptions();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     }
   });
 
   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Опция успешно удалена");
+      message.success(translations.dataSaved);
       refetchOptions();
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     }
   });
 
@@ -151,12 +151,12 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
     const option = customOptions[index];
     
     if (!option.customTitle) {
-      message.error("Пожалуйста, введите название опции");
+      message.error(translations.enterTitle);
       return;
     }
     
     if (!option.productCostNetto) {
-      message.error("Пожалуйста, введите цену опции");
+      message.error(translations.enterPrice);
       return;
     }
 
@@ -195,7 +195,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
       }
 
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -238,7 +238,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
       setShowDeleteConfirm(false);
       setOptionToDelete(null);
     } catch (error) {
-      message.error(`Произошла ошибка при удалении: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -248,7 +248,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         <Spin size="large" />
-        <p>Загрузка данных о кастомных опциях...</p>
+        <p>{translations.loading}</p>
       </div>
     );
   }
@@ -257,7 +257,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={4}>Кастомные опции</Title>
+          <Title level={4}>{translations.customOptions}</Title>
         </Col>
         <Col>
           <Button 
@@ -265,7 +265,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
             icon={<PlusOutlined />} 
             onClick={addNewOption}
           >
-            Добавить опцию
+            `${translations.add} ${translations.customOption}`
           </Button>
         </Col>
       </Row>
@@ -274,7 +274,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         <Card 
           key={option.id || `new-option-${index}`} 
           style={{ marginBottom: "16px" }}
-          title={option.id ? `Опция #${index + 1}` : "Новая опция"}
+          title={option.id ? `${translations.option} #${index + 1}` : translations.newOption}
           extra={
             <Space>
               <Button
@@ -292,7 +292,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
                 onClick={() => confirmDeleteOption(index)}
                 loading={loading}
               >
-                Удалить
+                {translations.delete}
               </Button>
             </Space>
           }
@@ -300,11 +300,11 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
           <Row gutter={20}>
             <Col span={8}>
               <Form.Item
-                label="Название опции"
+                label={translations.title}
                 required
               >
                 <Input
-                  placeholder="Введите название опции"
+                  placeholder={translations.enterTitle}
                   value={option.customTitle}
                   onChange={(e) => handleOptionChange(index, "customTitle", e.target.value)}
                 />
@@ -312,12 +312,12 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
             </Col>
             <Col span={8}>
               <Form.Item
-                label="Цена (Netto)"
+                label={`${translations.price} (Netto)`}
                 required
               >
                 <Input
                   type="number"
-                  placeholder="Введите цену"
+                  placeholder={translations.enterPrice}
                   value={option.productCostNetto}
                   onChange={(e) => handleOptionChange(index, "productCostNetto", e.target.value)}
                   addonAfter={getCurrencySymbol()}
@@ -326,11 +326,11 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
             </Col>
             <Col span={8}>
               <Form.Item
-                label="Количество"
+                label={translations.amount}
               >
                 <Input
                   type="number"
-                  placeholder="Количество"
+                  placeholder={translations.amount}
                   value={option.amount}
                   min={1}
                   onChange={(e) => handleOptionChange(index, "amount", e.target.value)}
@@ -343,19 +343,19 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
 
       {customOptions.length === 0 && (
         <div style={{ textAlign: "center", padding: "20px" }}>
-          <Text type="secondary">Нет добавленных кастомных опций. Нажмите "Добавить опцию", чтобы создать новую.</Text>
+          <Text type="secondary">{translations.noCustomOptions}</Text>
         </div>
       )}
 
       <Modal
-        title="Подтверждение удаления"
+        title={translations.confirmDel}
         open={showDeleteConfirm}
         onOk={handleDeleteOption}
         onCancel={() => setShowDeleteConfirm(false)}
-        okText="Удалить"
-        cancelText="Отмена"
+        okText={translations.delete}
+        cancelText={translations.cancel}
       >
-        <p>Вы уверены, что хотите удалить эту опцию?</p>
+        <p>{translations.sureToDel}</p>
       </Modal>
     </div>
   );

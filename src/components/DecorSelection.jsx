@@ -91,12 +91,12 @@ const DecorSelection = ({
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`Декор ${isFrontSide ? 'лицевой' : 'тыльной'} стороны успешно обновлен`);
+      message.success(`${translations.decor} ${isFrontSide ? translations.frontSide : translations.backSide} ${translations.dataSaved}`);
       setSaving(false);
       refetch(); // Обновляем данные после успешного обновления
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -227,10 +227,10 @@ useEffect(() => {
     // Проверяем, что тип декора выбран и это тип с выбором цвета
     if (selectedDecorType && isPaintType(selectedDecorType.typeName)) {
       if (isFrontSide && suborderProduct.colorCode) {
-        console.log("Setting front color code:", suborderProduct.colorCode);
+        // console.log("Setting front color code:", suborderProduct.colorCode);
         onColorChange(suborderProduct.colorCode);
       } else if (!isFrontSide && suborderProduct.secondSideColorCode) {
-        console.log("Setting back color code:", suborderProduct.secondSideColorCode);
+        // console.log("Setting back color code:", suborderProduct.secondSideColorCode);
         onColorChange(suborderProduct.secondSideColorCode);
       }
     }
@@ -299,12 +299,12 @@ useEffect(() => {
 // Функция сохранения декора
 const handleSaveDecor = async () => {
   if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
   }
 
   if (!suborderProductId) {
-      message.error(`Сначала выберите дверь в разделе 'Выбор полотна'`);
+      message.error(translations.firstDoor);
       return;
   }
 
@@ -373,7 +373,7 @@ const handleSaveDecor = async () => {
   if (decorTypesError) {
     return (
       <div>
-        <div>Ошибка при загрузке типов декоров: {decorTypesError.message}</div>
+        <div> {translations.loadError}: {decorTypesError.message} </div>
         <pre>{JSON.stringify(decorTypesError, null, 2)}</pre>
       </div>
     );
@@ -382,7 +382,7 @@ const handleSaveDecor = async () => {
   if (!doorId) {
     return (
       <Empty 
-        description="Сначала выберите полотно" 
+        description={translations.firstDoor} 
         image={Empty.PRESENTED_IMAGE_SIMPLE}
       />
     );
@@ -392,7 +392,7 @@ const handleSaveDecor = async () => {
     return (
       <Empty description={
         <div>
-          <p>Нет доступных типов декора</p>
+          <p>{translations.noAvDecor}</p>
         </div>
       } />
     );
@@ -406,7 +406,8 @@ const handleSaveDecor = async () => {
       
       // Создаем вложенные табы для категорий Veneer
       const categoryTabItems = veneerCategories.map(category => ({
-        label: category.replace('veneer_', 'Veneer '),
+        // label: category.replace('veneer_', 'Veneer '),
+        label: category.replace('veneer_', `${translations.category} `),
         key: category,
         children: (
           <div>
@@ -416,8 +417,8 @@ const handleSaveDecor = async () => {
                 onChange={(e) => setVeneerOrientation(e.target.value)}
                 buttonStyle="solid"
               >
-                <Radio.Button value="vertical">Вертикальный</Radio.Button>
-                <Radio.Button value="horizontal">Горизонтальный</Radio.Button>
+                <Radio.Button value="vertical">{translations.vertical}</Radio.Button>
+                <Radio.Button value="horizontal">{translations.horizontal}</Radio.Button>
               </Radio.Group>
             </div>
             <Row gutter={[16, 16]}>
@@ -433,7 +434,7 @@ const handleSaveDecor = async () => {
                         style={{ height: 200, objectFit: 'cover' }}
                       /> : 
                       <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        Нет изображения
+                        {translations.noImages}
                       </div>
                     }
                     onClick={() => handleDecorSelect(decor)}
@@ -451,7 +452,8 @@ const handleSaveDecor = async () => {
       }));
       
       return {
-        label: decorType.typeName,
+        // label: decorType.typeName,
+        label: translations[decorType.typeName],
         key: decorType.documentId,
         children: (
           <div>
@@ -460,7 +462,7 @@ const handleSaveDecor = async () => {
                 <Spin />
               ) : decorsError ? (
                 <div>
-                  <div>Ошибка при загрузке декоров: {decorsError.message}</div>
+                  <div> {translations.loadError} : {decorsError.message}</div>
                   <pre>{JSON.stringify(decorsError, null, 2)}</pre>
                 </div>
               ) : veneerCategories.length > 0 ? (
@@ -473,13 +475,13 @@ const handleSaveDecor = async () => {
               ) : (
                 <Empty description={
                   <div>
-                    <p>Нет доступных категорий Veneer</p>
+                    <p> {translations.noAvDecor} </p>
                   </div>
                 } />
               )
             ) : (
               <Empty 
-                description="Выберите этот тип декора для просмотра содержимого" 
+                description={translations.selectThisDecor} 
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}
@@ -489,7 +491,8 @@ const handleSaveDecor = async () => {
     } else {
       // Для остальных типов декора
       return {
-        label: decorType.typeName,
+        // label: decorType.typeName,
+        label: translations[decorType.typeName],
         key: decorType.documentId,
         children: (
           <div>
@@ -508,7 +511,7 @@ const handleSaveDecor = async () => {
                   <Spin />
                 ) : decorsError ? (
                   <div>
-                    <div>Ошибка при загрузке декоров: {decorsError.message}</div>
+                    <div>{translations.loadError}: {decorsError.message}</div>
                     <pre>{JSON.stringify(decorsError, null, 2)}</pre>
                   </div>
                 ) : decors && decors.length > 0 ? (
@@ -525,7 +528,7 @@ const handleSaveDecor = async () => {
                               style={{ height: 200, objectFit: 'cover' }}
                             /> : 
                             <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              Нет изображения
+                              {translations.noImages}
                             </div>
                           }
                           onClick={() => handleDecorSelect(decor)}
@@ -541,15 +544,15 @@ const handleSaveDecor = async () => {
                 ) : (
                   <Empty description={
                     <div>
-                      <p>Нет доступных декоров типа {decorType.typeName}</p>
-                      <p>ID типа декора: {decorType.documentId}</p>
+                      <p> {translations.noAvDecor} {decorType.typeName}</p>
+                      <p>ID: {decorType.documentId}</p>
                     </div>
                   } />
                 )
               )
             ) : (
               <Empty 
-                description="Выберите этот тип декора для просмотра содержимого" 
+                description={translations.selectThisDecor} 
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             )}
@@ -562,11 +565,11 @@ const handleSaveDecor = async () => {
   return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={4}>{isFrontSide ? "Декор лицевой стороны" : "Декор тыльной стороны"}</Title>
+        <Title level={4}>{isFrontSide ? translations.decorFront : translations.decorBack}</Title>
         <div>
           {!isFrontSide && onClearSelection && (
             <Button onClick={onClearSelection} danger style={{ marginRight: 8 }}>
-              Убрать выбранное
+              {translations.removeSelected}
             </Button>
           )}
           <Button 

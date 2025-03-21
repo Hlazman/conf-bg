@@ -7,9 +7,20 @@ import { LanguageContext } from "../context/LanguageContext";
 const { Title, Text } = Typography;
 
 // Запрос для получения опций
+// const GET_OPTIONS = gql`
+//   query Products($filters: ProductFiltersInput) {
+//     products(filters: $filters) {
+//       documentId
+//       title
+//       type
+//       brand
+//     }
+//   }
+// `;
+
 const GET_OPTIONS = gql`
-  query Products($filters: ProductFiltersInput) {
-    products(filters: $filters) {
+  query Products($filters: ProductFiltersInput, $pagination: PaginationArg) {
+    products(filters: $filters, pagination: $pagination) {
       documentId
       title
       type
@@ -93,6 +104,9 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
         type: {
           eqi: "option"
         }
+      },
+      pagination: {
+        limit: 30
       }
     },
     skip: !selectedDoor
@@ -122,7 +136,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       refetchSuborderProducts();
     },
     onError: (error) => {
-      message.error(`Ошибка при создании опции: ${error.message}`);
+      message.error(`${translations.saveError} ${error.message}`);
     }
   });
 
@@ -131,7 +145,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       refetchSuborderProducts();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении опции: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
     }
   });
 
@@ -140,7 +154,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       refetchSuborderProducts();
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении опции: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
     }
   });
 
@@ -200,7 +214,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   // Функция сохранения выбранных опций
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
@@ -273,9 +287,9 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       await onAfterSubmit();
     }
 
-      message.success("Опции успешно сохранены");
+      message.success(translations.dataSaved);
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     } finally {
       setSaving(false);
     }
@@ -285,7 +299,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         <Spin size="large" />
-        <p>Загрузка опций...</p>
+        <p>{translations.loading}</p>
       </div>
     );
   }
@@ -293,8 +307,8 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   if (error) {
     return (
       <div>
-        <Title level={4}>Опции</Title>
-        <p>Ошибка при загрузке опций: {error.message}</p>
+        <Title level={4}>{translations.options}</Title>
+        <p>`${translations.loadError}: ${error.message}`</p>
       </div>
     );
   }
@@ -302,8 +316,8 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   if (!selectedDoor) {
     return (
       <div>
-        <Title level={4}>Опции</Title>
-        <p>Сначала выберите дверь</p>
+        <Title level={4}>{translations.options}</Title>
+        <p>{translations.firstDoor}</p>
       </div>
     );
   }
@@ -311,8 +325,8 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   if (options.length === 0) {
     return (
       <div>
-        <Title level={4}>Опции</Title>
-        <p>Нет доступных опций для выбранной двери</p>
+        <Title level={4}>{translations.options}</Title>
+        <p>{translations.noAvOptions}</p>
       </div>
     );
   }
@@ -321,7 +335,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={4}>Опции</Title>
+          <Title level={4}>{translations.options}</Title>
         </Col>
         <Col>
           <Button 
@@ -335,7 +349,6 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       </Row>
 
       <Divider />
-
       {options.map(option => (
         <Card 
           key={option.documentId} 
@@ -348,14 +361,15 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
                 checked={!!selectedOptions[option.documentId]}
                 onChange={(e) => handleOptionChange(e.target.checked, option)}
               >
-                <Text strong>{option.title}</Text>
+                {/* <Text strong>{option.title}</Text> */}
+                <Text strong>{translations[option.title]}</Text>
               </Checkbox>
             </Col>
             {option.brand === "countOptions" && selectedOptions[option.documentId] && (
               <Col span={8}>
                 <Row justify="end">
                   <Col>
-                    <Text style={{ marginRight: "8px" }}>Количество:</Text>
+                    <Text style={{ marginRight: "8px" }}>{translations.amount}:</Text>
                   </Col>
                   <Col>
                     <InputNumber

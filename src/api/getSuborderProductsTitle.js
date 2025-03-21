@@ -89,7 +89,7 @@ export const fetchSuborderData = async (client, suborderId) => {
     
     return formattedTitles;
   } catch (error) {
-    console.error('Error fetching suborder data:', error);
+    // console.error('Error fetching suborder data:', error);
     return null;
   }
 };
@@ -178,9 +178,12 @@ const formatDoorParameters = (products) => {
   const sizes = doorProduct.sizes;
   const parts = [];
   
-  if (sizes.height) parts.push(`Высота: ${sizes.height}`);
-  if (sizes.width) parts.push(`Ширина: ${sizes.width}`);
-  if (sizes.thickness) parts.push(`Толщина: ${sizes.thickness}`);
+  // if (sizes.height) parts.push(`Высота: ${sizes.height}`);
+  // if (sizes.width) parts.push(`Ширина: ${sizes.width}`);
+  // if (sizes.thickness) parts.push(`Толщина: ${sizes.thickness}`);
+  if (sizes.height) parts.push(`H: ${sizes.height}`);
+  if (sizes.width) parts.push(`W: ${sizes.width}`);
+  if (sizes.thickness) parts.push(`T: ${sizes.thickness}`);
   
   return parts.join(', ');
 };

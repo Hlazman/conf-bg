@@ -126,13 +126,13 @@ const FrameSelection = ({
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success("Данные успешно сохранены");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchFrame();
       refetchThreshold();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -140,12 +140,12 @@ const FrameSelection = ({
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Данные успешно обновлены");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchFrame();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -157,12 +157,10 @@ const FrameSelection = ({
       setSaving(false);
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении порога: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   });
-
-  // const frames = data?.products || [];
   
   // Получаем рамы из результатов запроса
   const frames = useMemo(() => {
@@ -222,7 +220,7 @@ const FrameSelection = ({
   // Функция сохранения выбранной рамы и порога
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
@@ -288,26 +286,26 @@ const FrameSelection = ({
         await onAfterSubmit();
       }
 
-      message.success("Все данные успешно сохранены");
+      message.success(translations.dataSaved);
       setSaving(false);
       
       // Обновляем данные
       refetchFrame();
       refetchThreshold();
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
 
   if (loading || loadingFrameProduct) return <Spin size="large" />;
-  if (error) return <Empty description="Ошибка при загрузке рам" />;
-  if (frames.length === 0) return <Empty description="Нет доступных рам для выбранной двери" />;
+  if (error) return <Empty description={translations.loadError} />;
+  if (frames.length === 0) return <Empty description={translations.noData} />;
 
   return (
     <div>
        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-       <Title level={4}>Рама и Порог</Title>
+       <Title level={4}>{translations.frame}, {translations.threshold}</Title>
         <Button 
           type="primary" 
           onClick={handleSave}
@@ -325,12 +323,12 @@ const FrameSelection = ({
         checked={hasThreshold}
         onChange={handleThresholdChange}
         >
-        Добавить порог
+        {translations.add} {translations.threshold}
         </Checkbox>
       </div>
 
       {/* <Title level={4}>Выбор рамы</Title> */}
-      <Divider orientation="left">Выбор рамы</Divider>
+      <Divider orientation="left">{translations.selection} {translations.frame}</Divider>
       <Row gutter={[16, 16]}>
         {frames.map(frame => (
           <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>
@@ -343,7 +341,8 @@ const FrameSelection = ({
               styles={{ body: { padding: '12px' } }}
               onClick={() => onFrameSelect(frame)}
             >
-              <Card.Meta title={frame.title} />
+              {/* <Card.Meta title={frame.title} /> */}
+              <Card.Meta title={translations[frame.title]} />
             </Card>
           </Col>
         ))}

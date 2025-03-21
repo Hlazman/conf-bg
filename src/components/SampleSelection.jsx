@@ -123,7 +123,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
       refetchSuborderProducts();
     },
     onError: (error) => {
-      message.error(`Ошибка при создании образца: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     }
   });
 
@@ -132,7 +132,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
       refetchSuborderProducts();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении образца: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
     }
   });
 
@@ -141,7 +141,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
       refetchSuborderProducts();
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении образца: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
     }
   });
 
@@ -192,7 +192,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   // Функция сохранения выбранных образцов
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
@@ -258,9 +258,9 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
         await onAfterSubmit();
       }
 
-      message.success("Образцы успешно сохранены");
+      message.success(translations.dataSaved);
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
     } finally {
       setSaving(false);
     }
@@ -269,7 +269,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   if (loading || loadingSuborderProducts) {
     return (
       <Card>
-        <Spin tip="Загрузка образцов..."  fullscreen={true} />
+        <Spin tip={translations.loading}  fullscreen={true} />
       </Card>
     );
   }
@@ -277,7 +277,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   if (error) {
     return (
       <Card>
-        <Text type="danger">Ошибка при загрузке образцов: {error.message}</Text>
+        <Text type="danger">{translations.loadError}: {error.message}</Text>
       </Card>
     );
   }
@@ -285,7 +285,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   if (samples.length === 0) {
     return (
       <Card>
-        <Empty description="Нет доступных образцов" />
+        <Empty description={translations.noData} />
       </Card>
     );
   }
@@ -293,7 +293,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   return (
     <Card>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-            <Col> <Title level={4}>Выбор образцов</Title></Col>
+            <Col> <Title level={4}>{translations.selection} {translations.samples}</Title></Col>
             <Col>
               <Button
                 type="primary"
@@ -316,7 +316,8 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
                     checked={selectedSamples[sample.documentId] || false}
                     onChange={(e) => handleSampleChange(e.target.checked, sample)}
                   >
-                    {sample.title}
+                    {/* {sample.title} */}
+                    {translations[sample.title]}
                   </Checkbox>
                 </Col>
                 

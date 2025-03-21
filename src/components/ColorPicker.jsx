@@ -34,7 +34,7 @@ const ColorPicker = ({ value, onChange }) => {
           // console.log('RAL code:', code, 'HEX:', hex);
           return hex;
         } catch (error) {
-          console.error('Ошибка при конвертации RAL кода:', error);
+          // console.error('Error converting RAL code:', error);
           return null;
         }
       }
@@ -46,7 +46,7 @@ const ColorPicker = ({ value, onChange }) => {
           // console.log('NCS code:', code, 'HEX:', ncsHex);
           return ncsHex;
         } catch (error) {
-          console.error('Ошибка при конвертации NCS кода:', error);
+          // console.error('Error converting NCS code:', error);
           return null;
         }
       }
@@ -59,7 +59,7 @@ const ColorPicker = ({ value, onChange }) => {
         <Input
             value={colorCode}
             onChange={handleChange}
-            placeholder="Введите код RAL (4 цифры) или NCS"
+            placeholder={translations.enterRAL}
             style={{ width: 300, marginBottom: 10 }}
         />
     <div
@@ -70,7 +70,7 @@ const ColorPicker = ({ value, onChange }) => {
         border: "1px solid #d9d9d9",
         borderRadius: 4
         }}
-        title={colorHex || "Цвет не определен"}
+        title={colorHex || translations.noColor}
     />
     {colorCode && !colorHex && (
         <div style={{ marginTop: 10, color: 'red' }}>

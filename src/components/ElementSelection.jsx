@@ -149,12 +149,12 @@ const ElementSelection = ({
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success(`${productType} успешно добавлен`);
+      message.success(`${productType}: ${translations.dataSaved}`);
       setSaving(false);
       refetchProduct();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.saveError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -162,12 +162,12 @@ const ElementSelection = ({
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`${productType} успешно обновлен`);
+      message.success(`${productType}: ${translations.dataSaved}`);
       setSaving(false);
       refetchProduct();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -175,7 +175,7 @@ const ElementSelection = ({
   // Мутация для удаления SuborderProduct
   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`${productType} успешно удален`);
+      message.success(`${productType}: ${translations.removed}`);
       setSaving(false);
       refetchProduct();
       // Сбросить состояние после удаления
@@ -190,7 +190,7 @@ const ElementSelection = ({
       setBackColorCode("");
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -219,7 +219,7 @@ const ElementSelection = ({
     const idToDelete = productId || productData?.suborderProducts[0]?.documentId;
     
     if (!idToDelete) {
-      message.error(`${productType} не найден`);
+      message.error(`${productType}: ${translations.noData}`);
       return;
     }
   
@@ -231,7 +231,7 @@ const ElementSelection = ({
         }
       });
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
@@ -326,32 +326,32 @@ const ElementSelection = ({
   // Функция сохранения выбранного продукта
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
     if (!selectedProduct) {
-      message.error(`Выберите ${productType}`);
+      message.error(`${translations.choose} ${productType}`);
       return;
     }
 
     if (availableSizes.height && !sizes.height ) {
-      message.error(`Выберите высоту`);
+      message.error(translations.enterHeight);
       return;
     }
 
     if (availableSizes.width && !sizes.width ) {
-      message.error(`Выберите ширину`);
+      message.error(translations.enterwidth);
       return;
     }
 
     if (availableSizes.length && !sizes.length ) {
-      message.error(`Выберите длину`);
+      message.error(translations.enterLength);
       return;
     }
 
     if (availableSizes.thickness && !sizes.thickness ) {
-      message.error(`Выберите толщину`);
+      message.error(translations.enterThickness);
       return;
     }
 
@@ -393,20 +393,20 @@ const ElementSelection = ({
       }
 
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
 
   if (loading || loadingProduct) return <Spin size="large" />;
 
-  if (error) return <Empty description={`Ошибка загрузки данных: ${error.message}`} />;
+  if (error) return <Empty description={`${translations.loadError}: ${error.message}`} />;
 
   // Создаем items для Tabs
   const items = [
     {
       key: "1",
-      label: "Выбор элемента",
+      label: translations.element,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
@@ -421,7 +421,8 @@ const ElementSelection = ({
                       : '1px solid #d9d9d9'
                   }}
                 >
-                  <Title level={5}>{product.title}</Title>
+                  {/* <Title level={5}>{product.title}</Title> */}
+                  <Title level={5}>{translations[product.title]}</Title>
                 </Card>
               </Col>
             ))}
@@ -431,14 +432,14 @@ const ElementSelection = ({
     },
     {
       key: "2",
-      label: "Размеры",
+      label: translations.sizes,
       disabled: !selectedProduct,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
             {availableSizes.height && (
               <Col span={6}>
-                <Title level={5}>Высота (мм)</Title>
+                <Title level={5}>{translations.height}</Title>
                 <InputNumber
                   min={0}
                   value={sizes.height}
@@ -450,7 +451,7 @@ const ElementSelection = ({
             )}
             {availableSizes.width && (
               <Col span={6}>
-                <Title level={5}>Ширина (мм)</Title>
+                <Title level={5}>{translations.width}</Title>
                 <InputNumber
                   min={0}
                   value={sizes.width}
@@ -462,7 +463,7 @@ const ElementSelection = ({
             )}
             {availableSizes.length && (
               <Col span={6}>
-                <Title level={5}>Длина (мм)</Title>
+                <Title level={5}>{translations.length}</Title>
                 <InputNumber
                   min={0}
                   value={sizes.length}
@@ -474,7 +475,7 @@ const ElementSelection = ({
             )}
             {availableSizes.thickness && (
               <Col span={6}>
-                <Title level={5}>Толщина (мм)</Title>
+                <Title level={5}>{translations.thickness}</Title>
                 <InputNumber
                   min={0}
                   value={sizes.thickness}
@@ -492,7 +493,7 @@ const ElementSelection = ({
       key: "3",
       label: (
         <span>
-          Лицевая сторона
+          {translations.decorFront}
           <span style={{ color: '#00A651' }}>
             {selectedFrontDecorType ? ` - ${selectedFrontDecorType.typeName}` : ""}
             {selectedFrontDecor ? ` - ${selectedFrontDecor.title}` : ""}
@@ -520,7 +521,7 @@ const ElementSelection = ({
       key: "4",
       label: (
         <span>
-          Тыльная сторона
+          {translations.decorBack}
           <span style={{ color: '#00A651' }}>
             {selectedBackDecorType ? ` - ${selectedBackDecorType.typeName}` : ""}
             {selectedBackDecor ? ` - ${selectedBackDecor.title}` : ""}
@@ -551,7 +552,7 @@ const ElementSelection = ({
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
         <Col>
-          <Title level={3}>Выбор {productType}</Title>
+          <Title level={3}>{translations.selection} {productType}</Title>
         </Col>
         <Col>
           <Button
@@ -575,7 +576,7 @@ const ElementSelection = ({
               onClick={handleDelete}
               loading={saving}
             >
-              Удалить
+              {translations.delete}
             </Button>
           )}
         </Col>

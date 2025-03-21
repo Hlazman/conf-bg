@@ -56,7 +56,7 @@ export const checkSuborderErrors = async (client, suborderId) => {
       // Возвращаем true, если хотя бы одно поле ошибки равно true
       return errorFields.some(field => data.suborder.suborderErrors[field] === true);
     } catch (error) {
-      console.error("Ошибка при проверке ошибок субордера:", error);
+      // console.error(error);
       return false;
     }
   };
@@ -82,47 +82,47 @@ const ErrorAlerts = ({ suborderId }) => {
     if (!errors) return messages;
     
     if (errors.decorError) {
-      messages.push("Ошибка в выборе декора. Пожалуйста, проверьте выбор декора для лицевой и тыльной стороны.");
+      messages.push(translations.errAlertDecor);
     }
     
     if (errors.frameError) {
-      messages.push("Ошибка в выборе рамы. Пожалуйста, проверьте выбор рамы.");
+      messages.push(translations.errAlertFrame);
     }
     
     if (errors.extenderError) {
-      messages.push("Ошибка в выборе расширителя. Пожалуйста, проверьте выбор расширителя.");
+      messages.push(translations.errAlertExtender);
     }
     
     if (errors.platbandError) {
-      messages.push("Ошибка в выборе наличника. Пожалуйста, проверьте выбор наличника.");
+      messages.push(translations.errAlertPlatband);
     }
     
     if (errors.platbandThreadError) {
-      messages.push("Ошибка в выборе наличника с резьбой. Пожалуйста, проверьте выбор наличника с резьбой.");
+      messages.push(translations.errAlertPlatbandThreaded);
     }
     
     if (errors.platbandFrontError) {
-      messages.push("Ошибка в выборе наличника лицевой стороны. Пожалуйста, проверьте выбор наличника лицевой стороны.");
+      messages.push(translations.errAlertPlatbandFront);
     }
     
     if (errors.platbandBackError) {
-      messages.push("Ошибка в выборе наличника тыльной стороны. Пожалуйста, проверьте выбор наличника тыльной стороны.");
+      messages.push(translations.errAlertPlatbandBack);
     }
     
     if (errors.aluminumMoldingError) {
-      messages.push("Ошибка в выборе алюминиевого молдинга. Пожалуйста, проверьте выбор алюминиевого молдинга.");
+      messages.push(translations.errAlertAlumMolding);
     }
     
     if (errors.aluminumFrameError) {
-      messages.push("Ошибка в выборе алюминиевого обклада. Пожалуйста, проверьте выбор алюминиевого обклада.");
+      messages.push(translations.errAlertAlumFrame);
     }
     
     if (errors.aluminumCladdingError) {
-      messages.push("Ошибка в выборе алюминиевого каркаса. Пожалуйста, проверьте выбор алюминиевого каркаса.");
+      messages.push(translations.errAlertAlumCladding);
     }
     
     if (errors.optionError) {
-      messages.push("Ошибка в выборе опций. Пожалуйста, проверьте выбор опций.");
+      messages.push(translations.errAlertOptions);
     }
     
     return messages;
@@ -147,7 +147,7 @@ const ErrorAlerts = ({ suborderId }) => {
         {errorMessages.map((message, index) => (
           <Alert
             key={index}
-            message="Ошибка в заказе"
+            message={translations.errInOrder}
             description={message}
             type="error"
             showIcon

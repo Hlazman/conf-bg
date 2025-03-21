@@ -123,24 +123,24 @@ const { loading, error, data } = useQuery(GET_HINGES, {
 
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success("Петли успешно добавлены");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchHinge();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
 
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Петли успешно обновлены");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchHinge();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -191,12 +191,12 @@ const { loading, error, data } = useQuery(GET_HINGES, {
 
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
     if (!selectedHinge) {
-      message.error("Выберите петлю");
+      message.error(`${translations.choose} ${translations.hinge}`);
       return;
     }
 
@@ -229,11 +229,11 @@ const { loading, error, data } = useQuery(GET_HINGES, {
         await onAfterSubmit();
       }
 
-      message.success("Данные успешно сохранены");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchHinge();
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
@@ -243,14 +243,14 @@ const { loading, error, data } = useQuery(GET_HINGES, {
   };
 
   if (loading || loadingHingeProduct) return <Spin size="large" />;
-  if (error) return <Alert type="error" message={`Ошибка загрузки: ${error.message}`} />;
-  if (!hinges || hinges.length === 0) return <Empty description="Петли не найдены" />;
+  if (error) return <Alert type="error" message={`${translations.loadError}: ${error.message}`} />;
+  if (!hinges || hinges.length === 0) return <Empty description={translations.noData} />;
 
   return (
     <div className="hinge-selection">
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
         <Col>
-          <Title level={3}>Выбор петель</Title>
+          <Title level={3}>{translations.selection} {translations.hinge}</Title>
         </Col>
         <Col>
           <Button 
@@ -269,7 +269,7 @@ const { loading, error, data } = useQuery(GET_HINGES, {
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <div style={{ marginBottom: 16 }}>
-            <span style={{ marginRight: 16 }}>Количество петель:</span>
+            <span style={{ marginRight: 16 }}>{translations.amount}:</span>
             <InputNumber 
               min={0} 
               value={hingeAmount} 

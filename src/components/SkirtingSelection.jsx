@@ -156,13 +156,13 @@ const SkirtingSelection = ({
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success(`Плинтус успешно добавлен`);
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchProduct();
       refetchMilling();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -170,12 +170,12 @@ const SkirtingSelection = ({
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`Плинтус успешно обновлен`);
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchProduct();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -187,7 +187,7 @@ const SkirtingSelection = ({
       setSaving(false);
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении фрезеровки: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -289,17 +289,17 @@ const SkirtingSelection = ({
   // Функция сохранения выбранного продукта
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
     if (!selectedProduct) {
-      message.error(`Выберите плинтус`);
+      message.error(`${translations.choose} ${translations.skirting}`);
       return;
     }
 
     if (!sizes.length) {
-      message.error(`Укажите длину`);
+      message.error(translations.enterLength);
       return;
     }
 
@@ -365,25 +365,25 @@ const SkirtingSelection = ({
         await onAfterSubmit();
       }
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
 
   if (loading || loadingProduct) return <Spin size="large" />;
 
-  if (error) return <Empty description={`Ошибка: ${error.message}`} />;
+  if (error) return <Empty description={`${translations.err}: ${error.message}`} />;
 
   const items = [
     {
       key: "1",
-      label: "Выбор плинтуса",
+      label: `${translations.skirting}`,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
             {productElements.length === 0 ? (
               <Col span={24}>
-                <Empty description="Нет доступных плинтусов" />
+                <Empty description={translations.noData} />
               </Col>
             ) : (
               productElements.map(product => (
@@ -398,7 +398,7 @@ const SkirtingSelection = ({
                         style={{ height: 200, objectFit: 'cover' }}
                       /> : 
                       <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        Нет изображения
+                        {translations.noImage}
                       </div>
                     }
                     onClick={() => handleProductSelect(product)}
@@ -408,7 +408,8 @@ const SkirtingSelection = ({
                         : '1px solid #d9d9d9'
                     }}
                   >
-                    <Card.Meta title={product.title} />
+                    {/* <Card.Meta title={product.title} /> */}
+                    <Card.Meta title={translations[product.title]} />
                   </Card>
                 </Col>
               ))
@@ -419,19 +420,19 @@ const SkirtingSelection = ({
     },
     {
       key: "2",
-      label: "Размеры",
+      label: translations.sizes,
       disabled: !selectedProduct,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
             <Col span={8}>
-              <Title level={5}>Длина (мм)</Title>
+              <Title level={5}>{translations.length}</Title>
               <InputNumber
                 min={0}
                 value={sizes.length}
                 onChange={(value) => handleSizeChange('length', value)}
                 style={{ width: '100%' }}
-                addonAfter={'мм'}
+                addonAfter={'mm'}
               />
             </Col>
           </Row>
@@ -440,7 +441,7 @@ const SkirtingSelection = ({
     },
     {
       key: "3",
-      label: "Фрезеровка",
+      label: translations["Milling insert"],
       disabled: !selectedProduct,
       children: (
         <Card>
@@ -450,7 +451,7 @@ const SkirtingSelection = ({
                 checked={hasMilling}
                 onChange={handleMillingChange}
               >
-                {translations.skirtingMilling || "Фрезеровка плинтуса"}
+                {translations["Milling insert"]}
               </Checkbox>
             </Col>
           </Row>
@@ -464,7 +465,7 @@ const SkirtingSelection = ({
     key: "4",
     label: (
       <span>
-        Лицевая сторона
+        {translations.decorFront}
         <span style={{ color: '#00A651' }}>
           {selectedFrontDecorType ? ` - ${selectedFrontDecorType.typeName}` : ""}
           {selectedFrontDecor ? ` - ${selectedFrontDecor.title}` : ""}
@@ -494,7 +495,7 @@ const SkirtingSelection = ({
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
         <Col>
-          <Title level={3}>{translations.selectSkirting || "Выбор плинтуса"}</Title>
+          <Title level={3}>{translations.selection} {translations.skirting}</Title>
         </Col>
         <Col>
           <Button
@@ -507,7 +508,7 @@ const SkirtingSelection = ({
               ...(!productId ? {} : { backgroundColor: '#52C41A' })
             }}
           >
-            {productId ? translations.update || "Обновить" : translations.save || "Сохранить"}
+            {productId ? translations.update : translations.save }
           </Button>
         </Col>
       </Row>

@@ -143,7 +143,7 @@ const { translations } = useContext(LanguageContext);
     fetchPolicy: "network-only" // Всегда получаем свежие данные
   });
 
-  if (loading) return <Spin size="large" tip="Загрузка данных заказа..." fullscreen={true} />;
+  if (loading) return <Spin size="large" tip={translations.loading} fullscreen={true} />;
   
   if (error) return (
     <Alert

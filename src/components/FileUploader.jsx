@@ -21,7 +21,7 @@ const FileUploader = ({ onFileUploaded }) => {
       const token = user?.jwt;
 
       if (!token) {
-        throw new Error('Токен авторизации не найден');
+        throw new Error('Token not found');
       }
       
       const response = await axios.post('https://dev.api.boki-groupe.com/api/upload', formData, {
@@ -31,12 +31,12 @@ const FileUploader = ({ onFileUploaded }) => {
       });
       
       const uploadedFile = response.data[0];
-      message.success(`${file.name} успешно загружен`);
+      message.success(`${file.name}: ${translations.dataSaved}`);
       onFileUploaded(uploadedFile);
       setLoading(false);
       return uploadedFile;
     } catch (error) {
-      message.error(`Ошибка загрузки файла: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setLoading(false);
       return null;
     }
@@ -56,7 +56,7 @@ const FileUploader = ({ onFileUploaded }) => {
   return (
     <div style={{ marginBottom: 16 }}>
       <Upload {...props}>
-        <Button icon={<UploadOutlined />}>Выбрать изображение</Button>
+        <Button icon={<UploadOutlined />}>{translations.selection} {translations.image}</Button>
       </Upload>
       {fileList.length > 0 && (
         <Button
@@ -65,7 +65,7 @@ const FileUploader = ({ onFileUploaded }) => {
           disabled={loading}
           style={{ marginTop: 16 }}
         >
-          {loading ? <Spin size="small" /> : 'Загрузить'}
+          {loading ? <Spin size="small" /> : translations.upload}
         </Button>
       )}
     </div>

@@ -97,12 +97,12 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
   // Мутация для создания ручки
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success("Ручка успешно добавлена");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchKnob();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -110,12 +110,12 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
   // Мутация для обновления ручки
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Ручка успешно обновлена");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchKnob();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -123,7 +123,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
   // Мутация для удаления ручки
   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Ручка успешно удалена");
+      message.success(`${translations.knob} ${translations.removed}`);
       setDeleting(false);
       setKnobProductId(null);
       setCustomTitle("");
@@ -134,7 +134,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
       refetchKnob();
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setDeleting(false);
     }
   });
@@ -183,7 +183,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
 
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
   
@@ -236,7 +236,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
       }
 
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
@@ -245,7 +245,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
   // Обработчик удаления ручки
   const handleDelete = async () => {
     if (!knobProductId) {
-      message.error("Ручка не найдена");
+      message.error(translations.noData);
       return;
     }
 
@@ -263,7 +263,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
         }
       });
     } catch (error) {
-      message.error(`Произошла ошибка при удалении: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setDeleting(false);
     }
   };
@@ -272,7 +272,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         <Spin size="large" />
-        <p>Загрузка данных о ручке...</p>
+        <p>{translations.loading}</p>
       </div>
     );
   }
@@ -281,7 +281,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={4}>Выбор ручки</Title>
+          <Title level={4}>{translations.selection} {translations.knob}</Title>
         </Col>
         <Col>
           <Space>
@@ -300,7 +300,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
                 onClick={handleDelete} 
                 loading={deleting}
               >
-                Удалить
+                {translations.delete}
               </Button>
             )}
           </Space>
@@ -312,11 +312,11 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
           <Col span={8}>
             <Form.Item
               name="customTitle"
-              label="Название ручки"
-              rules={[{ required: true, message: "Пожалуйста, введите название ручки" }]}
+              label={translations.title}
+              rules={[{ required: true, message: translations.enterTitle }]}
             >
               <Input 
-                placeholder="Введите название ручки" 
+                placeholder={translations.enterTitle} 
                 onChange={(e) => setCustomTitle(e.target.value)} 
               />
             </Form.Item>
@@ -324,12 +324,12 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
           <Col span={8}>
             <Form.Item
               name="productCostNetto"
-              label="Цена (Netto)"
-              rules={[{ required: true, message: "Пожалуйста, введите цену" }]}
+              label={`${translations.price} (Netto)`}
+              rules={[{ required: true, message: translations.enterPrice }]}
             >
               <Input 
                 type="number" 
-                placeholder="Введите цену" 
+                placeholder={translations.enterPrice} 
                 onChange={(e) => setProductCostNetto(e.target.value)}
                 addonAfter={getCurrencySymbol()} 
               />
@@ -338,12 +338,12 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
           <Col span={8}>
             <Form.Item
               name="amount"
-              label="Количество"
-              rules={[{ required: true, message: "Пожалуйста, укажите количество" }]}
+              label={translations.amount}
+              rules={[{ required: true, message: translations.enterAmount }]}
             >
               <Input 
                 type="number" 
-                placeholder="Количество" 
+                placeholder={translations.amount} 
                 min={1}
                 onChange={(e) => setAmount(e.target.value)} 
               />
@@ -351,13 +351,13 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
           </Col>
         </Row>
         
-        <Form.Item label="Изображение ручки">
+        <Form.Item label={translations.image}>
           <div style={{ marginBottom: "10px" }}>
             {customImageUrl && (
               <div style={{ marginBottom: "10px" }}>
                 <img 
                   src={customImageUrl} 
-                  alt="Изображение ручки" 
+                  alt="knob" 
                   style={{ maxWidth: "100%", maxHeight: "200px" }} 
                 />
               </div>
@@ -368,14 +368,14 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
       </Form>
       
       <Modal
-        title="Подтверждение удаления"
+        title={translations.confirmDel}
         open={showDeleteConfirm}
         onOk={confirmDelete}
         onCancel={() => setShowDeleteConfirm(false)}
-        okText="Удалить"
-        cancelText="Отмена"
+        okText={translations.delete}
+        cancelText={translations.cancel}
       >
-        <p>Вы уверены, что хотите удалить эту ручку?</p>
+        <p>{translations.sureToDel}</p>
       </Modal>
     </div>
   );

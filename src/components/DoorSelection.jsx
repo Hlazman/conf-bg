@@ -106,12 +106,12 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
       setSuborderProductId(data.createSuborderProduct.documentId);
-      message.success("Дверь успешно сохранена");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetch(); // Обновляем данные после успешного создания
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -119,12 +119,12 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Дверь успешно обновлена");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetch(); // Обновляем данные после успешного обновления
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -165,13 +165,11 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
           if (doorFromProducts) {
             onDoorSelect(doorFromProducts);
 
-          // Для ВКЛАДОК
           // Находим коллекцию выбранной двери и устанавливаем её как активную вкладку
           const doorCollection = doorFromProducts.collections[0];
             if (doorCollection) {
               setActiveTabKey(doorCollection.documentId);
             }
-            // Для ВКЛАДОК
           }
         }
       }
@@ -180,12 +178,12 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
 
   const handleSaveDoor = async () => {
     if (!selectedDoor) {
-      message.warning("Пожалуйста, выберите дверь");
+      message.warning(translations.firstDoor);
       return;
     }
 
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
@@ -227,10 +225,10 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
 
   if (loading || loadingSuborderProduct) return <Spin size="large" />;
 
-  if (error) return <Empty description={`Ошибка загрузки: ${error.message}`} />;
+  if (error) return <Empty description={`${translations.loadError}: ${error.message}`} />;
 
   if (collections.length === 0) {
-    return <Empty description="Нет доступных коллекций дверей" />;
+    return <Empty description={translations.noData} />;
   }
 
   const doorTabItems = collections.map(collection => ({
@@ -272,7 +270,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
   return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={4}>Выбор двери</Title>
+        <Title level={4}>{translations.doorCanvas}</Title>
         <Button 
           type="primary" 
           onClick={handleSaveDoor} 

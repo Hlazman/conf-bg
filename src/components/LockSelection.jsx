@@ -85,24 +85,24 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
 
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success("Замок успешно добавлен");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchLock();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
 
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Замок успешно обновлен");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchLock();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -131,12 +131,12 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
 
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
     
     if (!selectedLock) {
-      message.error("Выберите замок");
+      message.error(`${translations.choose} ${translations.lock}`);
       return;
     }
     
@@ -169,23 +169,23 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
       await onAfterSubmit();
     }
       
-      message.success("Данные успешно сохранены");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchLock();
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
 
   if (loading || loadingLockProduct) return <Spin size="large" />;
 
-  if (error) return <Alert message={`Ошибка загрузки данных: ${error.message}`} type="error" />;
+  if (error) return <Alert message={`${translations.loadError}: ${error.message}`} type="error" />;
 
   return (
     <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Title level={3}>Выбор замка</Title>
+            <Title level={3}>{translations.selection} {translations.lock}</Title>
             <Button
             type="primary"
             onClick={handleSave}
@@ -199,7 +199,7 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
         </div>
       
       {locks.length === 0 ? (
-        <Empty description="Нет доступных замков" />
+        <Empty description={translations.noData} />
       ) : (
       <Row gutter={[16, 16]}>
         {locks.map(lock => (
@@ -214,7 +214,7 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
                     style={{ height: 200, objectFit: 'cover' }}
                 /> : 
                 <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    Нет изображения
+                    {translations.noImage}
                 </div>
                 }
                 onClick={() => onLockSelect(lock)}

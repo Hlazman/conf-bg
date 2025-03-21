@@ -7,9 +7,20 @@ import { LanguageContext } from "../context/LanguageContext";
 const { Title, Text } = Typography;
 
 // GraphQL запросы
+// const GET_SLIDING_FRAMES = gql`
+//   query Products($filters: ProductFiltersInput) {
+//     products(filters: $filters) {
+//       documentId
+//       title
+//       description
+//       type
+//     }
+//   }
+// `;
+
 const GET_SLIDING_FRAMES = gql`
-  query Products($filters: ProductFiltersInput) {
-    products(filters: $filters) {
+  query Products($filters: ProductFiltersInput, $pagination: PaginationArg) {
+    products(filters: $filters, pagination: $pagination) {
       documentId
       title
       description
@@ -17,6 +28,7 @@ const GET_SLIDING_FRAMES = gql`
     }
   }
 `;
+
 
 const CREATE_SUBORDER_PRODUCT = gql`
   mutation CreateSuborderProduct($data: SuborderProductInput!) {
@@ -83,6 +95,9 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
         type: {
           eqi: "slidingFrame"
         }
+      },
+      pagination: {
+        limit: 30
       }
     }
   });
@@ -108,12 +123,12 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success("Раздвижная система успешно добавлена");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchSlidingFrame();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -121,12 +136,12 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Раздвижная система успешно обновлена");
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchSlidingFrame();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -134,14 +149,14 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   // Мутация для удаления SuborderProduct
   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success("Раздвижная система успешно удалена");
+      message.success(translations.dataSaved);
       setSaving(false);
       setSelectedSlidingFrame(null);
       setSlidingFrameProductId(null);
       refetchSlidingFrame();
     },
     onError: (error) => {
-      message.error(`Ошибка при удалении: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -181,12 +196,12 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   // Функция сохранения выбранной раздвижной системы
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
     if (!selectedSlidingFrame) {
-      message.warning("Пожалуйста, выберите раздвижную систему");
+      message.warning(translations.enterSliding);
       return;
     }
 
@@ -221,7 +236,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
         await onAfterSubmit();
       }
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
@@ -229,7 +244,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   // Функция удаления выбранной раздвижной системы
   const handleDelete = async () => {
     if (!slidingFrameProductId) {
-      message.error("Раздвижная система не найдена");
+      message.error(translations.noData);
       return;
     }
 
@@ -242,7 +257,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
         }
       });
     } catch (error) {
-      message.error(`Произошла ошибка при удалении: ${error.message}`);
+      message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   };
@@ -251,7 +266,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
     return (
       <div style={{ textAlign: "center", padding: "20px" }}>
         <Spin size="large" />
-        <p>Загрузка раздвижных систем...</p>
+        <p>{translations.loading}</p>
       </div>
     );
   }
@@ -259,8 +274,8 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   if (error) {
     return (
       <div>
-        <Title level={4}>Раздвижная система</Title>
-        <p>Ошибка при загрузке раздвижных систем: {error.message}</p>
+        <Title level={4}>{translations.slidingFrame}</Title>
+        <p>{translations.loadError}: {error.message}</p>
       </div>
     );
   }
@@ -269,7 +284,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={4}>Раздвижная система</Title>
+          <Title level={4}>{translations.slidingFrame}</Title>
         </Col>
         <Col>
           <Row gutter={8}>
@@ -291,7 +306,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
                   onClick={handleDelete} 
                   loading={saving}
                 >
-                  Удалить
+                  {translations.delete}
                 </Button>
               </Col>
             )}
@@ -315,7 +330,8 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
               <div style={{ textAlign: "center" }}>
                 <Title level={5}>{slidingFrame.title}</Title>
                 {slidingFrame.description && (
-                  <Text type="secondary">{slidingFrame.description}</Text>
+                  // <Text type="secondary">{slidingFrame.description}</Text>
+                  <Text type="secondary">{translations[slidingFrame.description]}</Text>
                 )}
               </div>
             </Card>
@@ -325,7 +341,7 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
 
       {slidingFrames.length === 0 && (
         <div style={{ textAlign: "center", padding: "20px" }}>
-          <Text type="secondary">Нет доступных раздвижных систем</Text>
+          <Text type="secondary">{translations.noData}</Text>
         </div>
       )}
     </div>

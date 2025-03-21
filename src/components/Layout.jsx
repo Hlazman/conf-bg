@@ -145,18 +145,21 @@ const AppLayout = ({ children }) => {
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["orders"]} items={menuItems} />
         
-        <Dropdown menu={languageMenu}>
-          <Button type="text" icon={<GlobalOutlined />} style={{ color: "white", textAlign: "left" }}>
-            {translations.language} <DownOutlined />
-          </Button>
-        </Dropdown>
-
-        <Dropdown menu={currencyMenu}>
-          {/* <Button type="text" icon={<span>{getCurrencySymbol()}</span>} style={{ color: "white", textAlign: "left" }}> */}
-          <Button type="text" icon={<DollarOutlined />} style={{ color: "white", textAlign: "left", marginTop: 15 }}>
-            {currency} <DownOutlined />
-          </Button>
-        </Dropdown>
+        <div style={{ marginTop: 15, marginBottom: 15,  }}>
+          <Dropdown menu={languageMenu}>
+            <Button type="text" icon={<GlobalOutlined />} style={{ color: "white", textAlign: "left" }}>
+              {translations.language} <DownOutlined />
+            </Button>
+          </Dropdown>
+        </div>
+        <div>
+          <Dropdown menu={currencyMenu}>
+            {/* <Button type="text" icon={<span>{getCurrencySymbol()}</span>} style={{ color: "white", textAlign: "left" }}> */}
+            <Button type="text" icon={<DollarOutlined />} style={{ color: "white", textAlign: "left"}}>
+              {currency} <DownOutlined />
+            </Button>
+          </Dropdown>
+        </div>
       </Sider>
 
       <Layout>

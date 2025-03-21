@@ -139,12 +139,12 @@ const WallPanelSelection = ({
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success(`Стеновая панель успешно добавлена`);
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchProduct();
     },
     onError: (error) => {
-      message.error(`Ошибка при сохранении: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -152,12 +152,12 @@ const WallPanelSelection = ({
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`Стеновая панель успешно обновлена`);
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchProduct();
     },
     onError: (error) => {
-      message.error(`Ошибка при обновлении: ${error.message}`);
+      message.error(`${translations.editError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -236,22 +236,22 @@ const WallPanelSelection = ({
   // Функция сохранения выбранного продукта
   const handleSave = async () => {
     if (!suborderId) {
-      message.error("ID подзаказа не найден");
+      message.error(translations.err);
       return;
     }
 
     if (!selectedProduct) {
-      message.error(`Выберите стеновую панель`);
+      message.error(`${translations.choose} ${translations.wallPanels}`);
       return;
     }
 
     if (!sizes.height) {
-      message.error(`Выберите высоту`);
+      message.error(translations.enterHeight);
       return;
     }
 
     if (!sizes.width) {
-      message.error(`Выберите ширину`);
+      message.error(translations.enterWidth);
       return;
     }
 
@@ -290,26 +290,26 @@ const WallPanelSelection = ({
         await onAfterSubmit();
       }
     } catch (error) {
-      message.error(`Произошла ошибка: ${error.message}`);
+      message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
     }
   };
 
   if (loading || loadingProduct) return <Spin size="large" />;
 
-  if (error) return <div>Ошибка: {error.message}</div>;
+  if (error) return <div>{translations.err}: {error.message}</div>;
 
   // Создаем items для Tabs
   const items = [
     {
       key: "1",
-      label: "Выбор стеновой панели",
+      label: `${translations.wallPanels}`,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
             {productElements.length === 0 ? (
               <Col span={24}>
-                <Empty description="Нет доступных стеновых панелей" />
+                <Empty description={translations.noData} />
               </Col>
             ) : (
               productElements.map(product => (
@@ -324,7 +324,7 @@ const WallPanelSelection = ({
                         style={{ height: 200, objectFit: 'cover' }}
                       /> : 
                       <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        Нет изображения
+                        {translations.noImage}
                       </div>
                     }
                     onClick={() => handleProductSelect(product)}
@@ -334,7 +334,8 @@ const WallPanelSelection = ({
                         : '1px solid #d9d9d9'
                     }}
                   >
-                    <Card.Meta title={product.title} />
+                    {/* <Card.Meta title={product.title} /> */}
+                    <Card.Meta title={translations[product.title]} />
                   </Card>
                 </Col>
               ))
@@ -345,13 +346,13 @@ const WallPanelSelection = ({
     },
     {
       key: "2",
-      label: "Размеры",
+      label: translations.sizes,
       disabled: !selectedProduct,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
             <Col span={8}>
-              <Title level={5}>Высота (мм)</Title>
+              <Title level={5}>{translations.height}</Title>
               <InputNumber
                 min={0}
                 value={sizes.height}
@@ -361,7 +362,7 @@ const WallPanelSelection = ({
               />
             </Col>
             <Col span={8}>
-              <Title level={5}>Ширина (мм)</Title>
+              <Title level={5}>{translations.width}</Title>
               <InputNumber
                 min={0}
                 value={sizes.width}
@@ -371,7 +372,7 @@ const WallPanelSelection = ({
               />
             </Col>
             <Col span={8}>
-              <Title level={5}>Площадь (м²)</Title>
+              <Title level={5}>{translations.area}</Title>
               <InputNumber
                 disabled
                 value={squareMeters.toFixed(4)}
@@ -391,7 +392,7 @@ const WallPanelSelection = ({
       key: "3",
       label: (
         <span>
-          Лицевая сторона
+          {translations.decorFront}
           <span style={{ color: '#00A651' }}>
             {selectedFrontDecorType ? ` - ${selectedFrontDecorType.typeName}` : ""}
             {selectedFrontDecor ? ` - ${selectedFrontDecor.title}` : ""}
@@ -422,7 +423,7 @@ const WallPanelSelection = ({
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
         <Col>
-          <Title level={3}>Выбор стеновой панели</Title>
+          <Title level={3}>{translations.selection} {translations.wallPanels}</Title>
         </Col>
         <Col>
           <Button
