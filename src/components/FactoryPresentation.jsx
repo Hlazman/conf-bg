@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Typography, Space, Divider, Card } from "antd";
-import html2pdf from "html2pdf.js";
+// import html2pdf from "html2pdf.js";
+import html2pdf from 'html2pdf.js/dist/html2pdf.min.js';
 
 const { Title, Text } = Typography;
 

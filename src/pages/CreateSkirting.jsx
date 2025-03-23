@@ -64,7 +64,7 @@ const CreateSkirting = () => {
       children: <SkirtingSelection 
                   suborderId={suborderId} 
                   onAfterSubmit={updateFormattedTitles}
-                  onSkirtingSelect={handleSkirtingSelect} // Добавляем обработчик выбора плинтуса
+                  onSkirtingSelect={handleSkirtingSelect}
                 />
     },
     {

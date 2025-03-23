@@ -67,7 +67,7 @@ const ErrorAlerts = ({ suborderId }) => {
   const { translations } = useContext(LanguageContext);
   
   // Запрос для получения данных о субордере
-  const { data, loading, error, refetch } = useQuery(GET_SUBORDER_ERRORS, {
+  const { data, loading, error, refetch } = useQuery(GET_SUBORDER_ERRORS, { // eslint-disable-line no-unused-vars
     variables: { documentId: suborderId },
     skip: !suborderId,
     fetchPolicy: "network-only",
@@ -134,6 +134,7 @@ const ErrorAlerts = ({ suborderId }) => {
       const messages = generateErrorMessages(data.suborder);
       setErrorMessages(messages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   
   // Если нет ошибок или данные загружаются, не отображаем ничего

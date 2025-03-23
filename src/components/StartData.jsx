@@ -190,7 +190,6 @@ const StartData = ({ onDataChange, suborderId, onAfterSubmit }) => {
               disabled={!suborderId}
               style={!doorSide && !doorOpening ? {} : { backgroundColor: '#52C41A' }}
             >
-              {/* {translations.save} */}
               {doorSide && doorOpening ? translations.update : translations.save}
             </Button>
           </div>

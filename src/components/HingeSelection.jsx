@@ -95,7 +95,6 @@ const { loading, error, data } = useQuery(GET_HINGES, {
     skip: doorType !== "hiddenDoor" && !collectionId
   });
   
-  
   const { data: hingeProductData, loading: loadingHingeProduct, refetch: refetchHinge } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {
       filters: {
@@ -260,7 +259,6 @@ const { loading, error, data } = useQuery(GET_HINGES, {
             disabled={!selectedHinge}
             style={!hingeProductId? {} : { backgroundColor: '#52C41A' }}
           >
-            {/* Сохранить */}
             {hingeProductId? translations.update : translations.save}
           </Button>
         </Col>
@@ -292,7 +290,7 @@ const { loading, error, data } = useQuery(GET_HINGES, {
                   style={{ height: 200, objectFit: 'cover' }}
                 /> : 
                 <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  Нет изображения
+                  {translations.noImages}
                 </div>
               }
               onClick={() => onHingeSelect(hinge)}

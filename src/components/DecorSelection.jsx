@@ -1,11 +1,49 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Tabs, Card, Row, Col, Spin, Empty, Button, Radio, Typography, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { GET_DECOR_TYPES, GET_DECORS } from '../api/queries';
 import ColorPicker from '../components/ColorPicker';
 import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
+
+// GraphQL запрос для получения декоров
+const GET_DECOR_TYPES = gql`
+  query DecorType($filters: DecorTypeFiltersInput, $pagination: PaginationArg) {
+    decorTypes(filters: $filters) {
+      documentId
+      typeName
+      decors(pagination: $pagination) {
+        documentId
+        title
+        image {
+          url
+        }
+        category
+      }
+      products {
+        documentId
+      }
+    }
+  }
+`;
+
+// GraphQL запрос для получения декоров определенного типа
+const GET_DECORS = gql`
+  query GetDecors($filters: DecorFiltersInput, $pagination: PaginationArg) {
+    decors(filters: $filters, pagination: $pagination) {
+      documentId
+      title
+      image {
+        url
+      }
+      category
+      decor_type {
+        documentId
+        typeName
+      }
+    }
+  }
+`;
 
 // Мутация для обновления SuborderProduct
 const UPDATE_SUBORDER_PRODUCT = gql`
@@ -79,8 +117,7 @@ const DecorSelection = ({
           }
         },
         type: {
-          // eq: "door"
-          eq: productType 
+          eq: productType // eq: "door"
         }
       }
     },
@@ -122,7 +159,6 @@ const DecorSelection = ({
     skip: !doorId
   });
   
-  // const decorTypes = decorTypesData?.decorTypes || [];
   const decorTypes = useMemo(() => {
     return decorTypesData?.decorTypes || [];
   }, [decorTypesData]);
@@ -153,9 +189,9 @@ const DecorSelection = ({
     return decorsData?.decors || [];
   }, [decorsData]);
   
-// Эффект для загрузки данных из SuborderProduct
-useEffect(() => {
-  if (!loadingSuborderProduct && suborderProductData && decorTypes.length > 0) {
+  // Эффект для загрузки данных из SuborderProduct
+  useEffect(() => {
+    if (!loadingSuborderProduct && suborderProductData && decorTypes.length > 0) {
       if (suborderProductData.suborderProducts && suborderProductData.suborderProducts.length > 0) {
           const suborderProduct = suborderProductData.suborderProducts[0];
           setSuborderProductId(suborderProduct.documentId);
@@ -178,64 +214,64 @@ useEffect(() => {
               }
           }
       }
-  }
-}, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect]);
+    }
+  }, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect]);
 
-// Отдельный эффект для установки декора и других параметров после загрузки декоров
-useEffect(() => {
-  // Если декоры загружены и есть данные о suborderProduct
-  if (!decorsLoading && decors && decors.length > 0 && suborderProductData) {
-      const suborderProduct = suborderProductData.suborderProducts?.[0];
-      if (!suborderProduct) return;
-      
-      // Получаем ID декора для текущей стороны
-      const decorId = isFrontSide 
-          ? suborderProduct.decor?.documentId 
-          : suborderProduct.secondSideDecor?.documentId;
-          
-      if (decorId && selectedDecorType) {
-          // Находим декор в списке
-          const decorToSelect = decors.find(d => d.documentId === decorId);
-          if (decorToSelect) {
-              // Если это Veneer, устанавливаем категорию
-              if (selectedDecorType.typeName === "Veneer" && decorToSelect.category) {
-                  setSelectedCategory(decorToSelect.category);
-              }
-              
-              // Устанавливаем декор
-              onDecorSelect(decorToSelect);
-              
-              // Устанавливаем ориентацию шпона для Veneer
-              if (selectedDecorType.typeName === "Veneer") {
-                  const direction = isFrontSide 
-                      ? suborderProduct.veneerDirection 
-                      : suborderProduct.secondSideVeneerDirection;
-                  if (direction) {
-                      setVeneerOrientation(direction);
-                  }
-              }
-          }
-      }
-  }
-}, [decors, decorsLoading, suborderProductData, isFrontSide, selectedDecorType, onDecorSelect, onColorChange]);
+  // Отдельный эффект для установки декора и других параметров после загрузки декоров
+  useEffect(() => {
+    // Если декоры загружены и есть данные о suborderProduct
+    if (!decorsLoading && decors && decors.length > 0 && suborderProductData) {
+        const suborderProduct = suborderProductData.suborderProducts?.[0];
+        if (!suborderProduct) return;
+        
+        // Получаем ID декора для текущей стороны
+        const decorId = isFrontSide 
+            ? suborderProduct.decor?.documentId 
+            : suborderProduct.secondSideDecor?.documentId;
+            
+        if (decorId && selectedDecorType) {
+            // Находим декор в списке
+            const decorToSelect = decors.find(d => d.documentId === decorId);
+            if (decorToSelect) {
+                // Если это Veneer, устанавливаем категорию
+                if (selectedDecorType.typeName === "Veneer" && decorToSelect.category) {
+                    setSelectedCategory(decorToSelect.category);
+                }
+                
+                // Устанавливаем декор
+                onDecorSelect(decorToSelect);
+                
+                // Устанавливаем ориентацию шпона для Veneer
+                if (selectedDecorType.typeName === "Veneer") {
+                    const direction = isFrontSide 
+                        ? suborderProduct.veneerDirection 
+                        : suborderProduct.secondSideVeneerDirection;
+                    if (direction) {
+                        setVeneerOrientation(direction);
+                    }
+                }
+            }
+        }
+    }
+  }, [decors, decorsLoading, suborderProductData, isFrontSide, selectedDecorType, onDecorSelect, onColorChange]);
 
 // Отдельный эффект для установки цвета
-useEffect(() => {
-  if (suborderProductData?.suborderProducts?.[0]) {
-    const suborderProduct = suborderProductData.suborderProducts[0];
-    
-    // Проверяем, что тип декора выбран и это тип с выбором цвета
-    if (selectedDecorType && isPaintType(selectedDecorType.typeName)) {
-      if (isFrontSide && suborderProduct.colorCode) {
-        // console.log("Setting front color code:", suborderProduct.colorCode);
-        onColorChange(suborderProduct.colorCode);
-      } else if (!isFrontSide && suborderProduct.secondSideColorCode) {
-        // console.log("Setting back color code:", suborderProduct.secondSideColorCode);
-        onColorChange(suborderProduct.secondSideColorCode);
+  useEffect(() => {
+    if (suborderProductData?.suborderProducts?.[0]) {
+      const suborderProduct = suborderProductData.suborderProducts[0];
+      
+      // Проверяем, что тип декора выбран и это тип с выбором цвета
+      if (selectedDecorType && isPaintType(selectedDecorType.typeName)) {
+        if (isFrontSide && suborderProduct.colorCode) {
+          // console.log("Setting front color code:", suborderProduct.colorCode);
+          onColorChange(suborderProduct.colorCode);
+        } else if (!isFrontSide && suborderProduct.secondSideColorCode) {
+          // console.log("Setting back color code:", suborderProduct.secondSideColorCode);
+          onColorChange(suborderProduct.secondSideColorCode);
+        }
       }
     }
-  }
-}, [suborderProductData, selectedDecorType, isFrontSide, onColorChange]);
+  }, [suborderProductData, selectedDecorType, isFrontSide, onColorChange]);
   
   // Функция для определения типов декора, для которых нужно показывать ColorPicker
   const isPaintType = (typeName) => {
@@ -312,7 +348,6 @@ const handleSaveDecor = async () => {
   
   // Подготавливаем базовые данные с явным сбросом всех полей
   const decorData = {
-      // Общие поля
       type: productType
   };
   
@@ -579,7 +614,6 @@ const handleSaveDecor = async () => {
             disabled={!suborderProductId}
             style={!selectedDecor ? {} : { backgroundColor: '#52C41A' }}
           >
-            {/* Сохранить */}
              {selectedDecor ? translations.update : translations.save}
           </Button>
         </div>

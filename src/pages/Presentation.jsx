@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom"; 
 import { gql, useQuery } from "@apollo/client";
 import ClientPresentation from "../components/ClientPresentation";
 import FactoryPresentation from "../components/FactoryPresentation";

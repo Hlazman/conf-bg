@@ -93,9 +93,6 @@ export const fetchSuborderData = async (client, suborderId) => {
     return null;
   }
 };
-
-// Вспомогательные функции для форматирования заголовков
-
 // Форматирование данных для StartData
 const formatStartData = (suborder) => {
   if (!suborder.side && !suborder.opening) return null;
@@ -106,21 +103,6 @@ const formatStartData = (suborder) => {
   
   return parts.join(', ');
 };
-
-// Форматирование данных для SampleSelection
-// const formatSamplesSelection = (products) => {
-//   const sampleProducts = products.filter(p => p.type === 'sample');
-  
-//   if (sampleProducts.length === 0) return null;
-  
-//   // Собираем заголовки всех образцов в массив
-//   const sampleTitles = sampleProducts
-//     .map(product => product.product?.title)
-//     .filter(title => title); // Фильтруем пустые значения
-  
-//   // Объединяем заголовки через запятую
-//   return sampleTitles.join(', ');
-// };
 
 // Форматирование данных для SampleSelection (до скобок)
 const formatSamplesSelection = (products) => {
@@ -178,9 +160,6 @@ const formatDoorParameters = (products) => {
   const sizes = doorProduct.sizes;
   const parts = [];
   
-  // if (sizes.height) parts.push(`Высота: ${sizes.height}`);
-  // if (sizes.width) parts.push(`Ширина: ${sizes.width}`);
-  // if (sizes.thickness) parts.push(`Толщина: ${sizes.thickness}`);
   if (sizes.height) parts.push(`H: ${sizes.height}`);
   if (sizes.width) parts.push(`W: ${sizes.width}`);
   if (sizes.thickness) parts.push(`T: ${sizes.thickness}`);

@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
-// Включите подробные сообщения об ошибках в режиме разработки
+// Подробные сообщения об ошибках в режиме разработки
 if (process.env.NODE_ENV !== "production") {
   loadDevMessages();
   loadErrorMessages();
@@ -71,7 +71,6 @@ export const client = new ApolloClient({
         fields: {
           suborder_products: {
             merge(existing = {}, incoming) {
-              // Создаем новый объект, объединяя существующие и новые данные
               return { ...existing, ...incoming };
             }
           }

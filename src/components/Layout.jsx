@@ -24,7 +24,7 @@ const AppLayout = ({ children }) => {
   const location = useLocation();
   const [selectedCompany, setSelectedCompany] = useState(null);
 
-  const { currency, setCurrency, getCurrencySymbol } = useContext(CurrencyContext);
+  const { currency, setCurrency } = useContext(CurrencyContext);
 
   const isEditOrderPage = useMemo(() => {
     const pathParts = location.pathname.split("/").filter(Boolean);
@@ -154,7 +154,6 @@ const AppLayout = ({ children }) => {
         </div>
         <div>
           <Dropdown menu={currencyMenu}>
-            {/* <Button type="text" icon={<span>{getCurrencySymbol()}</span>} style={{ color: "white", textAlign: "left" }}> */}
             <Button type="text" icon={<DollarOutlined />} style={{ color: "white", textAlign: "left"}}>
               {currency} <DownOutlined />
             </Button>

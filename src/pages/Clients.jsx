@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Dropdown, Space, Popconfirm, message } from "antd";
+import React, { useEffect, useContext } from "react";
+import { Table, Button, Dropdown, message } from "antd";
 import { 
   MenuOutlined, 
   PlusOutlined, 
@@ -58,7 +58,7 @@ const Clients = () => {
     refetch();
   }, [location.pathname, refetch]);
 
-  const [deleteClient, { loading: deletingClient }] = useMutation(DELETE_CLIENT, {
+  const [deleteClient, { loading: deletingClient }] = useMutation(DELETE_CLIENT, { // eslint-disable-line no-unused-vars
     refetchQueries: [
       {
         query: GET_CLIENTS,

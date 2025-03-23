@@ -36,7 +36,7 @@ const CreateOrder = () => {
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
 
-  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
+  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext); // eslint-disable-line no-unused-vars
   
   const [createOrder] = useMutation(CREATE_ORDER);
 
@@ -47,7 +47,7 @@ const CreateOrder = () => {
     }
   }, []);
 
-  const { data, loading: queryLoading, error } = useQuery(GET_AGENTS_AND_CLIENTS, {
+  const { data, loading: queryLoading, error } = useQuery(GET_AGENTS_AND_CLIENTS, { // eslint-disable-line no-unused-vars
     variables: { 
       filters: { 
         company: { 
@@ -149,9 +149,9 @@ const CreateOrder = () => {
             
             <Form.Item name="deliveryCost" label={translations.deliveryCost}>
               <InputNumber 
-              style={{ width: "100%" }} 
-              addonAfter={getCurrencySymbol()} 
-            />
+                style={{ width: "100%" }} 
+                addonAfter={getCurrencySymbol()} 
+              />
             </Form.Item>
           </Col>
           <Col span={6}>

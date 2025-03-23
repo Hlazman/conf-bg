@@ -56,12 +56,12 @@ const ColorPicker = ({ value, onChange }) => {
   
     return (
     <div style={{ padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Input
-            value={colorCode}
-            onChange={handleChange}
-            placeholder={translations.enterRAL}
-            style={{ width: 300, marginBottom: 10 }}
-        />
+      <Input
+          value={colorCode}
+          onChange={handleChange}
+          placeholder={translations.enterRAL}
+          style={{ width: 300, marginBottom: 10 }}
+      />
     <div
         style={{
         width: 200,
@@ -74,7 +74,7 @@ const ColorPicker = ({ value, onChange }) => {
     />
     {colorCode && !colorHex && (
         <div style={{ marginTop: 10, color: 'red' }}>
-        Цвет не найден
+        {translations.noColor}
         </div>
     )}
     </div>

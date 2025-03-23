@@ -5,7 +5,7 @@ import FileUploader from "./FileUploader";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 // GraphQL запросы
 const CREATE_SUBORDER_PRODUCT = gql`
@@ -61,20 +61,20 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
-const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }) => {
+const KnobSelection = ({ suborderId, onAfterSubmit }) => {
   const [form] = Form.useForm();
   const [knobProductId, setKnobProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [customTitle, setCustomTitle] = useState("");
   const [customImageId, setCustomImageId] = useState(null);
   const [customImageUrl, setCustomImageUrl] = useState("");
-  const [productCostNetto, setProductCostNetto] = useState("");
+  const [customTitle, setCustomTitle] = useState(""); // eslint-disable-line no-unused-vars
+  const [productCostNetto, setProductCostNetto] = useState(""); // eslint-disable-line no-unused-vars
+  const [amount, setAmount] = useState(1); // eslint-disable-line no-unused-vars
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [amount, setAmount] = useState(1);
   const { translations } = useContext(LanguageContext);
 
-  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
+  const { convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   // Получаем данные о существующей ручке для подзаказа
   const { data: knobProductData, loading: loadingKnobProduct, refetch: refetchKnob } = useQuery(GET_SUBORDER_PRODUCT, {
@@ -152,8 +152,6 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
         
         if (knobProduct.customImage) {
           setCustomImageId(knobProduct.customImage.documentId);
-          // setCustomImageUrl(knobProduct.customImage.url);
-
            // Проверяем формат URL и добавляем базовый URL, если путь относительный
           const imageUrl = knobProduct.customImage.url;
           if (imageUrl && imageUrl.startsWith('/')) {
@@ -168,7 +166,7 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
           customTitle: knobProduct.customTitle || "",
           // productCostNetto: knobProduct.productCostNetto || "",
           productCostNetto: convertFromEUR(knobProduct.productCostNetto) || "",
-          amount: knobProduct.amount || 1 // Добавить в форму
+          amount: knobProduct.amount || 1
         });
       }
     }
@@ -229,7 +227,6 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
           }
         });
       }
-
       // Update title in collapse
       if (onAfterSubmit) {
         await onAfterSubmit();
@@ -241,7 +238,6 @@ const KnobSelection = ({ suborderId, selectedKnob, onKnobSelect, onAfterSubmit }
     }
   };
   
-
   // Обработчик удаления ручки
   const handleDelete = async () => {
     if (!knobProductId) {

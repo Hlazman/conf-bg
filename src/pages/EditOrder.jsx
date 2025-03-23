@@ -3,7 +3,7 @@ import { Form, Input, InputNumber, Button, Select, notification, Row, Col } from
 import { useNavigate, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-import { GET_ORDERS } from "./Orders"; // Импортируем запрос для обновления списка
+import { GET_ORDERS } from "./Orders";
 import { CurrencyContext } from "../context/CurrencyContext";
 
 const GET_ORDER = gql`
@@ -62,7 +62,7 @@ const EditOrder = () => {
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
 
-  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
+  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext); // eslint-disable-line no-unused-vars
   
   const [updateOrder] = useMutation(UPDATE_ORDER);
 
@@ -127,61 +127,6 @@ const EditOrder = () => {
   
   const agents = agentsClientsData?.agents || [];
   const clients = agentsClientsData?.clients || [];
-
-  // const onFinish = async (values) => {
-  //   if (!selectedCompany?.documentId || !documentId) return;
-
-  //   const orderUpdateData = {
-  //     orderNumber: values.orderNumber,
-  //     deliveryCost: convertToEUR(values.deliveryCost) || 0,
-  //     clientDiscount: values.clientDiscount || 0,
-  //     taxRate: values.taxRate,
-  //     clientExtraPay: values.clientExtraPay || 0,
-  //     comment: values.comment || "",
-  //     company: selectedCompany.documentId,
-  //     agent: values.agent || null,
-  //     client: values.client || null,
-  //   };
-
-  //   try {
-  //     setLoading(true);
-  //     await updateOrder({
-  //       variables: { 
-  //         documentId: documentId,
-  //         data: orderUpdateData 
-  //       },
-  //       refetchQueries: [
-  //         {
-  //           query: GET_ORDERS,
-  //           variables: { 
-  //             filters: { 
-  //               company: { 
-  //                 documentId: { 
-  //                   eqi: selectedCompany?.documentId 
-  //                 } 
-  //               } 
-  //             } 
-  //           }
-  //         }
-  //       ]
-  //     });
-  //     api.success({
-  //       message: translations.success,
-  //       description: translations.orderUpdatedSuc,
-  //       placement: "topRight",
-  //     });
-      
-  //     navigate("/orders");
-  //   } catch (error) {
-  //     api.error({
-  //       message: translations.err,
-  //       description: translations.failedOrderUpdate,
-  //       placement: "topRight",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const onFinish = async (values) => {
     if (!selectedCompany?.documentId || !documentId) return;

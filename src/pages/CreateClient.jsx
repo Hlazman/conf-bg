@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
-// Определяем запрос GET_CLIENTS, который будем использовать для обновления списка
+// Запрос GET_CLIENTS, который будем использовать для обновления списка
 export const GET_CLIENTS = gql`
   query GetClients($filters: ClientFiltersInput) {
     clients(filters: $filters) {

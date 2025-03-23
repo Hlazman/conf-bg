@@ -23,6 +23,7 @@ export const GET_PRODUCTS = gql`
   }
 `;
 
+// GraphQL запрос для получения декоров
 export const GET_DECOR_TYPES = gql`
   query DecorType($filters: DecorTypeFiltersInput, $pagination: PaginationArg) {
     decorTypes(filters: $filters) {

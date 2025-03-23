@@ -35,12 +35,12 @@ const EditAgent = () => {
   const [loading, setLoading] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const { translations } = useContext(LanguageContext);
-  const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
+  const navigate = useNavigate();
   const [updateAgent] = useMutation(UPDATE_AGENT);
 
   // Получаем данные агента
-  const { data: agentData, loading: agentLoading } = useQuery(GET_AGENT, {
+  const { data: agentData, loading: agentLoading } = useQuery(GET_AGENT, { // eslint-disable-line no-unused-vars
     variables: { documentId },
     skip: !documentId,
     onCompleted: (data) => {
@@ -69,6 +69,7 @@ const EditAgent = () => {
         setSelectedCompany(companyData);
       }
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
   }, []);
 
   const onFinish = async (values) => {

@@ -117,8 +117,6 @@ export const CREATE_SUBORDER_PRODUCT = gql`
 export const cloneSuborderWithProducts = async (suborderId, client, messageApi, translations) => {
   try {
     // console.log('Starting clone process for suborderId:', suborderId);
-    
-    // 1. Получаем данные о подзаказе
     // console.log('Fetching suborder data...');
     let result;
     try {
@@ -144,8 +142,6 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
 
     const sourceSuborder = result.data.suborder;
     // console.log('Source suborder data retrieved');
-
-    // 2. Создаем новый подзаказ
     // console.log('Creating new suborder...');
     let newSuborderData;
     try {
@@ -180,14 +176,11 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
     const newSuborderId = newSuborderData.createSuborder.documentId;
     // console.log('New suborder ID:', newSuborderId);
 
-    // 3. Клонируем продукты подзаказа
     if (sourceSuborder.suborder_products && sourceSuborder.suborder_products.length > 0) {
     //   console.log(`Cloning ${sourceSuborder.suborder_products.length} suborder products...`);
       
       for (const product of sourceSuborder.suborder_products) {
         // console.log(`Processing product of type: ${product.type}`);
-        
-        // Создаем базовый объект с примитивными полями
         const productInput = {
           suborder: newSuborderId,
           type: product.type || "door"
@@ -239,7 +232,6 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
         } catch (productError) {
           console.error("Error creating suborder product:", productError);
         //   console.log("Failed product input:", JSON.stringify(productInput, null, 2));
-          // Продолжаем создавать другие продукты даже если один не удался
         }
       }
     } else {

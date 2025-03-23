@@ -1,11 +1,28 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, Checkbox, Button, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { GET_FRAMES } from '../api/queries';
 import { LanguageContext } from "../context/LanguageContext";
 
 
 const { Title } = Typography;
+
+// GraphQL запрос для получения рам
+const GET_FRAMES = gql`
+  query GetFrames($filters: ProductFiltersInput) {
+    products(filters: $filters) {
+      documentId
+      title
+      type
+      image {
+        url
+      }
+      collections {
+        documentId
+        title
+      }
+    }
+  }
+`;
 
 // Мутация для создания SuborderProduct
 const CREATE_SUBORDER_PRODUCT = gql`
@@ -327,7 +344,6 @@ const FrameSelection = ({
         </Checkbox>
       </div>
 
-      {/* <Title level={4}>Выбор рамы</Title> */}
       <Divider orientation="left">{translations.selection} {translations.frame}</Divider>
       <Row gutter={[16, 16]}>
         {frames.map(frame => (

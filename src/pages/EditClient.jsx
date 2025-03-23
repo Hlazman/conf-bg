@@ -41,7 +41,7 @@ const EditClient = () => {
   const [updateClient] = useMutation(UPDATE_CLIENT);
 
   // Получаем данные клиента
-  const { data: clientData, loading: clientLoading } = useQuery(GET_CLIENT, {
+  const { data: clientData, loading: clientLoading } = useQuery(GET_CLIENT, { // eslint-disable-line no-unused-vars
     variables: { documentId },
     skip: !documentId,
     onCompleted: (data) => {
@@ -71,6 +71,7 @@ const EditClient = () => {
         setSelectedCompany(companyData);
       }
     }
+    /* eslint-disable react-hooks/exhaustive-deps */
   }, []);
 
   const onFinish = async (values) => {

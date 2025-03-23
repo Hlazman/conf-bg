@@ -107,7 +107,6 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
     }
   });
 
-//   const locks = data?.products || [];
   const locks = useMemo(() => {
     return data?.products || [];
   }, [data]);
@@ -163,7 +162,6 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
           }
         });
       }
-
     // Update title in collapse
     if (onAfterSubmit) {
       await onAfterSubmit();
@@ -193,7 +191,6 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
             disabled={!selectedLock}
             style={!lockProductId? {} : { backgroundColor: '#52C41A' }}
             >
-            {/* Сохранить */}
             {lockProductId? translations.update : translations.save}
             </Button>
         </div>
@@ -203,28 +200,28 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
       ) : (
       <Row gutter={[16, 16]}>
         {locks.map(lock => (
-            <Col span={4} key={lock.documentId}>
-            <Card
-                hoverable
-                cover={
-                lock.image?.url ? 
-                <img 
-                    alt={lock.title} 
-                    src={`https://dev.api.boki-groupe.com${lock.image.url}`} 
-                    style={{ height: 200, objectFit: 'cover' }}
-                /> : 
-                <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {translations.noImage}
-                </div>
-                }
-                onClick={() => onLockSelect(lock)}
-                style={{
-                border: selectedLock?.documentId === lock.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0'
-                }}
-            >
-                <Card.Meta title={lock.title} />
-            </Card>
-            </Col>
+          <Col span={4} key={lock.documentId}>
+          <Card
+            hoverable
+            cover={
+              lock.image?.url ? 
+              <img 
+                alt={lock.title} 
+                src={`https://dev.api.boki-groupe.com${lock.image.url}`} 
+                style={{ height: 200, objectFit: 'cover' }}
+              /> : 
+              <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {translations.noImage}
+              </div>
+            }
+            onClick={() => onLockSelect(lock)}
+            style={{
+            border: selectedLock?.documentId === lock.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0'
+            }}
+          >
+          <Card.Meta title={lock.title} />
+          </Card>
+          </Col>
         ))}
       </Row>
       )}

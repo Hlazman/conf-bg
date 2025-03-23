@@ -406,10 +406,7 @@ const items = [
   return (
     <div style={{ padding: "20px" }}>
       <Title level={2}> {translations.create} {translations.product} </Title>
-
-      {/* Компонент для отображения алертов об ошибках */}
       <ErrorAlerts suborderId={suborderId} />
-      
       <Collapse 
         items={items}
         defaultActiveKey={activeKeys} 

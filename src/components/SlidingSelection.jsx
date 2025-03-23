@@ -6,18 +6,6 @@ import { LanguageContext } from "../context/LanguageContext";
 
 const { Title, Text } = Typography;
 
-// GraphQL запросы
-// const GET_SLIDING_FRAMES = gql`
-//   query Products($filters: ProductFiltersInput) {
-//     products(filters: $filters) {
-//       documentId
-//       title
-//       description
-//       type
-//     }
-//   }
-// `;
-
 const GET_SLIDING_FRAMES = gql`
   query Products($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
@@ -28,7 +16,6 @@ const GET_SLIDING_FRAMES = gql`
     }
   }
 `;
-
 
 const CREATE_SUBORDER_PRODUCT = gql`
   mutation CreateSuborderProduct($data: SuborderProductInput!) {
@@ -162,7 +149,6 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
   });
 
   // Получаем раздвижные системы из результатов запроса
-  // const slidingFrames = data?.products || [];
   const slidingFrames = useMemo(() => {
     const frames = data?.products || [];
     return [...frames].sort((a, b) => a.title.localeCompare(b.title));

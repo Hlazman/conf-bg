@@ -62,12 +62,12 @@ const CREATE_SUBORDER = gql`
 
 const Orders = () => {
   const [commentModal, setCommentModal] = useState({ open: false, text: "" });
-  const navigate = useNavigate();
-  const location = useLocation();
   const selectedCompany = JSON.parse(localStorage.getItem("selectedCompany"));
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
   const client = useApolloClient();
+  const location = useLocation();
+  const navigate = useNavigate();
   
   const { data, loading, refetch } = useQuery(GET_ORDERS, {
     variables: { 
@@ -157,17 +157,6 @@ const Orders = () => {
       // Сохраняем ID субордера в localStorage для надежности
       localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
       localStorage.setItem('currentType', "door");
-      
-      
-      // После успешного создания Suborder переходим на страницу CreateProduct
-      // navigate(`/create-product`, { 
-      //   state: { 
-      //     orderId: record.documentId,
-      //     suborderId: suborderData.createSuborder.documentId,
-      //     // type: "interior" 
-      //     type: "door" 
-      //   } 
-      // });
       navigate(`/create-product`);
     } catch (error) {
       message.error(translations.errCreateSubOrder);
@@ -190,15 +179,6 @@ const Orders = () => {
       // Сохраняем ID субордера в localStorage
       localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
       localStorage.setItem('currentType', "hiddenDoor");
-  
-      // Переходим на страницу CreateProduct
-      // navigate(`/create-product`, {
-      //   state: {
-      //     orderId: record.documentId,
-      //     suborderId: suborderData.createSuborder.documentId,
-      //     type: "hiddenDoor"
-      //   }
-      // });
       navigate(`/create-product`);
     } catch (error) {
       message.error(translations.errCreateSubOrder);
@@ -220,16 +200,7 @@ const handleSlidingDoorClick = async (record) => {
 
     // Сохраняем ID субордера в localStorage
     localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
-    // localStorage.setItem('currentType', "sliding");
     localStorage.setItem('currentType', "slidingDoor");
-
-    // Переходим на страницу CreateProduct
-    // navigate(`/create-product`, {
-    //   state: {
-    //     orderId: record.documentId,
-    //     suborderId: suborderData.createSuborder.documentId,
-    //     type: "slidingDoor"
-    //   }
     navigate(`/create-product`);
   } catch (error) {
     message.error(translations.errCreateSubOrder);
@@ -251,14 +222,6 @@ const handleWallPanelClick = async (record) => {
 
     // Сохраняем ID субордера в localStorage
     localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
-
-    // Переходим на страницу CreateProduct
-    // navigate(`/create-wallpanel`, {
-    //   state: {
-    //     orderId: record.documentId,
-    //     suborderId: suborderData.createSuborder.documentId,
-    //   }
-
     navigate(`/create-wallpanel`);
   } catch (error) {
     message.error(translations.errCreateSubOrder);
@@ -307,50 +270,6 @@ const handleSampleClick = async (record) => {
     console.error("Error creating suborder:", error);
   }
 };
-
-  // const handleEditSuborder = (suborderId, orderId) => {
-  //   // Сохраняем ID субордера в localStorage для надежности
-  //   localStorage.setItem('currentSuborderId', suborderId);
-    
-  //   // Находим заказ по orderId
-  //   const order = orders.find(order => order.documentId === orderId);
-    
-  //   // Находим подзаказ по suborderId
-  //   const suborder = order?.suborders?.find(sub => sub.documentId === suborderId);
-
-  //   // Определяем тип подзаказа на основе suborder_type.typeName
-  //   let type = "door"; // По умолчанию
-  //   let currentType = "door"; // По умолчанию для localStorage
-    
-  //   if (suborder?.suborder_type) {
-  //     const typeName = suborder.suborder_type.typeName;
-      
-  //     if (typeName.includes("hidden")) {
-  //       type = "hiddenDoor";
-  //       currentType = "hiddenDoor";
-  //     } else if (typeName.includes("slidingDoor")) {
-  //       type = "slidingDoor";
-  //       currentType = "slidingDoor";
-  //     } else {
-  //       type = "door";
-  //       currentType = "door";
-  //     }
-  //   }
-    
-  //   // Сохраняем тип в localStorage, как это делается в других функциях
-  //   localStorage.setItem('currentType', currentType);
-    
-  //   // Переходим на страницу CreateProduct с передачей state
-  //   navigate(`/create-product`, { 
-  //     state: { 
-  //       orderId: orderId,
-  //       suborderId: suborderId,
-  //       type: type,
-  //       isEditing: true // Флаг для определения режима редактирования
-  //     } 
-  //   });
-  // };
-
 
   const handleEditSuborder = (suborderId, orderId) => {
     localStorage.setItem('currentSuborderId', suborderId);

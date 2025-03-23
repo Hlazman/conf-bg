@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Empty, Button, message, Typography } from "antd";
+import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Button, message, Typography } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
@@ -46,9 +46,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
 
   // Размеры
   const [dimensionType, setDimensionType] = useState("door");
-  // const [doorHeight, setDoorHeight] = useState(2000);
-  // const [doorWidth, setDoorWidth] = useState(800);
-  // const [wallThickness, setWallThickness] = useState(100);
   const [doorHeight, setDoorHeight] = useState();
   const [doorWidth, setDoorWidth] = useState();
   const [wallThickness, setWallThickness] = useState();
@@ -101,9 +98,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
         
         // Заполняем состояние данными из suborderProduct
         if (suborderProduct.sizes) {
-          // setDoorHeight(suborderProduct.sizes.height || 2000);
-          // setDoorWidth(suborderProduct.sizes.width || 800);
-          // setWallThickness(suborderProduct.sizes.thickness || 100);
           setDoorHeight(suborderProduct.sizes.height);
           setDoorWidth(suborderProduct.sizes.width);
           setWallThickness(suborderProduct.sizes.thickness);
@@ -213,8 +207,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
         thickness: wallThickness,
         type: dimensionType
       },
-      // type: "door"
-      type: doorType
+      type: doorType // type: "door"
     };
 
     // Обновляем существующий SuborderProduct
@@ -252,7 +245,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
           disabled={!suborderProductId}
           style={!doorHeight ? {} : { backgroundColor: '#52C41A' }}
         >
-          {/* Сохранить */}
           {doorHeight? translations.update : translations.save}
         </Button>
       </div>

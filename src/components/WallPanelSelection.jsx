@@ -6,7 +6,7 @@ import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
 
-// Запрос для получения элементов продукта
+// Запрос для получения настенных панелей
 const GET_PRODUCT_ELEMENTS = gql`
   query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
     products(pagination: $pagination, filters: $filters) {

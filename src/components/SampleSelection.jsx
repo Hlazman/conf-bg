@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Checkbox, Button, message, Divider, Empty } from "antd";
+import { Card, Row, Col, Typography, Spin, Checkbox, Button, message, Empty } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import ColorPicker from '../components/ColorPicker';
@@ -117,7 +117,6 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
     fetchPolicy: "network-only"
   });
 
-  // Мутации
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
       refetchSuborderProducts();

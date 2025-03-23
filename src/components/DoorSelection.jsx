@@ -1,11 +1,33 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Tabs, Card, Row, Col, Typography, Spin, Empty, Button, message } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { GET_PRODUCTS } from '../api/queries';
 import { useApolloClient } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
 const { Title } = Typography;
+
+// GraphQL запрос для получения продуктов (дверей)
+export const GET_PRODUCTS = gql`
+  query Query($pagination: PaginationArg, $filters: ProductFiltersInput) {
+    products(pagination: $pagination, filters: $filters) {
+      brand
+      collections {
+        documentId
+        title
+      }
+      decor_types {
+        documentId
+        typeName
+      }
+      documentId
+      title
+      type
+      image {
+        url
+      }
+    }
+  }
+`;
 
 // Мутация для создания SuborderProduct
 const CREATE_SUBORDER_PRODUCT = gql`
@@ -39,14 +61,13 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
-// const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId }) => {
 const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
   const { translations } = useContext(LanguageContext);
 
   const doorType = localStorage.getItem('currentType');
-  const [activeTabKey, setActiveTabKey] = useState(null); // ДЛЯ ВКЛАДОК
+  const [activeTabKey, setActiveTabKey] = useState(null);
 
   const client = useApolloClient();
 
@@ -58,20 +79,11 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
       },
       filters: {
         type: {
-          // eqi: "door"
           in: doorType === "hiddenDoor" ? ["door", "hiddenDoor"] : ["door"]
         }
       }
     }
   });
-
-  // const doors = data?.products?.filter(product =>
-  //   (doorType === "hiddenDoor" ? 
-  //     (product.type === "door" || product.type === "hiddenDoor") : 
-  //     product.type === "door") &&
-  //   product.collections &&
-  //   product.collections.length > 0
-  // ) || [];
 
   // Обработка данных после загрузки с использованием useMemo
   const doors = useMemo(() => {
@@ -93,7 +105,6 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
           }
         },
         type: {
-          // eq: "door"
           eq: doorType // Используем тип из localStorage
         }
       }
@@ -192,7 +203,6 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
     const doorData = {
       suborder: suborderId,
       product: selectedDoor.documentId,
-      // type: "door"
       type: doorType // Используем тип из localStorage
     };
 
@@ -248,7 +258,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
                   style={{ height: 200, objectFit: 'cover' }}
                 /> : 
                 <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  Нет изображения
+                  {translations.noImages}
                 </div>
               }
               onClick={() => {
@@ -281,9 +291,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
           {suborderProductId ? translations.update : translations.save}
         </Button>
       </div>
-      {/* ДЛЯ ВКЛАДОК */}
       <Tabs activeKey={activeTabKey} onChange={setActiveTabKey} type="card" items={doorTabItems} />
-      {/* <Tabs type="card" items={doorTabItems} /> */}
     </div>
   );
 };

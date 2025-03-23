@@ -95,7 +95,6 @@ const SkirtingSelection = ({
   const [hasMilling, setHasMilling] = useState(false);
   const [millingProductId, setMillingProductId] = useState(null);
   const [millingChanged, setMillingChanged] = useState(false);
-  
   const { translations } = useContext(LanguageContext);
 
   // Состояние для лицевой стороны декора
@@ -255,10 +254,6 @@ const SkirtingSelection = ({
     }
   }, [millingProductData, loadingMillingProduct]);
 
-  // Функция для выбора продукта
-  // const handleProductSelect = (product) => {
-  //   setSelectedProduct(product);
-  // };
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
     if (onSkirtingSelect) {

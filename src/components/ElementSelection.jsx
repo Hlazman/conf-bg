@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Divider, Tabs } from "antd";
+import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
@@ -195,26 +195,6 @@ const ElementSelection = ({
     }
   });
 
-  // Функция удаления выбранного продукта
-  // const handleDelete = async () => {
-  //   if (!productId) {
-  //     message.error(`${productType} не найден`);
-  //     return;
-  //   }
-
-  //   setSaving(true);
-  //   try {
-  //     await deleteSuborderProduct({
-  //       variables: {
-  //         documentId: productId
-  //       }
-  //     });
-  //   } catch (error) {
-  //     message.error(`Произошла ошибка: ${error.message}`);
-  //     setSaving(false);
-  //   }
-  // };
-
   const handleDelete = async () => {
     const idToDelete = productId || productData?.suborderProducts[0]?.documentId;
     
@@ -386,7 +366,6 @@ const ElementSelection = ({
           }
         });
       }
-
       // Update title in collapse
       if (onAfterSubmit) {
         await onAfterSubmit();
@@ -560,16 +539,13 @@ const ElementSelection = ({
             onClick={handleSave}
             loading={saving}
             disabled={!selectedProduct}
-            // style={{ marginRight: 8 }}
             style={{
               ...{ marginRight: 8 },
               ...(!productId ? {} : { backgroundColor: '#52C41A' })
             }}
           >
-            {/* Сохранить */}
             {productId? translations.update : translations.save}
           </Button>
-          {/* {productId && ( */}
           {(productId || productData?.suborderProducts[0]?.documentId) && (
             <Button
               danger

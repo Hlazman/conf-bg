@@ -88,7 +88,7 @@ mutation DeleteSuborderProduct($documentId: ID!) {
 const SkirtingInsertSelection = ({
   selectedSkirting,
   suborderId,
-  productType, // тип продукта (skirtingInsert)
+  productType, // тип продукта skirtingInsert
   onAfterSubmit
 }) => {
   const [productId, setProductId] = useState(null);

@@ -56,7 +56,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
   const [optionToDelete, setOptionToDelete] = useState(null);
   const { translations } = useContext(LanguageContext);
 
-  const { currency, convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
+  const { convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   // Получаем данные о существующих кастомных опциях для подзаказа
   const { data: customOptionsData, loading: loadingOptions, refetch: refetchOptions } = useQuery(GET_SUBORDER_PRODUCTS, {
@@ -126,6 +126,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
       }
     }
   // }, [customOptionsData, loadingOptions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customOptionsData, loadingOptions, convertFromEUR]);
 
   // Добавление новой пустой опции

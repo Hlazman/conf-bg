@@ -3,20 +3,7 @@ import { Card, Row, Col, Typography, Spin, Checkbox, Button, message, InputNumbe
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
-
 const { Title, Text } = Typography;
-
-// Запрос для получения опций
-// const GET_OPTIONS = gql`
-//   query Products($filters: ProductFiltersInput) {
-//     products(filters: $filters) {
-//       documentId
-//       title
-//       type
-//       brand
-//     }
-//   }
-// `;
 
 const GET_OPTIONS = gql`
   query Products($filters: ProductFiltersInput, $pagination: PaginationArg) {
@@ -106,7 +93,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
         }
       },
       pagination: {
-        limit: 30
+        limit: 40
       }
     },
     skip: !selectedDoor
@@ -130,7 +117,6 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
     fetchPolicy: "network-only"
   });
 
-  // Мутации
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
       refetchSuborderProducts();
