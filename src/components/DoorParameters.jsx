@@ -236,8 +236,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
 
   return (
     <div>
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={4}>{translations.doorParameters}</Title>
+      <Divider orientation="left">{translations.doorParameters}</Divider> 
+      <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
         <Button 
           type="primary" 
           onClick={handleSaveParameters} 

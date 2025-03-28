@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Tabs, Card, Row, Col, Typography, Spin, Empty, Button, message } from "antd";
+import { Tabs, Card, Row, Col, Spin, Empty, Button, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { useApolloClient } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-
-const { Title } = Typography;
 
 // GraphQL запрос для получения продуктов (дверей)
 export const GET_PRODUCTS = gql`
@@ -279,8 +277,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
 
   return (
     <div>
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={4}>{translations.doorCanvas}</Title>
+      <Divider orientation="left">{translations.doorCanvas}</Divider> 
+      <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
         <Button 
           type="primary" 
           onClick={handleSaveDoor} 

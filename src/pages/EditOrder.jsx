@@ -12,6 +12,7 @@ const GET_ORDER = gql`
       documentId
       orderNumber
       deliveryCost
+      installationCost
       clientDiscount
       taxRate
       clientExtraPay
@@ -77,6 +78,7 @@ const EditOrder = () => {
       form.setFieldsValue({
         orderNumber: orderData.order.orderNumber,
         deliveryCost: convertFromEUR(orderData.order.deliveryCost),
+        installationCost: convertFromEUR(orderData.order.installationCost),
         clientDiscount: orderData.order.clientDiscount,
         taxRate: orderData.order.taxRate,
         clientExtraPay: orderData.order.clientExtraPay,
@@ -134,6 +136,7 @@ const EditOrder = () => {
     const orderUpdateData = {
       orderNumber: values.orderNumber,
       deliveryCost: convertToEUR(values.deliveryCost) || 0,
+      installationCost: convertToEUR(values.installationCost) || 0,
       clientDiscount: values.clientDiscount || 0,
       taxRate: values.taxRate,
       clientExtraPay: values.clientExtraPay || 0,
@@ -197,6 +200,7 @@ const EditOrder = () => {
         onFinish={onFinish}
         initialValues={{
           deliveryCost: 0,
+          installationCost: 0,
           clientDiscount: 0,
           clientExtraPay: 0,
         }}
@@ -230,13 +234,21 @@ const EditOrder = () => {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item name="clientDiscount" label={translations.discount}>
-              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
+            <Form.Item name="installationCost" label={translations.installation}>
+              <InputNumber 
+                style={{ width: "100%" }} 
+                addonAfter={getCurrencySymbol()} 
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
+          <Col span={6}>
+            <Form.Item name="clientDiscount" label={translations.discount}>
+              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
+            </Form.Item>
+            </Col>
           <Col span={6}>
             <Form.Item name="clientExtraPay" label={translations.extraCharge}>
               <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>

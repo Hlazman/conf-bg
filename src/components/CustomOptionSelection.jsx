@@ -38,9 +38,20 @@ const DELETE_SUBORDER_PRODUCT = gql`
   }
 `;
 
+// const GET_SUBORDER_PRODUCTS = gql`
+//   query GetSuborderProducts($filters: SuborderProductFiltersInput) {
+//     suborderProducts(filters: $filters) {
+//       documentId
+//       customTitle
+//       productCostNetto
+//       amount
+//     }
+//   }
+// `;
+
 const GET_SUBORDER_PRODUCTS = gql`
-  query GetSuborderProducts($filters: SuborderProductFiltersInput) {
-    suborderProducts(filters: $filters) {
+  query GetSuborderProducts($filters: SuborderProductFiltersInput, $pagination: PaginationArg) {
+    suborderProducts(filters: $filters, pagination: $pagination) {
       documentId
       customTitle
       productCostNetto
@@ -70,6 +81,9 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         type: {
           eq: "customOption"
         }
+      },
+      pagination: {
+        limit: 100
       }
     },
     skip: !suborderId,
@@ -258,7 +272,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
     <div>
       <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
         <Col>
-          <Title level={4}>{translations.customOptions}</Title>
+          <Title level={5}>{translations.customOptions}</Title>
         </Col>
         <Col>
           <Button 
@@ -266,7 +280,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
             icon={<PlusOutlined />} 
             onClick={addNewOption}
           >
-            `${translations.add} ${translations.customOption}`
+            {translations.add} {translations.customOption}
           </Button>
         </Col>
       </Row>

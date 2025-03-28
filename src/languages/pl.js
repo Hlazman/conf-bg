@@ -14,7 +14,9 @@ const pl = {
   dashboard: "Pulpit nawigacyjny",
   inDoor: "Drzwi wewnętrzne",
   hiDoor: "Ukryte drzwi",
+  hiddenDoor: "Ukryte drzwi",
   sliDoor: "Drzwi przesuwne",
+  slidingDoor: "Drzwi przesuwne",
   createClient: "Utwórz klienta",
   createAgent: "Utwórz agenta",
   clients: "Klienci",
@@ -24,11 +26,13 @@ const pl = {
   tax: 'Podatek',
   deliveryCost: 'Koszt dostawy',
   discount: 'Rabat',
+  showDiscount: 'pokaż rabat',
   extraCharge: 'Dodatkowa opłata',
   agent: 'Agent',
   client: 'Klient',
   comment: 'Komentarz',
   wallPanels: "Panele ścienne",
+  wallPanel: "Panel ścienny",
   suborderType: "Typ podzamówienia",
   products: "Produkty",
   priceNetto: "Cena netto",
@@ -80,6 +84,8 @@ const pl = {
   doorOpening: "Otwieranie",
   leftSide: "Lewa",
   rightSide: "Prawa",
+  left: "Lewa",
+  right: "Prawa",
   inside: "Do wewnątrz",
   outside: "Na zewnątrz",
   universal: "Uniwersalne",
@@ -128,6 +134,20 @@ const pl = {
   selection: 'Wybór',
   insert: 'Wkładka',
   area: 'Powierzchnia',
+  doorFilling: 'Wypełnienie drzwi',
+  minWool: 'Wypełnienie wełną mineralną',
+  collection: 'Kolekcja',
+  wall: 'Wall',
+  guarantee: 'Gwarancja',
+  years: 'lat',
+  description: 'Opis',
+  information: 'informacja',
+  installation: 'Instalacja',
+  openInNewTab: 'Otwórz w nowej karcie',
+  fittings: 'Armatura',
+  pcs: 'szt.',
+  company: 'Firma',
+  site: 'Strona internetowa',
 
   // MESSAGES
   success: "Sukces",
@@ -294,6 +314,10 @@ const pl = {
   "Primer": "Grunt",
   "Stoneware": "Kamionka",
   "Veneer": "Fornir",
+
+    // ORDER Warning: 
+    colorWarning: 'Należy pamiętać, że kolory wyświetlane na ekranie mogą nieznacznie różnić się od tych w druku lub w rzeczywistości. Różnica ta może wynikać z różnic w ustawieniach reprodukcji kolorów monitora i potencjalnych różnic w procesie drukowania. Zaleca się uwzględnienie tego przy ocenie schematu kolorów prezentacji.',
+
   };
   
   export default pl;

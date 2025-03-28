@@ -1,105 +1,100 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Typography, Spin, Checkbox, Button, message, Empty, Divider } from "antd";
+import { Card, Row, Col, Typography, Spin, Checkbox, Button, message, Empty } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-import DecorSelection from './DecorSelection';
+import ColorPicker from '../components/ColorPicker';
 
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
 // Запрос для получения образцов
 const GET_SAMPLES = gql`
-query Products($filters: ProductFiltersInput) {
-  products(filters: $filters) {
-    documentId
-    title
-    type
-    brand
-    image {
-      url
+  query Products($filters: ProductFiltersInput) {
+    products(filters: $filters) {
       documentId
+      title
+      type
+      brand
+      image {
+        url
+        documentId
+      }
     }
   }
-}`;
+`;
+
 
 // Мутация для создания SuborderProduct
 const CREATE_SUBORDER_PRODUCT = gql`
-mutation CreateSuborderProduct($data: SuborderProductInput!) {
-  createSuborderProduct(data: $data) {
-    documentId
-    product {
+  mutation CreateSuborderProduct($data: SuborderProductInput!) {
+    createSuborderProduct(data: $data) {
       documentId
-      title
-      brand
-      image {
-        url
+      product {
         documentId
+        title
+        brand
+        image {
+          url
+          documentId
+        }
       }
+      colorCode
     }
-    colorCode
   }
-}`;
+`;
 
 // Мутация для обновления SuborderProduct
 const UPDATE_SUBORDER_PRODUCT = gql`
-mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
-  updateSuborderProduct(documentId: $documentId, data: $data) {
-    documentId
-    product {
+  mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
+    updateSuborderProduct(documentId: $documentId, data: $data) {
       documentId
-      title
-      brand
-      image {
-        url
+      product {
         documentId
+        title
+        brand
+        image {
+          url
+          documentId
+        }
       }
+      colorCode
     }
-    colorCode
   }
-}`;
+`;
 
 // Мутация для удаления SuborderProduct
 const DELETE_SUBORDER_PRODUCT = gql`
-mutation DeleteSuborderProduct($documentId: ID!) {
-  deleteSuborderProduct(documentId: $documentId) {
-    documentId
+  mutation DeleteSuborderProduct($documentId: ID!) {
+    deleteSuborderProduct(documentId: $documentId) {
+      documentId
+    }
   }
-}`;
+`;
 
 // Запрос для получения существующих SuborderProduct
 const GET_SUBORDER_PRODUCTS = gql`
-query GetSuborderProducts($filters: SuborderProductFiltersInput) {
-  suborderProducts(filters: $filters) {
-    documentId
-    product {
+  query GetSuborderProducts($filters: SuborderProductFiltersInput) {
+    suborderProducts(filters: $filters) {
       documentId
-      title
-      brand
-      image {
-        url
+      product {
         documentId
+        title
+        brand
+        image {
+          url
+          documentId
+        }
       }
-    }
-    colorCode
-    decor {
-      documentId
-      title
-    }
-    decor_type {
-      documentId
-      typeName
+      colorCode
     }
   }
-}`;
+`;
 
 const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   const [selectedSamples, setSelectedSamples] = useState({});
+  const [sampleColors, setSampleColors] = useState({});
   const [suborderProducts, setSuborderProducts] = useState({});
   const [saving, setSaving] = useState(false);
   const { translations } = useContext(LanguageContext);
-  
-  const [selectedFrontDecorType, setSelectedFrontDecorType] = useState(null);
-  const [selectedFrontDecor, setSelectedFrontDecor] = useState(null);
-  const [frontColorCode, setFrontColorCode] = useState("");
 
   // Запрос для получения образцов
   const { loading, error, data } = useQuery(GET_SAMPLES, {
@@ -158,6 +153,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   useEffect(() => {
     if (!loadingSuborderProducts && suborderProductsData) {
       const newSelectedSamples = {};
+      const newSampleColors = {};
       const newSuborderProducts = {};
 
       if (suborderProductsData.suborderProducts && suborderProductsData.suborderProducts.length > 0) {
@@ -165,18 +161,14 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
           if (suborderProduct.product) {
             const productId = suborderProduct.product.documentId;
             newSelectedSamples[productId] = true;
+            newSampleColors[productId] = suborderProduct.colorCode || "";
             newSuborderProducts[productId] = suborderProduct.documentId;
-            
-            if (suborderProduct.product.brand === "colorSample") {
-              setSelectedFrontDecorType(suborderProduct.decor_type || null);
-              setSelectedFrontDecor(suborderProduct.decor || null);
-              setFrontColorCode(suborderProduct.colorCode || "");
-            }
           }
         });
       }
 
       setSelectedSamples(newSelectedSamples);
+      setSampleColors(newSampleColors);
       setSuborderProducts(newSuborderProducts);
     }
   }, [suborderProductsData, loadingSuborderProducts]);
@@ -184,11 +176,16 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   // Обработчик изменения выбора образца
   const handleSampleChange = (checked, sample) => {
     setSelectedSamples(prev => ({ ...prev, [sample.documentId]: checked }));
-    if (checked && sample.brand === "colorSample") {
-      setFrontColorCode("");
-      setSelectedFrontDecorType(null);
-      setSelectedFrontDecor(null);
+    
+    // Если образец требует указания цвета, устанавливаем значение по умолчанию
+    if (checked && sample.brand === "colorSample" && !sampleColors[sample.documentId]) {
+      setSampleColors(prev => ({ ...prev, [sample.documentId]: "" }));
     }
+  };
+
+  // Обработчик изменения цвета образца
+  const handleColorChange = (color, sampleId) => {
+    setSampleColors(prev => ({ ...prev, [sampleId]: color }));
   };
 
   // Функция сохранения выбранных образцов
@@ -199,6 +196,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
     }
 
     setSaving(true);
+
     try {
       // Получаем все образцы, которые есть в базе
       const existingSampleIds = Object.keys(suborderProducts);
@@ -227,13 +225,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
           
           // Если образец требует указания цвета, добавляем его
           if (sample.brand === "colorSample") {
-            sampleData.colorCode = frontColorCode;
-            if (selectedFrontDecorType) {
-              sampleData.decor_type = selectedFrontDecorType.documentId;
-            }
-            if (selectedFrontDecor) {
-              sampleData.decor = selectedFrontDecor.documentId;
-            }
+            sampleData.colorCode = sampleColors[sampleId] || "";
           }
           
           await createSuborderProduct({ variables: { data: sampleData } });
@@ -244,21 +236,10 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
       for (const sampleId of samplesToUpdate) {
         const sample = samples.find(s => s.documentId === sampleId);
         if (sample && sample.brand === "colorSample") {
-          const updateData = { 
-            colorCode: frontColorCode
-          };
-          
-          if (selectedFrontDecorType) {
-            updateData.decor_type = selectedFrontDecorType.documentId;
-          }
-          if (selectedFrontDecor) {
-            updateData.decor = selectedFrontDecor.documentId;
-          }
-          
           await updateSuborderProduct({
             variables: {
               documentId: suborderProducts[sampleId],
-              data: updateData
+              data: { colorCode: sampleColors[sampleId] || "" }
             }
           });
         }
@@ -285,67 +266,75 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   };
 
   if (loading || loadingSuborderProducts) {
-    return <Spin size="large" />;
+    return (
+      <Card>
+        <Spin tip={translations.loading}  fullscreen={true} />
+      </Card>
+    );
   }
 
   if (error) {
-    return <div>{translations.loadError}: {error.message}</div>;
+    return (
+      <Card>
+        <Text type="danger">{translations.loadError}: {error.message}</Text>
+      </Card>
+    );
   }
 
   if (samples.length === 0) {
-    return <Empty description={translations.noData} />;
+    return (
+      <Card>
+        <Empty description={translations.noData} />
+      </Card>
+    );
   }
-
-  // Находим выбранный образец с brand === "colorSample"
-  const selectedColorSample = samples.find(
-    sample => sample.brand === "colorSample" && selectedSamples[sample.documentId]
-  );
 
   return (
     <Card>
-      <Divider orientation="left">{translations.selection} {translations.samples}</Divider> 
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
-        <Button 
-          type="primary" 
-          onClick={handleSave} 
-          loading={saving}
-          style={{ marginTop: -60 }}
-        >
-          {translations.save}
-        </Button>
-      </div>
-
-        {samples.map(sample => (
-          <Card style={{marginBottom: 16}}>
-            <Checkbox 
-              checked={selectedSamples[sample.documentId] || false}
-              onChange={(e) => handleSampleChange(e.target.checked, sample)}
-            />
-            <Text> {translations[sample.title]}</Text>
-          </Card>
-        ))}
+      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
+            <Col> <Title level={4}>{translations.selection} {translations.samples}</Title></Col>
+            <Col>
+              <Button
+                type="primary"
+                onClick={handleSave}
+                loading={saving}
+                style={{ marginTop: 16 }}
+                >
+                    {translations.save}
+              </Button>
+            </Col>
+      </Row>
       
-      {/* DecorSelection размещен под продуктами, а не внутри Card */}
-      {selectedColorSample && (
-        <div style={{ marginTop: 32 }}>
-          <DecorSelection
-            doorId={selectedColorSample.documentId}
-            selectedDecorType={selectedFrontDecorType}
-            selectedDecor={selectedFrontDecor}
-            colorCode={frontColorCode}
-            onDecorTypeSelect={setSelectedFrontDecorType}
-            onDecorSelect={setSelectedFrontDecor}
-            onColorChange={setFrontColorCode}
-            isFrontSide={true}
-            suborderId={suborderId}
-            productType="sample"
-            onAfterSubmit={onAfterSubmit}
-          />
-        </div>
-      )}
+      <Row gutter={[16, 16]}>
+        {samples.map(sample => (
+          <Col span={24} key={sample.documentId}>
+            <Card size="small">
+              <Row align="middle">
+                <Col span={12}>
+                  <Checkbox
+                    checked={selectedSamples[sample.documentId] || false}
+                    onChange={(e) => handleSampleChange(e.target.checked, sample)}
+                  >
+                    {/* {sample.title} */}
+                    {translations[sample.title]}
+                  </Checkbox>
+                </Col>
+                
+                {sample.brand === "colorSample" && selectedSamples[sample.documentId] && (
+                  <Col span={12}>
+                    <ColorPicker
+                      value={sampleColors[sample.documentId] || ""}
+                      onChange={(color) => handleColorChange(color, sample.documentId)}
+                    />
+                  </Col>
+                )}
+              </Row>
+            </Card>
+          </Col>
+        ))}
+      </Row>      
     </Card>
   );
 };
 
 export default SampleSelection;
-

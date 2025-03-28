@@ -77,6 +77,7 @@ const CreateOrder = () => {
       orderNumber: values.orderNumber,
       // deliveryCost: values.deliveryCost || 0,
       deliveryCost: convertToEUR(values.deliveryCost) || 0,
+      installationCost: convertToEUR(values.installationCost) || 0,
       clientDiscount: values.clientDiscount || 0,
       taxRate: values.taxRate,
       clientExtraPay: values.clientExtraPay || 0,
@@ -154,14 +155,22 @@ const CreateOrder = () => {
               />
             </Form.Item>
           </Col>
-          <Col span={6}>
-            <Form.Item name="clientDiscount" label={translations.discount}>
-              <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
+          <Col span={6}>            
+            <Form.Item name="installationCost" label={translations.installation}>
+              <InputNumber 
+                style={{ width: "100%" }} 
+                addonAfter={getCurrencySymbol()} 
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
+        <Col span={6}>
+          <Form.Item name="clientDiscount" label={translations.discount}>
+            <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>
+          </Form.Item>
+          </Col>
           <Col span={6}>
             <Form.Item name="clientExtraPay" label={translations.extraCharge}>
               <InputNumber style={{ width: "100%" }} addonAfter={'%'}/>

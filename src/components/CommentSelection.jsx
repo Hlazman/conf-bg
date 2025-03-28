@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Row, Col, Typography, Spin, Button, message, Input, Form } from "antd";
+import { Spin, Button, message, Input, Form, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
-const { Title } = Typography;
 const { TextArea } = Input;
 
 // GraphQL запросы
@@ -111,22 +110,17 @@ const CommentSelection = ({ suborderId, onAfterSubmit }) => {
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-        <Col>
-          <Title level={4}>{translations.comment}</Title>
-        </Col>
-        <Col>
+      <Divider orientation="left">{translations.comment}</Divider> 
+      <div style={{ display: 'flex', justifyContent: 'right', alignItems: 'center', marginBottom: 32, marginTop: -45 }}>
           <Button 
             type="primary" 
             onClick={handleSave} 
             loading={saving}
             style={!comment ? {} : { backgroundColor: '#52C41A' }}
           >
-            {/* Сохранить  */}
             {comment ? translations.update : translations.save}
           </Button>
-        </Col>
-      </Row>
+      </div>
       
       <Form form={form} layout="vertical" initialValues={{ comment: "" }}>
         <Form.Item

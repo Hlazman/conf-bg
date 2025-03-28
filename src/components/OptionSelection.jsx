@@ -12,6 +12,14 @@ const GET_OPTIONS = gql`
       title
       type
       brand
+      collections {
+        documentId
+        title
+      }
+      image {
+        url
+        documentId
+      }
     }
   }
 `;
@@ -38,6 +46,16 @@ const UPDATE_SUBORDER_PRODUCT = gql`
       product {
         documentId
         title
+        type
+        brand
+        image {
+          url
+          documentId
+        }
+        collections {
+          documentId
+          title
+        }
       }
       amount
     }
@@ -55,17 +73,22 @@ const DELETE_SUBORDER_PRODUCT = gql`
 
 // Запрос для получения существующих SuborderProduct
 const GET_SUBORDER_PRODUCTS = gql`
-  query GetSuborderProducts($filters: SuborderProductFiltersInput) {
-    suborderProducts(filters: $filters) {
+  query GetSuborderProducts($filters: SuborderProductFiltersInput, $pagination: PaginationArg) {
+    suborderProducts(filters: $filters, pagination: $pagination) {
       documentId
       product {
         documentId
         title
         brand
         image {
-        url
-        documentId
+          url
+          documentId
         }
+        collections {
+          documentId
+          title
+        }
+        type
       }
       amount
     }
@@ -100,7 +123,28 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   });
 
   // Запрос для получения существующих SuborderProduct типа option
-  const { data: suborderProductsData, loading: loadingSuborderProducts, refetch: refetchSuborderProducts } = useQuery(GET_SUBORDER_PRODUCTS, {
+  // const { data: suborderProductsData, loading: loadingSuborderProducts, refetch: refetchSuborderProducts } = useQuery(GET_SUBORDER_PRODUCTS, {
+  //   variables: {
+  //     filters: {
+  //       suborder: {
+  //         documentId: {
+  //           eq: suborderId
+  //         }
+  //       },
+  //       type: {
+  //         eq: "option"
+  //       }
+  //     }
+  //   },
+  //   skip: !suborderId,
+  //   fetchPolicy: "network-only"
+  // });
+
+  const { 
+    data: suborderProductsData, 
+    loading: loadingSuborderProducts, 
+    refetch: refetchSuborderProducts 
+  } = useQuery(GET_SUBORDER_PRODUCTS, {
     variables: {
       filters: {
         suborder: {
@@ -111,6 +155,9 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
         type: {
           eq: "option"
         }
+      },
+      pagination: {
+        limit: 100 // Установите нужное значение лимита
       }
     },
     skip: !suborderId,
@@ -319,22 +366,18 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-        <Col>
-          <Title level={4}>{translations.options}</Title>
-        </Col>
-        <Col>
+      <Divider orientation="left">{translations.options}</Divider>
+        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
           <Button 
             type="primary" 
             onClick={handleSave} 
             loading={saving}
+            style={{ marginTop: -60 }}
           >
             {translations.save}
           </Button>
-        </Col>
-      </Row>
-
-      <Divider />
+      </div>
+      {/* <Divider /> */}
       {options.map(option => (
         <Card 
           key={option.documentId} 

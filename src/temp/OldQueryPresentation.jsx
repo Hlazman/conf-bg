@@ -8,7 +8,7 @@ import { LanguageContext } from "../context/LanguageContext";
 
 // GraphQL запрос для получения данных заказа
 const GET_ORDER = gql`
-  query GetOrder($documentId: ID!, $subordersPagination: PaginationArg, $productsPagination: PaginationArg) {
+  query GetOrder($documentId: ID!, $pagination: PaginationArg) {
     order(documentId: $documentId) {
       documentId
       orderNumber
@@ -34,7 +34,7 @@ const GET_ORDER = gql`
       totalCostBrutto
       totalCostNetto
       totalTaxAmount
-      suborders(pagination: $subordersPagination) {
+      suborders(pagination: $pagination) {
         documentId
         comment
         double_door
@@ -63,7 +63,7 @@ const GET_ORDER = gql`
           documentId
           typeName
         }
-        suborder_products(pagination: $productsPagination) {
+        suborder_products {
           amount
           colorCode
           customImage {
@@ -163,13 +163,11 @@ const Presentation = () => {
   const selectedCompany = JSON.parse(localStorage.getItem("selectedCompany"));
   const companyId = selectedCompany?.documentId;
 
+  // Запрос данных заказа
   const { loading: orderLoading, error: orderError, data: orderData } = useQuery(GET_ORDER, {
     variables: {
       documentId: orderId,
-      subordersPagination: {
-        limit: 100
-      },
-      productsPagination: {
+      pagination: {
         limit: 100
       }
     },

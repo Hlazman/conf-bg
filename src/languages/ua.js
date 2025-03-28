@@ -14,7 +14,9 @@ const ua = {
   dashboard: "Головна",
   inDoor: "Міжкімнатні двері",
   hiDoor: "Двері скритого монтажу",
+  hiddenDoor: "Двері скритого монтажу",
   sliDoor: "Розсувні двері",
+  slidingDoor: "Розсувні двері",
   createClient: "Створити клієнта",
   createAgent: "Створити агента",
   clients: "Клієнти",
@@ -24,11 +26,13 @@ const ua = {
   tax: 'Податок',
   deliveryCost: 'Вартість доставки',
   discount: 'Знижка',
+  showDiscount: 'Показати знижку',
   extraCharge: 'Додаткова плата',
   agent: 'Агент',
   client: 'Клієнт',
   comment: 'Коментар',
   wallPanels: "Настінні панелі",
+  wallPanel: "Настінна панель",
   suborderType: "Тип підзамовлення",
   products: "Продукти",
   priceNetto: "Ціна нетто",
@@ -80,6 +84,8 @@ const ua = {
   doorOpening: "Відкривання",
   leftSide: "Ліва",
   rightSide: "Права",
+  left: "Ліва",
+  right: "Права",
   inside: "Всередину",
   outside: "Назовні",
   universal: "Універсальне",
@@ -128,6 +134,20 @@ const ua = {
   selection: 'Вибір',
   insert: 'Вставка',
   area: 'Площа',
+  doorFilling: 'Наповнення дверей',
+  minWool: 'Наповнення мінеральною ватою',
+  collection: 'Колекція',
+  wall: 'Ściana',
+  guarantee: 'Гарантія',
+  years: 'років',
+  description: 'Опис',
+  information: 'Інформація',
+  installation: 'Монтаж',
+  openInNewTab: 'Відкрити в новій вкладці',
+  fittings: 'Фурнітура',
+  pcs: 'шт.',
+  company: 'Компанія',
+  site: 'вебсайт',
 
   // MESSAGES
   success: "Успіх",
@@ -294,6 +314,9 @@ const ua = {
   "Primer": "Ґрунтовка",
   "Stoneware": "Керамограніт",
   "Veneer": "Шпон",
+
+    // ORDER Warning: 
+    colorWarning: 'Майте на увазі, що кольори, які відображаються на екрані, можуть дещо відрізнятися від друкованих або реальних. Цю варіацію можна пояснити різницею в налаштуваннях відтворення кольору монітора та можливими варіаціями в процесі друку. Бажано це враховувати при оцінці колірної гами презентації.',
   };
   
   export default ua;

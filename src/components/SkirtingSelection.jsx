@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Checkbox } from "antd";
+import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Checkbox, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
@@ -488,25 +488,21 @@ const SkirtingSelection = ({
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col>
-          <Title level={3}>{translations.selection} {translations.skirting}</Title>
-        </Col>
-        <Col>
+      <Divider orientation="left">{translations.selection} {translations.skirting}</Divider> 
+        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
           <Button
             type="primary"
             onClick={handleSave}
             loading={saving}
             disabled={!selectedProduct}
             style={{
-              ...{ marginRight: 8 },
+              ...{ marginRight: 8, marginTop: -60 },
               ...(!productId ? {} : { backgroundColor: '#52C41A' })
             }}
           >
             {productId ? translations.update : translations.save }
           </Button>
-        </Col>
-      </Row>
+        </div>
 
       <Tabs
         activeKey={activeTab}

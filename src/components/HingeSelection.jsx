@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, Button, message, InputNumber, Alert } from "antd";
+import { Card, Row, Col, Spin, Empty, Button, message, InputNumber, Alert, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-
-const { Title } = Typography;
 
 const GET_HINGES = gql`
   query GetHinges($filters: ProductFiltersInput, $pagination: PaginationArg) {
@@ -16,6 +14,7 @@ const GET_HINGES = gql`
       }
       collections {
         documentId
+        title
       }
     }
   }
@@ -49,6 +48,10 @@ const GET_SUBORDER_PRODUCT = gql`
         image {
           url
           documentId
+        }
+        collections {
+          documentId
+          title
         }
       }
       type
@@ -247,22 +250,18 @@ const { loading, error, data } = useQuery(GET_HINGES, {
 
   return (
     <div className="hinge-selection">
-      <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col>
-          <Title level={3}>{translations.selection} {translations.hinge}</Title>
-        </Col>
-        <Col>
-          <Button 
-            type="primary" 
-            onClick={handleSave} 
-            loading={saving}
-            disabled={!selectedHinge}
-            style={!hingeProductId? {} : { backgroundColor: '#52C41A' }}
-          >
-            {hingeProductId? translations.update : translations.save}
-          </Button>
-        </Col>
-      </Row>
+      <Divider orientation="left">{translations.selection} {translations.hinge}</Divider>
+      <div style={{ display: 'flex', justifyContent: 'right', alignItems: 'center', marginBottom: 32, marginTop: -45 }}>
+        <Button 
+          type="primary" 
+          onClick={handleSave} 
+          loading={saving}
+          disabled={!selectedHinge}
+          style={!hingeProductId? {} : { backgroundColor: '#52C41A' }}
+        >
+          {hingeProductId? translations.update : translations.save}
+        </Button>
+      </div>
       
       <Row gutter={[16, 16]}>
         <Col span={24}>

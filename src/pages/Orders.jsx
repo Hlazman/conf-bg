@@ -7,7 +7,8 @@ import {
   PlusOutlined, 
   DeleteOutlined, 
   FileTextOutlined,
-  CopyOutlined 
+  CopyOutlined,
+  TruckOutlined
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -26,6 +27,7 @@ export const GET_ORDERS = gql`
       totalCostBrutto
       taxRate
       deliveryCost
+      installationCost
       clientDiscount
       clientExtraPay
       agent {
@@ -355,7 +357,7 @@ const handleSampleClick = async (record) => {
       ? [{ 
           key: "viewFactory", 
           label: translations.factory, 
-          icon: <EyeOutlined />,
+          icon: <TruckOutlined />,
           onClick: () => handleViewFactoryPresentation(record)
         }] 
       : []),
@@ -500,8 +502,8 @@ const handleSampleClick = async (record) => {
 
   const columns = [
     { title: "№", key: "index", width: 60, render: (_, __, index) => index + 1, fixed: "left"},
-    { title: translations.orderNumber, dataIndex: "orderNumber", key: "orderNumber", fixed: "left" },
-    { title: translations.tax, dataIndex: "taxRate", key: "taxRate" },
+    { title: translations.orderNumber, dataIndex: "orderNumber", key: "orderNumber", fixed: "left", width: '150px', },
+    { title: translations.tax, dataIndex: "taxRate", key: "taxRate", width: '100px', },
     // { title: translations.priceNetto, dataIndex: "totalCostNetto", key: "totalCostNetto" },
     // { title: translations.priceBrutto, dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
     // { title: translations.deliveryCost, dataIndex: "deliveryCost", key: "deliveryCost" },
@@ -509,38 +511,51 @@ const handleSampleClick = async (record) => {
       title: translations.priceNetto,
       dataIndex: 'totalCostNetto',
       key: 'totalCostNetto',
+      width: '150px',
       render: (totalCostNetto) => `${convertFromEUR(totalCostNetto)} ${getCurrencySymbol()}`
     },
     {
       title: translations.priceBrutto,
       dataIndex: 'totalCostBrutto',
       key: 'totalCostBrutto',
+      width: '150px',
       render: (totalCostBrutto) => `${convertFromEUR(totalCostBrutto)} ${getCurrencySymbol()}`
     },
     {
       title: translations.deliveryCost,
       dataIndex: 'deliveryCost',
       key: 'deliveryCost',
+      width: '150px',
       render: (deliveryCost) => `${convertFromEUR(deliveryCost)} ${getCurrencySymbol()}`
     },
-    { title: translations.discount, dataIndex: "clientDiscount", key: "clientDiscount" },
-    { title: translations.extraCharge, dataIndex: "clientExtraPay", key: "clientExtraPay" },
+    {
+      title: translations.installation,
+      dataIndex: 'installationCost',
+      key: 'installationCost',
+      width: '150px',
+      render: (installationCost) => `${convertFromEUR(installationCost)} ${getCurrencySymbol()}`
+    },
+    { title: translations.discount, dataIndex: "clientDiscount", key: "clientDiscount", width: '150px', },
+    { title: translations.extraCharge, dataIndex: "clientExtraPay", key: "clientExtraPay", width: '150px', },
     { 
       title: translations.agent, 
       dataIndex: "agent", 
       key: "agent",
+      width: '150px',
       render: (agent) => agent?.name || "-"
     },
     { 
       title: translations.client, 
       dataIndex: "client", 
       key: "client",
+      width: '150px',
       render: (client) => client?.name || "-"
     },
     {
       title: translations.comment,
       dataIndex: "comment",
       key: "comment",
+      width: '100px',
       render: (text) =>
         text ? (
           <Button type="link" icon={<FileTextOutlined style={{ fontSize: "20px" }} />} onClick={() => setCommentModal({ open: true, text })} />
@@ -550,6 +565,7 @@ const handleSampleClick = async (record) => {
       title: translations.ation,
       key: "actions",
       fixed: "right",
+      width: '100px',
       render: (record) => (
         <Dropdown menu={menu(record)} trigger={["click"]}>
           <Button loading={creatingSuborder}>

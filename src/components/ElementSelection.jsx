@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs } from "antd";
+import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
@@ -529,34 +529,31 @@ const ElementSelection = ({
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col>
-          <Title level={3}>{translations.selection} {productType}</Title>
-        </Col>
-        <Col>
+      <Divider orientation="left">{translations.selection} {productType}</Divider>
+      <div style={{ display: 'flex', justifyContent: 'right', alignItems: 'center', marginBottom: 32, marginTop: -45 }}>
+        <Button
+          type="primary"
+          onClick={handleSave}
+          loading={saving}
+          disabled={!selectedProduct}
+          style={{
+            ...{ marginRight: 8 },
+            ...(!productId ? {} : { backgroundColor: '#52C41A' })
+          }}
+        >
+          {productId? translations.update : translations.save}
+        </Button>
+        
+        {(productId || productData?.suborderProducts[0]?.documentId) && (
           <Button
-            type="primary"
-            onClick={handleSave}
+            danger
+            onClick={handleDelete}
             loading={saving}
-            disabled={!selectedProduct}
-            style={{
-              ...{ marginRight: 8 },
-              ...(!productId ? {} : { backgroundColor: '#52C41A' })
-            }}
           >
-            {productId? translations.update : translations.save}
+            {translations.delete}
           </Button>
-          {(productId || productData?.suborderProducts[0]?.documentId) && (
-            <Button
-              danger
-              onClick={handleDelete}
-              loading={saving}
-            >
-              {translations.delete}
-            </Button>
-          )}
-        </Col>
-      </Row>
+        )}
+      </div>
 
       <Tabs
         activeKey={activeTab}

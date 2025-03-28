@@ -268,39 +268,28 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-        <Col>
-          <Title level={4}>{translations.slidingFrame}</Title>
-        </Col>
-        <Col>
-          <Row gutter={8}>
-            <Col>
-              <Button 
-                type="primary" 
-                onClick={handleSave} 
-                loading={saving}
-                disabled={!selectedSlidingFrame}
-                style={!slidingFrameProductId ? {} : { backgroundColor: '#52C41A' }}
-              >
-                {slidingFrameProductId ? translations.update : translations.save}
-              </Button>
-            </Col>
-            {slidingFrameProductId && (
-              <Col>
-                <Button 
-                  danger 
-                  onClick={handleDelete} 
-                  loading={saving}
-                >
-                  {translations.delete}
-                </Button>
-              </Col>
-            )}
-          </Row>
-        </Col>
-      </Row>
-
-      <Divider />
+      <Divider orientation="left">{translations.slidingFrame}</Divider>
+      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'right', alignItems: 'center', marginTop: -45  }}>
+        <Button 
+          type="primary" 
+          onClick={handleSave} 
+          loading={saving}
+          disabled={!selectedSlidingFrame}
+          style={!slidingFrameProductId ? {} : { backgroundColor: '#52C41A', marginRight: 8}}
+        >
+          {slidingFrameProductId ? translations.update : translations.save}
+        </Button>
+        
+        {slidingFrameProductId && (
+            <Button 
+              danger 
+              onClick={handleDelete} 
+              loading={saving}
+            >
+              {translations.delete}
+            </Button>
+              )}
+       </div>
 
       <Row gutter={[16, 16]}>
         {slidingFrames.map(slidingFrame => (

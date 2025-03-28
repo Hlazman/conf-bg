@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs } from "antd";
+import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
@@ -377,7 +377,7 @@ const WallPanelSelection = ({
                 disabled
                 value={squareMeters.toFixed(4)}
                 style={{ width: '100%' }}
-                addonAfter={'м²'}
+                addonAfter={'m²'}
               />
             </Col>
           </Row>
@@ -421,25 +421,21 @@ const WallPanelSelection = ({
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col>
-          <Title level={3}>{translations.selection} {translations.wallPanels}</Title>
-        </Col>
-        <Col>
+      <Divider orientation="left">{translations.selection} {translations.wallPanels}</Divider>
+        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
           <Button
             type="primary"
             onClick={handleSave}
             loading={saving}
             disabled={!selectedProduct}
             style={{
-              ...{ marginRight: 8 },
+              ...{ marginRight: 8, marginTop: -60 },
               ...(!productId ? {} : { backgroundColor: '#52C41A' })
             }}
           >
             {productId ? translations.update : translations.save}
           </Button>
-        </Col>
-      </Row>
+        </div>
 
       <Tabs
         activeKey={activeTab}

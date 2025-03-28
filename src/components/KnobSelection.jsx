@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal } from "antd";
+import { Row, Col, Spin, Button, message, Input, Form, Space, Modal, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import FileUploader from "./FileUploader";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
-
-const { Title } = Typography;
 
 // GraphQL запросы
 const CREATE_SUBORDER_PRODUCT = gql`
@@ -275,33 +273,29 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: "20px" }}>
-        <Col>
-          <Title level={4}>{translations.selection} {translations.knob}</Title>
-        </Col>
-        <Col>
-          <Space>
+      <Divider orientation="left">{translations.selection} {translations.knob}</Divider> 
+      <div style={{ display: 'flex', justifyContent: 'right', alignItems: 'center', marginBottom: 32, marginTop: -45 }}>
+        <Space>
+          <Button 
+            type="primary" 
+            onClick={handleSave} 
+            loading={saving}
+            style={!knobProductId? {} : { backgroundColor: '#52C41A' }}
+          >
+            {knobProductId ? translations.update : translations.save}
+          </Button>
+          
+          {knobProductId && (
             <Button 
-              type="primary" 
-              onClick={handleSave} 
-              loading={saving}
-              style={!knobProductId? {} : { backgroundColor: '#52C41A' }}
+              danger 
+              onClick={handleDelete} 
+              loading={deleting}
             >
-              {knobProductId ? translations.update : translations.save}
+              {translations.delete}
             </Button>
-            
-            {knobProductId && (
-              <Button 
-                danger 
-                onClick={handleDelete} 
-                loading={deleting}
-              >
-                {translations.delete}
-              </Button>
-            )}
-          </Space>
-        </Col>
-      </Row>
+          )}
+        </Space>
+      </div>
       
       <Form form={form} layout="vertical" initialValues={{ customTitle: "", productCostNetto: "" }}>
         <Row gutter={16}>

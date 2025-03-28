@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, Checkbox, Button, message, Divider } from "antd";
+import { Card, Row, Col, Spin, Empty, Checkbox, Button, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-
-
-const { Title } = Typography;
 
 // GraphQL запрос для получения рам
 const GET_FRAMES = gql`
@@ -321,8 +318,8 @@ const FrameSelection = ({
 
   return (
     <div>
-       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-       <Title level={4}>{translations.frame}, {translations.threshold}</Title>
+      <Divider orientation="left">{translations.frame}, {translations.threshold}</Divider> 
+       <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
         <Button 
           type="primary" 
           onClick={handleSave}
@@ -330,7 +327,6 @@ const FrameSelection = ({
           disabled={!selectedFrame && !thresholdChanged}
           style={!frameProductId? {} : { backgroundColor: '#52C41A' }}
         >
-          {/* Сохранить */}
           {frameProductId? translations.update : translations.save}
         </Button>
       </div>

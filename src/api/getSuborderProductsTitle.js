@@ -2,13 +2,13 @@ import { gql } from '@apollo/client';
 
 // GraphQL запрос для получения данных субордера
 export const SUBORDER_QUERY = gql`
-query Suborder($documentId: ID!) {
+query Suborder($documentId: ID!, $pagination: PaginationArg) {
   suborder(documentId: $documentId) {
     documentId
     comment
     side
     opening
-    suborder_products {
+    suborder_products(pagination: $pagination) {
       documentId
       decor_type {
         documentId
@@ -22,6 +22,11 @@ query Suborder($documentId: ID!) {
           documentId
           url
         }
+        collections {
+          documentId
+          title
+        }
+        type
       }
       sizes {
         height
@@ -42,11 +47,11 @@ query Suborder($documentId: ID!) {
 `;
 
 // Функция для получения данных субордера и форматирования заголовков
-export const fetchSuborderData = async (client, suborderId) => {
+export const fetchSuborderData = async (client, suborderId, limit = 100) => {
   try {
     const { data } = await client.query({
       query: SUBORDER_QUERY,
-      variables: { documentId: suborderId },
+      variables: { documentId: suborderId, pagination: { limit: limit } },
       fetchPolicy: 'network-only'
     });
     
@@ -207,7 +212,7 @@ const formatKnobTitle = (products) => {
 // Форматирование количества для опций
 const formatOptionCount = (products, type) => {
   const count = products.filter(p => p.type === type).length;
-  return count > 0 ? `${count} шт.` : null;
+  return count > 0 ? `${count} szt.` : null;
 };
 
 // Форматирование комментария

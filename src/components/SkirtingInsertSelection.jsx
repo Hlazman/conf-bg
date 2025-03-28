@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, Button, message, Tabs } from "antd";
+import { Card, Row, Col, Spin, Empty, Button, message, Tabs, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
-
-const { Title } = Typography;
 
 // Запрос для получения элементов продукта
 const GET_PRODUCT_ELEMENTS = gql`
@@ -441,11 +439,8 @@ const SkirtingInsertSelection = ({
 
   return (
     <div>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col>
-          <Title level={3}>{translations.selection} {translations.skirtingInsert}</Title>
-        </Col>
-        <Col>
+      <Divider orientation="left">{translations.selection} {translations.insert}</Divider> 
+        <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'right', alignItems: 'center', marginTop: -45  }}>
           <Button
             type="primary"
             onClick={handleSave}
@@ -467,8 +462,7 @@ const SkirtingInsertSelection = ({
               {translations.delete}
             </Button>
           )}
-        </Col>
-      </Row>
+        </div>
 
       <Tabs
         activeKey={activeTab}

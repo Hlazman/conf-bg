@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Typography, Spin, Empty, Button, message, Alert } from "antd";
+import { Card, Row, Col, Spin, Empty, Button, message, Alert, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
-const { Title } = Typography;
 
 const GET_LOCKS = gql`
 query GetLocks($filters: ProductFiltersInput, $pagination: PaginationArg) {
@@ -14,6 +13,11 @@ query GetLocks($filters: ProductFiltersInput, $pagination: PaginationArg) {
     image {
       url
     }
+    collections {
+      documentId
+      title
+    }
+    type
   }
 }`;
 
@@ -42,6 +46,10 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
       image {
         url
         documentId
+      }
+      collections {
+        documentId
+        title
       }
       type
     }
@@ -182,17 +190,17 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
 
   return (
     <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Title level={3}>{translations.selection} {translations.lock}</Title>
-            <Button
-            type="primary"
-            onClick={handleSave}
-            loading={saving}
-            disabled={!selectedLock}
-            style={!lockProductId? {} : { backgroundColor: '#52C41A' }}
-            >
+      <Divider orientation="left">{translations.selection} {translations.lock}</Divider> 
+        <div style={{ display: 'flex', justifyContent: 'right', alignItems: 'center', marginBottom: 32, marginTop: -45 }}>
+          <Button
+          type="primary"
+          onClick={handleSave}
+          loading={saving}
+          disabled={!selectedLock}
+          style={!lockProductId? {} : { backgroundColor: '#52C41A' }}
+          >
             {lockProductId? translations.update : translations.save}
-            </Button>
+          </Button>
         </div>
       
       {locks.length === 0 ? (

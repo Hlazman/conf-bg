@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Tabs, Card, Row, Col, Spin, Empty, Button, Radio, Typography, message } from "antd";
+import { Tabs, Card, Row, Col, Spin, Empty, Button, Radio, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import ColorPicker from '../components/ColorPicker';
 import { LanguageContext } from "../context/LanguageContext";
-
-const { Title } = Typography;
 
 // GraphQL запрос для получения декоров
 const GET_DECOR_TYPES = gql`
@@ -599,9 +597,10 @@ const handleSaveDecor = async () => {
   
   return (
     <div>
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={4}>{isFrontSide ? translations.decorFront : translations.decorBack}</Title>
-        <div>
+      <Divider orientation="left">{isFrontSide ? translations.decorFront : translations.decorBack}</Divider> 
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
+        {/* <Title level={4}>{isFrontSide ? translations.decorFront : translations.decorBack}</Title> */}      
+        <div style={{ marginTop: -60 }}>
           {!isFrontSide && onClearSelection && (
             <Button onClick={onClearSelection} danger style={{ marginRight: 8 }}>
               {translations.removeSelected}
