@@ -2,9 +2,11 @@ import React, { useContext } from "react";
 import { Descriptions, Row, Col, Card, Tooltip } from "antd";
 import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const SkirtingPresentation = ({ suborder, renderImage }) => {
   const { translations } = useContext(LanguageContext);
+  const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   const skirtingProduct = suborder.suborder_products.find(product => 
     product.type === 'skirting'
@@ -15,6 +17,20 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
   const productImage = skirtingProduct.product?.image?.url || skirtingProduct.customImage?.url;
   const sizes = skirtingProduct.sizes || {};
   const hasSkirtingMilling = suborder.suborder_products.some(product => product.type === 'skirtingMilling');
+
+  // Считаем общую стоимость продуктов в субордере
+  const calculateTotalNettoPrice = () => {
+    const productTypes = [
+      "skirting",
+      "skirtingInsert",
+      "skirtingMilling"
+    ];
+    const totalNetto = suborder.suborder_products
+      .filter(product => productTypes.includes(product.type))
+      .reduce((sum, product) => sum + (product.productCostNetto || 0), 0);
+
+    return convertFromEUR(totalNetto).toFixed(2);
+  };
   
   // Функция для открытия изображения в новой вкладке
   const openImageInNewTab = (imageUrl) => {
@@ -93,6 +109,11 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
             <Descriptions.Item label={translations["Milling insert"]}>
               {hasSkirtingMilling ? translations.yes : translations.no}
             </Descriptions.Item>
+
+            <Descriptions.Item label={translations.priceNetto}>
+              <div style={{textAlign: 'right', fontWeight: 'bold'}}> {calculateTotalNettoPrice()} {getCurrencySymbol()} </div>
+            </Descriptions.Item>
+
           </Descriptions>
         </Col>
       </Row>

@@ -61,3 +61,82 @@
 //     }
 //   }
 // `;
+
+
+//////////////////////////////////////////////////////////// SampleSelection ///////////////////////////////////////////////
+// // Запрос для получения образцов
+// const GET_SAMPLES = gql`
+// query Products($filters: ProductFiltersInput) {
+//   products(filters: $filters) {
+//     documentId
+//     title
+//     type
+//     brand
+//     image {
+//       url
+//       documentId
+//     }
+//   }
+// }`;
+
+// // Мутация для создания SuborderProduct
+// const CREATE_SUBORDER_PRODUCT = gql`
+// mutation CreateSuborderProduct($data: SuborderProductInput!) {
+//   createSuborderProduct(data: $data) {
+//     documentId
+//     product {
+//       documentId
+//       title
+//       brand
+//       image {
+//         url
+//         documentId
+//       }
+//     }
+//     colorCode
+//   }
+// }`;
+
+// // Мутация для обновления SuborderProduct
+// const UPDATE_SUBORDER_PRODUCT = gql`
+// mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
+//   updateSuborderProduct(documentId: $documentId, data: $data) {
+//     documentId
+//     product {
+//       documentId
+//       title
+//       brand
+//       image {
+//         url
+//         documentId
+//       }
+//     }
+//     colorCode
+//   }
+// }`;
+
+// // Запрос для получения существующих SuborderProduct
+// const GET_SUBORDER_PRODUCTS = gql`
+// query GetSuborderProducts($filters: SuborderProductFiltersInput) {
+//   suborderProducts(filters: $filters) {
+//     documentId
+//     product {
+//       documentId
+//       title
+//       brand
+//       image {
+//         url
+//         documentId
+//       }
+//     }
+//     colorCode
+//     decor {
+//       documentId
+//       title
+//     }
+//     decor_type {
+//       documentId
+//       typeName
+//     }
+//   }
+// }`;

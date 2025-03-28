@@ -14,6 +14,11 @@ query Products($filters: ProductFiltersInput) {
     title
     type
     brand
+    description
+    collections {
+      documentId
+    }
+    guarantee
     image {
       url
       documentId
@@ -29,7 +34,13 @@ mutation CreateSuborderProduct($data: SuborderProductInput!) {
     product {
       documentId
       title
+      type
       brand
+      description
+      collections {
+        documentId
+      }
+      guarantee
       image {
         url
         documentId
@@ -47,7 +58,13 @@ mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
     product {
       documentId
       title
+      type
       brand
+      description
+      collections {
+        documentId
+      }
+      guarantee
       image {
         url
         documentId
@@ -73,7 +90,13 @@ query GetSuborderProducts($filters: SuborderProductFiltersInput) {
     product {
       documentId
       title
+      type
       brand
+      description
+      collections {
+        documentId
+      }
+      guarantee
       image {
         url
         documentId
@@ -199,20 +222,12 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
     }
 
     setSaving(true);
+    
     try {
-      // Получаем все образцы, которые есть в базе
-      const existingSampleIds = Object.keys(suborderProducts);
-      
-      // Получаем все выбранные образцы
-      const selectedSampleIds = Object.keys(selectedSamples).filter(id => selectedSamples[id]);
-      
-      // Образцы для создания (выбраны, но не существуют в базе)
-      const samplesToCreate = selectedSampleIds.filter(id => !existingSampleIds.includes(id));
-      
-      // Образцы для обновления (выбраны и существуют в базе)
-      const samplesToUpdate = selectedSampleIds.filter(id => existingSampleIds.includes(id));
-      
-      // Образцы для удаления (существуют в базе, но не выбраны)
+      const existingSampleIds = Object.keys(suborderProducts); 
+      const selectedSampleIds = Object.keys(selectedSamples).filter(id => selectedSamples[id]); 
+      const samplesToCreate = selectedSampleIds.filter(id => !existingSampleIds.includes(id)); 
+      const samplesToUpdate = selectedSampleIds.filter(id => existingSampleIds.includes(id)); 
       const samplesToDelete = existingSampleIds.filter(id => !selectedSampleIds.includes(id));
 
       // Создаем новые образцы
@@ -284,6 +299,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
     }
   };
 
+    
   if (loading || loadingSuborderProducts) {
     return <Spin size="large" />;
   }
@@ -316,7 +332,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
       </div>
 
         {samples.map(sample => (
-          <Card style={{marginBottom: 16}}>
+          <Card key={sample.documentId} style={{marginBottom: 16}}>
             <Checkbox 
               checked={selectedSamples[sample.documentId] || false}
               onChange={(e) => handleSampleChange(e.target.checked, sample)}

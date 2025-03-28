@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useParams, useSearchParams } from "react-router-dom"; 
+import React, {useContext } from "react";
+import { useParams } from "react-router-dom"; 
 import { gql, useQuery } from "@apollo/client";
 import ClientPresentation from "../components/ClientPresentation";
 import FactoryPresentation from "../components/FactoryPresentation";
@@ -65,6 +65,7 @@ const GET_ORDER = gql`
         }
         suborder_products(pagination: $productsPagination) {
           amount
+          type
           colorCode
           customImage {
             documentId
@@ -89,6 +90,7 @@ const GET_ORDER = gql`
           lockInsertion
           product {
             title
+            type
             documentId
             brand
             description

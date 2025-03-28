@@ -18,6 +18,8 @@ query Suborder($documentId: ID!, $pagination: PaginationArg) {
         documentId
         title
         brand
+        description
+        guarantee
         image {
           documentId
           url

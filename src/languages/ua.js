@@ -148,6 +148,7 @@ const ua = {
   pcs: 'шт.',
   company: 'Компанія',
   site: 'вебсайт',
+  cost: 'Ціна',
 
   // MESSAGES
   success: "Успіх",

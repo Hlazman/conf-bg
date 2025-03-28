@@ -149,6 +149,7 @@ const en = {
   pcs: 'pcs.',
   company: 'Company',
   site: 'website',
+  cost: 'Cost',
 
   // MESSAGES
   success: "Success", 

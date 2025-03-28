@@ -6,24 +6,9 @@ import { CurrencyContext } from "../context/CurrencyContext";
 const InsertionPresentation = ({ suborder }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
-  // Считаем общую стоимость продуктов в субордере
-  const calculateTotalNettoPrice = () => {
-    const productTypes = [
-      "door",
-      "hiddenDoor",
-      "slidingDoor",
-      "samples",
-      "wallPanel",
-      "skirting",
-      "skirtingInsert",
-      "skirtingMilling"
-    ];
-    const totalNetto = suborder.suborder_products
-      .filter(product => productTypes.includes(product.type))
-      .reduce((sum, product) => sum + (product.productCostNetto || 0), 0);
 
-    return convertFromEUR(totalNetto).toFixed(2);
-  };
+  // Функция для конвертации цены
+  const formatPrice = (price) => `${convertFromEUR(price || 0).toFixed(2)} ${getCurrencySymbol()}`;
 
   return (
     <div className="insertion-presentation">
@@ -56,7 +41,7 @@ const InsertionPresentation = ({ suborder }) => {
         </Descriptions.Item>
         
         <Descriptions.Item label={translations.priceNetto}>
-          <div style={{textAlign: 'right', fontWeight: 'bold'}}> {calculateTotalNettoPrice()} {getCurrencySymbol()} </div>
+          <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(suborder.suborder_products[0].productCostNetto)} </div>
         </Descriptions.Item>
       </Descriptions>
     </div>

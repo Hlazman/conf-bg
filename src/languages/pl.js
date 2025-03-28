@@ -148,6 +148,7 @@ const pl = {
   pcs: 'szt.',
   company: 'Firma',
   site: 'Strona internetowa',
+  cost: 'Koszt',
 
   // MESSAGES
   success: "Sukces",

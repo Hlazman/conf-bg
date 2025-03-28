@@ -2,9 +2,11 @@ import React, { useContext } from "react";
 import { Descriptions, Row, Col, Card, Tooltip } from "antd";
 import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
+import { CurrencyContext } from "../context/CurrencyContext";
 
 const WallPanelPresentation = ({ suborder, renderImage }) => {
   const { translations } = useContext(LanguageContext);
+  const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   const wallPanelProduct = suborder.suborder_products.find(product => 
     product.type === 'wallPanel'
@@ -15,6 +17,9 @@ const WallPanelPresentation = ({ suborder, renderImage }) => {
   const productImage = wallPanelProduct.product?.image?.url || wallPanelProduct.customImage?.url;
   const sizes = wallPanelProduct.sizes || {};
   const area = sizes.height && sizes.width ? Math.round((sizes.height * sizes.width) / 1000000) : 0;
+
+    // Функция для конвертации цены
+    const formatPrice = (price) => `${convertFromEUR(price || 0).toFixed(2)} ${getCurrencySymbol()}`;
   
   // Функция для открытия изображения в новой вкладке
   const openImageInNewTab = (imageUrl) => {
@@ -86,17 +91,22 @@ const WallPanelPresentation = ({ suborder, renderImage }) => {
               {wallPanelProduct.product?.title || wallPanelProduct.customTitle || '-'}
             </Descriptions.Item>
             
-            <Descriptions.Item label={`${translations.height} (${translations[sizes.type]})`}>
+            <Descriptions.Item label={`${translations.height}`}>
               {sizes.height ? `${sizes.height} mm` : '-'}
             </Descriptions.Item>
             
-            <Descriptions.Item label={`${translations.width} (${translations[sizes.type]})`}>
+            <Descriptions.Item label={`${translations.width}`}>
               {sizes.width ? `${sizes.width} mm` : '-'}
             </Descriptions.Item>
             
             <Descriptions.Item label={translations.area}>
               {area > 0 ? `${area} m²` : '-'}
             </Descriptions.Item>
+
+            <Descriptions.Item label={translations.priceNetto}>
+              <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(wallPanelProduct.productCostNetto)} </div>
+            </Descriptions.Item>
+
           </Descriptions>
         </Col>
       </Row>
