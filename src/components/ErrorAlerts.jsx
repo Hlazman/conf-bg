@@ -62,7 +62,7 @@ export const checkSuborderErrors = async (client, suborderId) => {
   };
 
 // Компонент для отображения алертов об ошибках
-const ErrorAlerts = ({ suborderId }) => {
+const ErrorAlerts = ({ suborderId, onErrorsUpdate }) => {
   const [errorMessages, setErrorMessages] = useState([]);
   const { translations } = useContext(LanguageContext);
   
@@ -136,6 +136,19 @@ const ErrorAlerts = ({ suborderId }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  // Обновляем сообщения об ошибках при изменении данных
+  useEffect(() => {
+    if (data && data.suborder) {
+      const messages = generateErrorMessages(data.suborder);
+      setErrorMessages(messages);
+      
+      // Передаем ошибки в родительский компонент через callback
+      if (onErrorsUpdate && data.suborder.suborderErrors) {
+        onErrorsUpdate(data.suborder.suborderErrors);
+      }
+    }
+  }, [data, onErrorsUpdate]);
   
   // Если нет ошибок или данные загружаются, не отображаем ничего
   if (loading || error || errorMessages.length === 0) {
@@ -143,7 +156,7 @@ const ErrorAlerts = ({ suborderId }) => {
   }
   
   return (
-    <div style={{ position: "sticky", top: 0, zIndex: 1000, marginBottom: "20px" }}>
+    <div style={{ marginBottom: "20px" }}>
       <Space direction="vertical" style={{ width: '100%' }}>
         {errorMessages.map((message, index) => (
           <Alert

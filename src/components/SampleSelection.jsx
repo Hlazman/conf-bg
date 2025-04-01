@@ -316,8 +316,10 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
   const selectedColorSample = samples.find(
     sample => sample.brand === "colorSample" && selectedSamples[sample.documentId]
   );
+  // console.log(selectedColorSample)
 
   return (
+    <>
     <Card>
       <Divider orientation="left">{translations.selection} {translations.samples}</Divider> 
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
@@ -340,9 +342,10 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
             <Text> {translations[sample.title]}</Text>
           </Card>
         ))}
-      
-      {/* DecorSelection размещен под продуктами, а не внутри Card */}
-      {selectedColorSample && (
+    </Card>
+
+    {/* DecorSelection размещен под продуктами, а не внутри Card */}
+    {selectedColorSample && (
         <div style={{ marginTop: 32 }}>
           <DecorSelection
             doorId={selectedColorSample.documentId}
@@ -359,7 +362,7 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
           />
         </div>
       )}
-    </Card>
+    </>
   );
 };
 

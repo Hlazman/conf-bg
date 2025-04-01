@@ -59,6 +59,7 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
+// const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit, setSentDoor }) => {
 const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -224,6 +225,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
     if (checkErrors) {
       await checkErrors(client, suborderId);
     }
+
+    // await setSentDoor(doorData.product)
 
     // Update title in collapse
     if (onAfterSubmit) {

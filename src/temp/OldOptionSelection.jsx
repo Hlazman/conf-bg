@@ -12,8 +12,6 @@ const GET_OPTIONS = gql`
       title
       type
       brand
-      description
-      guarantee
       collections {
         documentId
         title
@@ -82,8 +80,6 @@ const GET_SUBORDER_PRODUCTS = gql`
         documentId
         title
         brand
-        description
-        guarantee
         image {
           url
           documentId
@@ -104,7 +100,6 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
   const [optionAmounts, setOptionAmounts] = useState({});
   const [suborderProducts, setSuborderProducts] = useState({});
   const [saving, setSaving] = useState(false);
-  const [incompatibleOptions, setIncompatibleOptions] = useState([]);
   const { translations } = useContext(LanguageContext);
 
   // Запрос для получения опций, совместимых с выбранной дверью
@@ -126,6 +121,24 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
     },
     skip: !selectedDoor
   });
+
+  // Запрос для получения существующих SuborderProduct типа option
+  // const { data: suborderProductsData, loading: loadingSuborderProducts, refetch: refetchSuborderProducts } = useQuery(GET_SUBORDER_PRODUCTS, {
+  //   variables: {
+  //     filters: {
+  //       suborder: {
+  //         documentId: {
+  //           eq: suborderId
+  //         }
+  //       },
+  //       type: {
+  //         eq: "option"
+  //       }
+  //     }
+  //   },
+  //   skip: !suborderId,
+  //   fetchPolicy: "network-only"
+  // });
 
   const { 
     data: suborderProductsData, 
@@ -190,11 +203,6 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       const newOptionAmounts = {};
       const newSuborderProducts = {};
 
-      // Получаем ID всех совместимых опций
-      const incompatible = [];
-      const compatibleOptionIds = data && data.products ? data.products.map(option => option.documentId) : [];
-      
-
       if (suborderProductsData.suborderProducts && suborderProductsData.suborderProducts.length > 0) {
         suborderProductsData.suborderProducts.forEach(suborderProduct => {
           if (suborderProduct.product) {
@@ -202,11 +210,6 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
             newSelectedOptions[productId] = true;
             newOptionAmounts[productId] = suborderProduct.amount || 1;
             newSuborderProducts[productId] = suborderProduct.documentId;
-
-          // Если опция есть в базе, но отсутствует в списке совместимых опций
-          if (!compatibleOptionIds.includes(productId)) {
-            incompatible.push(suborderProduct.product);
-          }
           }
         });
       }
@@ -214,9 +217,8 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       setSelectedOptions(newSelectedOptions);
       setOptionAmounts(newOptionAmounts);
       setSuborderProducts(newSuborderProducts);
-      setIncompatibleOptions(incompatible);
     }
-  }, [suborderProductsData, loadingSuborderProducts, data]);
+  }, [suborderProductsData, loadingSuborderProducts]);
 
   // Обработчик изменения выбора опции
   const handleOptionChange = (checked, option) => {
@@ -375,49 +377,7 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
             {translations.save}
           </Button>
       </div>
-      
-      {/* Блок с несовместимыми опциями */}
-      {incompatibleOptions.length > 0 && (
-        <>
-          <div style={{ marginBottom: 20 }}>
-            <Title level={4} style={{ color: 'red' }}>
-              {translations.incompatibleOptions || "Несовместимые опции"}
-            </Title>
-            
-            <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-              {incompatibleOptions.map(option => (
-                <Col span={8} key={option.documentId}>
-                  <Card 
-                    size="small" 
-                    style={{ 
-                      border: '2px solid red',
-                      backgroundColor: '#fff1f0'
-                    }}
-                  >
-                    <Checkbox
-                      checked={selectedOptions[option.documentId]}
-                      onChange={(e) => handleOptionChange(e.target.checked, option)}
-                    >
-                      {option.title}
-                    </Checkbox>
-                    
-                    {option.brand === "countOptions" && selectedOptions[option.documentId] && (
-                      <InputNumber
-                        min={1}
-                        value={optionAmounts[option.documentId] || 1}
-                        onChange={(value) => handleAmountChange(value, option.documentId)}
-                        style={{ marginLeft: 8 }}
-                      />
-                    )}
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </div>
-          <Divider />
-        </>
-      )}
-
+      {/* <Divider /> */}
       {options.map(option => (
         <Card 
           key={option.documentId} 

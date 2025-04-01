@@ -171,6 +171,7 @@ const pl = {
   noImages: 'Brak obrazów',
   noOrder: "Zamówienie nie zostało znalezione lub jest niedostępne",
   noAvOptions: 'Dla wybranych drzwi nie ma dostępnych żadnych opcji.',
+  incompatibleOptions: 'Niezgodne opcje',
   noColor: 'Kolor nie zdefiniowany',
   noCustomOptions: 'Nie dodano żadnych opcji niestandardowych. Kliknij "Dodaj opcję", aby utworzyć nową.',
   noSuborders: "Brak podzamówień",

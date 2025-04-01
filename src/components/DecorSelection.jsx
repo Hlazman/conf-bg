@@ -94,7 +94,7 @@ const DecorSelection = ({
   onClearSelection = null, // Функция для очистки выбора (для тыльной стороны)
   suborderId, // ID подзаказа для сохранения
   productType,
-  onAfterSubmit
+  onAfterSubmit,
 }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -206,7 +206,6 @@ const DecorSelection = ({
                   // Устанавливаем активную вкладку
                   setActiveDecorTabKey(decorTypeId);
                   onDecorTypeSelect(decorType);
-                  
                   // Загружаем соответствующие декоры после установки типа
                   // Остальные действия будут выполнены в другом useEffect после загрузки декоров
               }

@@ -172,6 +172,7 @@ const en = {
   noImages: 'No images',
   noOrder: "Order not found or unavailable",
   noAvOptions: 'No options available for the selected door',
+  incompatibleOptions: 'Incompatible options',
   noColor: 'Color not defined',
   noCustomOptions: 'There are no custom options added. Click "Add option" to create a new one.',
   noSuborders: "No suborders",

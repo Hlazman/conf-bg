@@ -17,6 +17,7 @@ import CommentSelection from "../components/CommentSelection";
 import ErrorAlerts from "../components/ErrorAlerts";
 import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
+import { validateSuborderProducts } from "../api/validateSuborderErrors";
 
 const { Title } = Typography;
 
@@ -26,7 +27,7 @@ const CreateProduct = () => {
   const suborderId = localStorage.getItem('currentSuborderId');
   const type = localStorage.getItem('currentType');
   const doorType = localStorage.getItem('currentType');
-  
+
   // Состояние для выбранной двери
   const [selectedDoor, setSelectedDoor] = useState(null);  
   const [selectedFrontDecorType, setSelectedFrontDecorType] = useState(null);
@@ -41,6 +42,7 @@ const CreateProduct = () => {
   const [selectedKnob, setSelectedKnob] = useState(null);
   const [activeKeys, setActiveKeys] = useState(['1', '2']);
   const [formattedTitles, setFormattedTitles] = useState({});
+  
   
   const handleDoorSelect = (door) => {
     setSelectedDoor(door);
@@ -83,15 +85,35 @@ useEffect(() => {
   }
 }, [suborderId, client]);
 
-const formatItemLabel = (baseLabel, additionalInfo) => {
+
+const [suborderErrors, setSuborderErrors] = useState({});
+const handleErrorsUpdate = (errors) => {
+  setSuborderErrors(errors);
+};
+
+const formatItemLabel = (baseLabel, additionalInfo, errorKey) => {
   if (!additionalInfo) return baseLabel;
   
+  const hasError = errorKey && suborderErrors && suborderErrors[errorKey] === true;  
+  const color = hasError ? '#FF0000' : '#00A651';
+  
   return (
-    <span>
-      {baseLabel} <span style={{ color: '#00A651', fontWeight: 'bold' }}>: {additionalInfo}</span>
+    <span style={{ color, fontWeight: 'bold' }}>
+      {baseLabel} : {additionalInfo}
     </span>
   );
 };
+
+// const formatItemLabel = (baseLabel, additionalInfo) => {
+//   if (!additionalInfo) return baseLabel;
+  
+//   return (
+//     <span>
+//       {baseLabel} <span style={{ color: '#00A651', fontWeight: 'bold' }}>: {additionalInfo}</span>
+//     </span>
+//   );
+// };
+
 
 const updateFormattedTitles = async () => {
   if (suborderId) {
@@ -99,9 +121,10 @@ const updateFormattedTitles = async () => {
     if (titles) {
       setFormattedTitles(titles);
     }
+    await validateSuborderProducts(client, suborderId);
   }
 };
-  
+ 
 const items = [
   {
     key: '1',
@@ -119,7 +142,8 @@ const items = [
         selectedDoor={selectedDoor} 
         onDoorSelect={handleDoorSelect} 
         suborderId={suborderId}
-        onAfterSubmit={updateFormattedTitles} 
+        onAfterSubmit={updateFormattedTitles}
+        // setSentDoor={setSentDoor}
     />
   },
   {
@@ -135,7 +159,7 @@ const items = [
   },
   {
     key: '4',
-    label: formatItemLabel(translations.decorFront, formattedTitles.frontDecorSelection),
+    label: formatItemLabel(translations.decorFront, formattedTitles.frontDecorSelection, 'decorError'),
     children: (
       <DecorSelection 
         doorId={selectedDoor?.documentId}
@@ -154,7 +178,7 @@ const items = [
   },
   {
     key: '5',
-    label: formatItemLabel(translations.decorBack, formattedTitles.backDecorSelection),
+    label: formatItemLabel(translations.decorBack, formattedTitles.backDecorSelection, 'decorError'),
     children: (
       <DecorSelection 
         doorId={selectedDoor?.documentId}
@@ -177,7 +201,7 @@ const items = [
     label: 
       type === 'slidingDoor' 
           ? formatItemLabel(translations.slidingFrame, formattedTitles.slidingSelection) 
-          : formatItemLabel(translations.frame, formattedTitles.frameSelection),
+          : formatItemLabel(translations.frame, formattedTitles.frameSelection, 'frameError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: type === 'slidingDoor' ? (
       <SlidingSelection 
@@ -197,7 +221,7 @@ const items = [
   },
   {
     key: '7',
-    label: formatItemLabel(translations.extender, formattedTitles.extenderSelection),
+    label: formatItemLabel(translations.extender, formattedTitles.extenderSelection, 'extenderError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -212,7 +236,7 @@ const items = [
   },
   {
     key: '8',
-    label: formatItemLabel(translations.platband, formattedTitles.platbandSelection),
+    label: formatItemLabel(translations.platband, formattedTitles.platbandSelection, 'platbandError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -227,7 +251,7 @@ const items = [
   },
   {
     key: '9',
-    label: formatItemLabel(translations.platbandThread, formattedTitles.platbandThreadSelection),
+    label: formatItemLabel(translations.platbandThread, formattedTitles.platbandThreadSelection, 'platbandThreadError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -242,7 +266,7 @@ const items = [
   },
   {
     key: '10',
-    label: formatItemLabel(translations.platbandFront, formattedTitles.platbandFrontSelection),
+    label: formatItemLabel(translations.platbandFront, formattedTitles.platbandFrontSelection, 'platbandFrontError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -257,7 +281,7 @@ const items = [
   },
   {
     key: '11',
-    label: formatItemLabel(translations.platbandBack, formattedTitles.platbandBackSelection),
+    label: formatItemLabel(translations.platbandBack, formattedTitles.platbandBackSelection, 'platbandBackError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -287,7 +311,7 @@ const items = [
   },
   {
     key: '13',
-    label: formatItemLabel(translations.aluminumMolding, formattedTitles.aluminumMoldingSelection),
+    label: formatItemLabel(translations.aluminumMolding, formattedTitles.aluminumMoldingSelection, 'aluminumMoldingError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -302,7 +326,7 @@ const items = [
   },
   {
     key: '14',
-    label: formatItemLabel(translations.aluminumFrame, formattedTitles.aluminumFrameSelection),
+    label: formatItemLabel(translations.aluminumFrame, formattedTitles.aluminumFrameSelection, 'aluminumFrameError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -317,7 +341,7 @@ const items = [
   },
   {
     key: '15',
-    label: formatItemLabel(translations.aluminumCladding, formattedTitles.aluminumCladdingSelection),
+    label: formatItemLabel(translations.aluminumCladding, formattedTitles.aluminumCladdingSelection, 'aluminumCladdingError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -372,7 +396,7 @@ const items = [
   },
   {
     key: '19',
-    label: formatItemLabel(translations.options, formattedTitles.optionSelection),
+    label: formatItemLabel(translations.options, formattedTitles.optionSelection, 'optionError'),
     children: (
       <OptionSelection 
         suborderId={suborderId}
@@ -406,7 +430,8 @@ const items = [
   return (
     <div style={{ padding: "20px" }}>
       <Title level={2}> {translations.create} {translations.product} </Title>
-      <ErrorAlerts suborderId={suborderId} />
+      {/* <ErrorAlerts suborderId={suborderId} sentDoor={sentDoor}/> */}
+      <ErrorAlerts suborderId={suborderId} onErrorsUpdate={handleErrorsUpdate}/>
       <Collapse 
         items={items}
         defaultActiveKey={activeKeys} 
