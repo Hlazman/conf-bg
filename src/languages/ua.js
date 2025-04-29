@@ -137,7 +137,7 @@ const ua = {
   doorFilling: 'Наповнення дверей',
   minWool: 'Наповнення мінеральною ватою',
   collection: 'Колекція',
-  wall: 'Ściana',
+  wall: 'Стіна',
   guarantee: 'Гарантія',
   years: 'років',
   description: 'Опис',
