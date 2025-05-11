@@ -6,6 +6,7 @@ import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
 import SampleSelection from '../components/SampleSelection';
 import CommentSelection from '../components/CommentSelection';
+import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
 
 const { Title } = Typography;
 
@@ -48,6 +49,7 @@ const CreateSamples = () => {
       if (titles) {
         setFormattedTitles(titles);
       }
+      await calculateOrderPriceBySuborder(client, suborderId);
     }
   };
 

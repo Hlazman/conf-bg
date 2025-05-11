@@ -6,6 +6,7 @@ import CommentSelection from "../components/CommentSelection";
 import ErrorAlerts from "../components/ErrorAlerts";
 import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
+import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
 
 const { Title } = Typography;
 
@@ -48,6 +49,7 @@ const CreateWallPanel = () => {
       if (titles) {
         setFormattedTitles(titles);
       }
+      await calculateOrderPriceBySuborder(client, suborderId);
     }
   };
 

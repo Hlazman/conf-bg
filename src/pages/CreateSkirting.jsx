@@ -7,6 +7,7 @@ import { LanguageContext } from "../context/LanguageContext";
 import CommentSelection from '../components/CommentSelection';
 import SkirtingSelection from '../components/SkirtingSelection';
 import SkirtingInsertSelection from '../components/SkirtingInsertSelection';
+import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
 
 const { Title } = Typography;
 
@@ -54,6 +55,7 @@ const CreateSkirting = () => {
       if (titles) {
         setFormattedTitles(titles);
       }
+      await calculateOrderPriceBySuborder(client, suborderId);
     }
   };
 
