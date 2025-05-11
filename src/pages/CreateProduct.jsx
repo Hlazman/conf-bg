@@ -18,6 +18,7 @@ import ErrorAlerts from "../components/ErrorAlerts";
 import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
 import { validateSuborderProducts } from "../api/validateSuborderErrors";
+import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
 
 const { Title } = Typography;
 
@@ -122,6 +123,7 @@ const updateFormattedTitles = async () => {
       setFormattedTitles(titles);
     }
     await validateSuborderProducts(client, suborderId);
+    await calculateOrderPriceBySuborder(client, suborderId);
   }
 };
  

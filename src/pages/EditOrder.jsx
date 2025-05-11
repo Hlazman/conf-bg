@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Form, Input, InputNumber, Button, Select, notification, Row, Col } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, useApolloClient } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import { GET_ORDERS } from "./Orders";
 import { CurrencyContext } from "../context/CurrencyContext";
+import { calculateOrderPrice } from '../api/calculateOrderPrice';
 
 const GET_ORDER = gql`
   query GetOrder($documentId: ID!) {
@@ -55,6 +56,7 @@ const UPDATE_ORDER = gql`
 `;
 
 const EditOrder = () => {
+  const client = useApolloClient();
   const { documentId } = useParams();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -177,6 +179,8 @@ const EditOrder = () => {
         description: translations.orderUpdatedSuc,
         placement: "topRight",
       });
+
+      await calculateOrderPrice(client, documentId);
       
       navigate("/orders");
     } catch (error) {
