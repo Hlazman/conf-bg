@@ -10,10 +10,18 @@ export const validateSuborderProducts = async (client, documentId) => {
             documentId
             suborder_products {
               documentId
+              sizes {
+                height
+                width
+              }
               product {
                 title
                 type
                 documentId
+                maxSizes {
+                  height
+                  width
+                }
                 collections {
                   documentId
                   title
@@ -87,7 +95,8 @@ export const validateSuborderProducts = async (client, documentId) => {
       platbandBackError: null,
       platbandError: null,
       platbandFrontError: null,
-      platbandThreadError: null
+      platbandThreadError: null,
+      doorParamsError: null
     };
 
     // 4. Проверяем совместимость продуктов
@@ -225,7 +234,22 @@ export const validateSuborderProducts = async (client, documentId) => {
       errors.decorError = (!frontDecorTypeValid || !backDecorTypeValid) ? true : null;
     }
 
-    // 7. Отправляем обновленные ошибки на сервер
+    // 7. Проверяем дверные параматре относительно высоты и ширины
+    const doorParamsError = suborderData.suborder.suborder_products.some(p => {
+      if (!p.sizes || !p.product.maxSizes?.length) return false;
+      
+      const savedHeight = p.sizes.height;
+      const savedWidth = p.sizes.width;
+      
+      return !p.product.maxSizes.some(size => 
+        savedHeight <= size.height && 
+        savedWidth <= size.width
+      );
+    });
+
+    errors.doorParamsError = doorParamsError ? true : null;
+
+    // 8. Отправляем обновленные ошибки на сервер
     await client.mutate({
       mutation: gql`
         mutation Mutation($documentId: ID!, $data: SuborderInput!) {

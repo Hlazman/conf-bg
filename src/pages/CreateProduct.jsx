@@ -150,7 +150,7 @@ const items = [
   },
   {
     key: '3',
-    label: formatItemLabel(translations.doorParameters, formattedTitles.doorParameters),
+    label: formatItemLabel(translations.doorParameters, formattedTitles.doorParameters, 'doorParamsError'),
     children: (
       <DoorParameters 
         selectedDoor={selectedDoor} 
