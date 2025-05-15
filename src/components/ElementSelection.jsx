@@ -17,6 +17,10 @@ query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
       documentId
     }
     documentId
+    maxSizes {
+      height
+      width
+    }
   }
 }`;
 
@@ -421,6 +425,7 @@ const ElementSelection = ({
                 <Title level={5}>{translations.height}</Title>
                 <InputNumber
                   min={0}
+                  max={selectedProduct?.maxSizes[0]?.height}
                   value={sizes.height}
                   onChange={(value) => handleSizeChange('height', value)}
                   style={{ width: '100%' }}
@@ -433,6 +438,7 @@ const ElementSelection = ({
                 <Title level={5}>{translations.width}</Title>
                 <InputNumber
                   min={0}
+                  max={selectedProduct?.maxSizes[0]?.width}
                   value={sizes.width}
                   onChange={(value) => handleSizeChange('width', value)}
                   style={{ width: '100%' }}
@@ -445,6 +451,7 @@ const ElementSelection = ({
                 <Title level={5}>{translations.length}</Title>
                 <InputNumber
                   min={0}
+                  max={selectedProduct?.maxSizes[0]?.length}
                   value={sizes.length}
                   onChange={(value) => handleSizeChange('length', value)}
                   style={{ width: '100%' }}
@@ -457,6 +464,7 @@ const ElementSelection = ({
                 <Title level={5}>{translations.thickness}</Title>
                 <InputNumber
                   min={0}
+                  max={selectedProduct?.maxSizes[0]?.thickness}
                   value={sizes.thickness}
                   onChange={(value) => handleSizeChange('thickness', value)}
                   style={{ width: '100%' }}

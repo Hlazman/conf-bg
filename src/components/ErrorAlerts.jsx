@@ -128,7 +128,7 @@ const ErrorAlerts = ({ suborderId, onErrorsUpdate }) => {
     }
 
     if (errors.doorParamsError) {
-      messages.push('неверные параметры');
+      messages.push(translations.errAlertParameters);
     }
     
     return messages;
