@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Row, Col, Spin, Button, message, Input, Form, Space, Modal, Divider } from "antd";
+import { Row, Col, Spin, Button, message, Input, Form, Space, Modal, Divider, Select } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import FileUploader from "./FileUploader";
 import { LanguageContext } from "../context/LanguageContext";
@@ -17,6 +17,7 @@ const CREATE_SUBORDER_PRODUCT = gql`
       }
       productCostNetto
       amount
+      knobOpen
     }
   }
 `;
@@ -32,6 +33,7 @@ const UPDATE_SUBORDER_PRODUCT = gql`
       }
       productCostNetto
       amount
+      knobOpen
     }
   }
 `;
@@ -55,6 +57,7 @@ const GET_SUBORDER_PRODUCT = gql`
       }
       productCostNetto
       amount
+      knobOpen
     }
   }
 `;
@@ -71,6 +74,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
   const [amount, setAmount] = useState(1); // eslint-disable-line no-unused-vars
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { translations } = useContext(LanguageContext);
+  const [knobOpen, setKnobOpen] = useState("none");
 
   const { convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
@@ -147,6 +151,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         // setProductCostNetto(knobProduct.productCostNetto || "");
         setProductCostNetto(convertFromEUR(knobProduct.productCostNetto) || "");
         setAmount(knobProduct.amount || 1);
+        setKnobOpen(knobProduct.knobOpen || "none");
         
         if (knobProduct.customImage) {
           setCustomImageId(knobProduct.customImage.documentId);
@@ -164,7 +169,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
           customTitle: knobProduct.customTitle || "",
           // productCostNetto: knobProduct.productCostNetto || "",
           productCostNetto: convertFromEUR(knobProduct.productCostNetto) || "",
-          amount: knobProduct.amount || 1
+          amount: knobProduct.amount || 1,
+          knobOpen: knobProduct.knobOpen || "none",
         });
       }
     }
@@ -200,7 +206,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         customTitle: formValues.customTitle,
         // productCostNetto: parseFloat(formValues.productCostNetto),
         productCostNetto: convertToEUR(parseFloat(formValues.productCostNetto)),
-        amount: parseInt(formValues.amount, 10) || 1
+        amount: parseInt(formValues.amount, 10) || 1,
+        knobOpen: formValues.knobOpen || "none"
       };
   
       const isNewImageUploaded = document.querySelector('.ant-upload-list-item') !== null;
@@ -298,8 +305,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
       </div>
       
       <Form form={form} layout="vertical" initialValues={{ customTitle: "", productCostNetto: "" }}>
-        <Row gutter={16}>
-          <Col span={8}>
+        <Row gutter={20}>
+          <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item
               name="customTitle"
               label={translations.title}
@@ -311,7 +318,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
               />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item
               name="productCostNetto"
               label={`${translations.price} (Netto)`}
@@ -325,7 +332,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
               />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item
               name="amount"
               label={translations.amount}
@@ -337,6 +344,21 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
                 min={1}
                 onChange={(e) => setAmount(e.target.value)} 
               />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Form.Item
+              label={translations.knobOpen || "Тип открывания"}
+              name="knobOpen"
+              rules={[{ required: true, message: translations.required }]}
+            >
+              <Select value={knobOpen} onChange={setKnobOpen}>
+                <Select.Option value="none">{translations.no}</Select.Option>
+                <Select.Option value="key">{translations.key}</Select.Option>
+                <Select.Option value="latch">{translations.latch}</Select.Option>
+                <Select.Option value="lock">{translations.lock}</Select.Option>
+              </Select>
             </Form.Item>
           </Col>
         </Row>

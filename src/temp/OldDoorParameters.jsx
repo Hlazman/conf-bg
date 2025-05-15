@@ -11,10 +11,6 @@ const UPDATE_SUBORDER_PRODUCT = gql`
   mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
     updateSuborderProduct(documentId: $documentId, data: $data) {
       documentId
-      sizes {
-        holeWidth
-        holeHeight
-      }
     }
   }
 `;
@@ -44,21 +40,6 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
-const GET_FRAME_PRODUCT = gql`
-  query GetFrameProduct($filters: SuborderProductFiltersInput) {
-    suborderProducts(filters: $filters) {
-      documentId
-      product {
-        documentId
-        maxSizes {
-          deltaWidth
-          deltaHeight
-        }
-      }
-    }
-  }
-`;
-
 const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -79,14 +60,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
   const [doorSeal, setDoorSeal] = useState("none");
   const [lockCutout, setLockCutout] = useState(false);
 
-  // Максимальная высота и ширина
-  const [selectedMaxSizeIndex, setSelectedMaxSizeIndex] = useState(-1);
-
-  // Дополнительные размеры для стены
-  const [holeWidth, setHoleWidth] = useState(-1);
-  const [holeHeight, setHoleHeight] = useState(-1);
-  const [frameProduct, setFrameProduct] = useState(null);
-
   // Запрос на получение существующего SuborderProduct
   const { data: suborderProductData, loading: loadingSuborderProduct } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {
@@ -100,18 +73,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
           // eq: "door"
           eq: doorType
         }
-      }
-    },
-    skip: !suborderId,
-    fetchPolicy: "network-only"
-  });
-
-  // Запрос на получение существующего frame из SuborderProduct
-  const { data: frameProductData } = useQuery(GET_FRAME_PRODUCT, {
-    variables: {
-      filters: {
-        suborder: { documentId: { eq: suborderId } },
-        type: { eq: "frame" }
       }
     },
     skip: !suborderId,
@@ -155,70 +116,39 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     }
   }, [suborderProductData, loadingSuborderProduct]);
 
-  // Мемоизация максимальных значений параметров.
+
+  // Максимальная высота и ширина
+  const [selectedMaxSizeIndex, setSelectedMaxSizeIndex] = useState(-1);
+
   const maxSizes = useMemo(() => 
     selectedDoor?.maxSizes || [], 
     [selectedDoor]
   );
 
-  // Эффект автоматического выбор единственного доступного размера
   useEffect(() => {
     if (maxSizes.length === 1) {
       setSelectedMaxSizeIndex(0);
     } 
   }, [maxSizes]);
 
-  // Эффект восстановления сохраненных размеров при загрузке данных
   useEffect(() => {
-    if (suborderProductData?.suborderProducts?.[0]?.sizes) {
-      const savedHeight = suborderProductData.suborderProducts[0].sizes.height;
-      const savedWidth = suborderProductData.suborderProducts[0].sizes.width;
-      
-      // Находим индекс сохранённого размера в maxSizes
-      const foundIndex = maxSizes.findIndex(size => 
-        size.height === savedHeight && size.width === savedWidth
-      );
-      
-      if (foundIndex !== -1) {
-        setSelectedMaxSizeIndex(foundIndex);
-      } else if (maxSizes.length === 1) {
-        setSelectedMaxSizeIndex(0);
-      }
+  if (suborderProductData?.suborderProducts?.[0]?.sizes) {
+    const savedHeight = suborderProductData.suborderProducts[0].sizes.height;
+    const savedWidth = suborderProductData.suborderProducts[0].sizes.width;
+    
+    // Находим индекс сохранённого размера в maxSizes
+    const foundIndex = maxSizes.findIndex(size => 
+      size.height === savedHeight && size.width === savedWidth
+    );
+    
+    if (foundIndex !== -1) {
+      setSelectedMaxSizeIndex(foundIndex);
+    } else if (maxSizes.length === 1) {
+      setSelectedMaxSizeIndex(0);
     }
-  }, [suborderProductData, maxSizes]);
+  }
+}, [suborderProductData, maxSizes]);
 
-  // Эффект обработка данных рамы (frame) при получении с сервера
-  useEffect(() => {
-    if (frameProductData?.suborderProducts?.length > 0) {
-      setFrameProduct(frameProductData.suborderProducts[0]);
-    }
-  }, [frameProductData]);
-
-  // Эффект расчета размеров проема (holeWidth/holeHeight)
-  useEffect(() => {
-    if (frameProduct?.product?.maxSizes?.[0]) {
-      const { deltaWidth, deltaHeight } = frameProduct.product.maxSizes[0];
-      
-      if (dimensionType === "door") {
-        setHoleWidth(doorWidth + deltaWidth);
-        setHoleHeight(doorHeight + deltaHeight);
-      } else {
-        setHoleWidth(doorWidth - deltaWidth);
-        setHoleHeight(doorHeight - deltaHeight);
-      }
-    }
-  }, [doorWidth, doorHeight, dimensionType, frameProduct]);
-
-  // Эффект инициализациии размеров проема при загрузке данных
-  useEffect(() => {
-    if (!loadingSuborderProduct && suborderProductData) {
-      if (suborderProductData.suborderProducts?.length > 0) {
-        const sizes = suborderProductData.suborderProducts[0].sizes;
-        setHoleWidth(sizes?.holeWidth ?? -1);
-        setHoleHeight(sizes?.holeHeight ?? -1);
-      }
-    }
-  }, [suborderProductData, loadingSuborderProduct]);
 
   // Эффект для отправки изменений параметров в родительский компонент
   useEffect(() => {
@@ -297,11 +227,9 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
         height: doorHeight,
         width: doorWidth,
         thickness: wallThickness,
-        type: dimensionType,
-        holeWidth: holeWidth !== -1 ? holeWidth : null, 
-        holeHeight: holeHeight !== -1 ? holeHeight : null
+        type: dimensionType
       },
-      type: doorType
+      type: doorType // type: "door"
     };
 
     // Обновляем существующий SuborderProduct
@@ -359,32 +287,37 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
             </Form.Item>
           </Col>
 
-          {/* Максимальная высота и ширина */}
-          {maxSizes.length > 1 && (
-            <Col span={24}>
-            <Form.Item label={translations.maxSize} required>
-              <Radio.Group
-                buttonStyle="solid" 
-                onChange={(e) => {
-                  const index = e.target.value;
-                  setSelectedMaxSizeIndex(index);
-                }}
-                value={selectedMaxSizeIndex}
-              >
-                {maxSizes.map((size, index) => (
-                  <Radio.Button key={index} value={index}>
-                    {`${size.height} x ${size.width}`}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            </Form.Item>
-            </Col>
-          )}
+        {/* Максимальная высота и ширина */}
+        {maxSizes.length > 1 && (
+          <Col span={24}>
+          <Form.Item label={translations.maxSize} required>
+            <Radio.Group
+              buttonStyle="solid" 
+              onChange={(e) => {
+                const index = e.target.value;
+                setSelectedMaxSizeIndex(index);
+                // setDoorHeight(maxSizes[index].height);
+                // setDoorWidth(maxSizes[index].width);
+              }}
+              value={selectedMaxSizeIndex}
+            >
+              {maxSizes.map((size, index) => (
+                <Radio.Button key={index} value={index}>
+                  {/* {`${translations.height}: ${size.height}, ${translations.width}: ${size.width}`} */}
+                  {`${size.height} x ${size.width}`}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+          </Col>
+        )}
 
           <Col span={dimensionType === "door" ? 12 : 8}>
             <Form.Item label={translations.height} required>
               <InputNumber
                 min={1}
+                // max={maxSizes[selectedMaxSizeIndex]?.height || maxSizes[0]?.height}
+                // disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
                 max={maxSizes[selectedMaxSizeIndex]?.height ?? undefined}
                 disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
                 value={doorHeight}
@@ -392,19 +325,14 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                 style={{ width: "100%" }}
                 addonAfter={'mm'}
               />
-                <InputNumber
-                  value={holeHeight || -1}
-                  readOnly
-                  style={{ marginTop: 8 }}
-                  addonAfter={'mm'}
-                  addonBefore={translations.holeHeight}
-                />
             </Form.Item>
           </Col>
           <Col span={dimensionType === "door" ? 12 : 8}>
             <Form.Item label={translations.width} required>
               <InputNumber
                 min={1}
+                // max={maxSizes[selectedMaxSizeIndex]?.width || maxSizes[0]?.width}
+                // disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
                 max={maxSizes[selectedMaxSizeIndex]?.width ?? undefined}
                 disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
                 value={doorWidth}
@@ -412,19 +340,14 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                 style={{ width: "100%" }}
                 addonAfter={'mm'}
               />
-               <InputNumber
-                  value={holeWidth || -1}
-                  readOnly
-                  style={{ marginTop: 8 }}
-                  addonAfter={'mm'}
-                  addonBefore={translations.holeWidth}
-                />
             </Form.Item>
           </Col>
           {dimensionType === "wall" && (
             <Col span={8}>
               <Form.Item label={translations.thickness} required>
                 <InputNumber
+                  // min={50}
+                  // max={500}
                   value={wallThickness}
                   onChange={setWallThickness}
                   style={{ width: "100%" }}

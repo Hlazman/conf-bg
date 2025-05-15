@@ -150,6 +150,11 @@ const ua = {
   site: 'вебсайт',
   cost: 'Ціна',
   maxSizes: 'Максимальні розміри',
+  holeWidth: ' Ширина отвору стіни',
+  holeHeight: 'Висота отвору стіни',
+  knobOpen: 'Відкривання ручки',
+  key: 'Ключ',
+  latch: 'Засувка',
 
   // MESSAGES
   success: "Успіх",

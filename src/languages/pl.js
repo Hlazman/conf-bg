@@ -150,6 +150,11 @@ const pl = {
   site: 'Strona internetowa',
   cost: 'Koszt',
   maxSizes: 'Maksymalne rozmiary',
+  holeWidth: 'Szerokość otworu ściennego',
+  holeHeight: 'Wysokość otworu ściennego',
+  knobOpen: 'Otwieranie gałką',
+  key: 'Klucz',
+  latch: 'Zatrzask',
 
   // MESSAGES
   success: "Sukces",

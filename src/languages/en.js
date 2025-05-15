@@ -151,6 +151,11 @@ const en = {
   site: 'website',
   cost: 'Cost',
   maxSizes: 'Maximum sizes',
+  holeWidth: ' Wall opening width',
+  holeHeight: 'Wall opening height',
+  knobOpen: 'Knobe opening',
+  key: 'Key',
+  latch: 'Latch',
 
   // MESSAGES
   success: "Success", 

@@ -150,56 +150,6 @@ const items = [
   },
   {
     key: '3',
-    label: formatItemLabel(translations.doorParameters, formattedTitles.doorParameters, 'doorParamsError'),
-    children: (
-      <DoorParameters 
-        selectedDoor={selectedDoor} 
-        suborderId={suborderId}
-        onAfterSubmit={updateFormattedTitles} 
-      />
-    )
-  },
-  {
-    key: '4',
-    label: formatItemLabel(translations.decorFront, formattedTitles.frontDecorSelection, 'decorError'),
-    children: (
-      <DecorSelection 
-        doorId={selectedDoor?.documentId}
-        selectedDecorType={selectedFrontDecorType}
-        selectedDecor={selectedFrontDecor}
-        colorCode={frontColorCode}
-        onDecorTypeSelect={setSelectedFrontDecorType}
-        onDecorSelect={setSelectedFrontDecor}
-        onColorChange={setFrontColorCode}
-        isFrontSide={true}
-        suborderId={suborderId}
-        productType={doorType}
-        onAfterSubmit={updateFormattedTitles}
-      />
-    )
-  },
-  {
-    key: '5',
-    label: formatItemLabel(translations.decorBack, formattedTitles.backDecorSelection, 'decorError'),
-    children: (
-      <DecorSelection 
-        doorId={selectedDoor?.documentId}
-        selectedDecorType={selectedBackDecorType}
-        selectedDecor={selectedBackDecor}
-        colorCode={backColorCode}
-        onDecorTypeSelect={setSelectedBackDecorType}
-        onDecorSelect={setSelectedBackDecor}
-        onColorChange={setBackColorCode}
-        isFrontSide={false}
-        onClearSelection={clearBackSelection}
-        suborderId={suborderId}
-        productType={doorType}
-        onAfterSubmit={updateFormattedTitles}
-      />
-    )
-  },
-  {
-    key: '6',
     label: 
       type === 'slidingDoor' 
           ? formatItemLabel(translations.slidingFrame, formattedTitles.slidingSelection) 
@@ -218,6 +168,56 @@ const items = [
         onFrameSelect={handleFrameSelect}
         suborderId={suborderId}
         onAfterSubmit={updateFormattedTitles} 
+      />
+    )
+  },
+  {
+    key: '4',
+    label: formatItemLabel(translations.doorParameters, formattedTitles.doorParameters, 'doorParamsError'),
+    children: (
+      <DoorParameters 
+        selectedDoor={selectedDoor} 
+        suborderId={suborderId}
+        onAfterSubmit={updateFormattedTitles} 
+      />
+    )
+  },
+  {
+    key: '5',
+    label: formatItemLabel(translations.decorFront, formattedTitles.frontDecorSelection, 'decorError'),
+    children: (
+      <DecorSelection 
+        doorId={selectedDoor?.documentId}
+        selectedDecorType={selectedFrontDecorType}
+        selectedDecor={selectedFrontDecor}
+        colorCode={frontColorCode}
+        onDecorTypeSelect={setSelectedFrontDecorType}
+        onDecorSelect={setSelectedFrontDecor}
+        onColorChange={setFrontColorCode}
+        isFrontSide={true}
+        suborderId={suborderId}
+        productType={doorType}
+        onAfterSubmit={updateFormattedTitles}
+      />
+    )
+  },
+  {
+    key: '6',
+    label: formatItemLabel(translations.decorBack, formattedTitles.backDecorSelection, 'decorError'),
+    children: (
+      <DecorSelection 
+        doorId={selectedDoor?.documentId}
+        selectedDecorType={selectedBackDecorType}
+        selectedDecor={selectedBackDecor}
+        colorCode={backColorCode}
+        onDecorTypeSelect={setSelectedBackDecorType}
+        onDecorSelect={setSelectedBackDecor}
+        onColorChange={setBackColorCode}
+        isFrontSide={false}
+        onClearSelection={clearBackSelection}
+        suborderId={suborderId}
+        productType={doorType}
+        onAfterSubmit={updateFormattedTitles}
       />
     )
   },

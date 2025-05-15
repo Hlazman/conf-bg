@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Spin, Empty, Checkbox, Button, message, Divider } from "antd";
+import { Card, Row, Col, Spin, Empty, Checkbox, Button, message, Divider, Typography } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
+
+const { Title  } = Typography;
 
 // GraphQL запрос для получения рам
 const GET_FRAMES = gql`
@@ -353,8 +355,14 @@ const FrameSelection = ({
               styles={{ body: { padding: '12px' } }}
               onClick={() => onFrameSelect(frame)}
             >
-              {/* <Card.Meta title={frame.title} /> */}
-              <Card.Meta title={translations[frame.title]} />
+              {/* <Card.Meta title={translations[frame.title]} /> */}
+              <Card.Meta 
+                title={
+                  <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '20px' }}>
+                    {translations[frame.title]}
+                  </Title >
+                }
+              />           
             </Card>
           </Col>
         ))}
