@@ -20,6 +20,10 @@ export const GET_PRODUCTS = gql`
       documentId
       title
       type
+      maxSizes {
+        height
+        width
+      }
       image {
         url
       }
@@ -59,7 +63,6 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
-// const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit, setSentDoor }) => {
 const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -264,6 +267,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
               }
               onClick={() => {
                 onDoorSelect(door);
+                // console.log("Выбрана дверь:", door);
                 // console.log("Выбрана дверь:", door.title);
               }}
               style={{

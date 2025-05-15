@@ -149,6 +149,7 @@ const pl = {
   company: 'Firma',
   site: 'Strona internetowa',
   cost: 'Koszt',
+  maxSizes: 'Maksymalne rozmiary',
 
   // MESSAGES
   success: "Sukces",

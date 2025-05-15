@@ -149,6 +149,7 @@ const ua = {
   company: 'Компанія',
   site: 'вебсайт',
   cost: 'Ціна',
+  maxSizes: 'Максимальні розміри',
 
   // MESSAGES
   success: "Успіх",

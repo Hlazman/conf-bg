@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Button, message, Typography } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
@@ -114,18 +114,39 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     }
   }, [suborderProductData, loadingSuborderProduct]);
 
-  // Эффект для обновления параметров при выборе новой двери
+
+  // Максимальная высота и ширина
+  const [selectedMaxSizeIndex, setSelectedMaxSizeIndex] = useState(-1);
+
+  const maxSizes = useMemo(() => 
+    selectedDoor?.maxSizes || [], 
+    [selectedDoor]
+  );
+
   useEffect(() => {
-    if (selectedDoor) {
-      // Можно установить значения по умолчанию на основе выбранной двери
-      if (selectedDoor.defaultHeight) {
-        setDoorHeight(selectedDoor.defaultHeight);
-      }
-      if (selectedDoor.defaultWidth) {
-        setDoorWidth(selectedDoor.defaultWidth);
-      }
+    if (maxSizes.length === 1) {
+      setSelectedMaxSizeIndex(0);
+    } 
+  }, [maxSizes]);
+
+  useEffect(() => {
+  if (suborderProductData?.suborderProducts?.[0]?.sizes) {
+    const savedHeight = suborderProductData.suborderProducts[0].sizes.height;
+    const savedWidth = suborderProductData.suborderProducts[0].sizes.width;
+    
+    // Находим индекс сохранённого размера в maxSizes
+    const foundIndex = maxSizes.findIndex(size => 
+      size.height === savedHeight && size.width === savedWidth
+    );
+    
+    if (foundIndex !== -1) {
+      setSelectedMaxSizeIndex(foundIndex);
+    } else if (maxSizes.length === 1) {
+      setSelectedMaxSizeIndex(0);
     }
-  }, [selectedDoor]);
+  }
+}, [suborderProductData, maxSizes]);
+
 
   // Эффект для отправки изменений параметров в родительский компонент
   useEffect(() => {
@@ -191,7 +212,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       return;
     }
     
-
     setSaving(true);
 
     const parameterData = {
@@ -264,11 +284,40 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
               </Radio.Group>
             </Form.Item>
           </Col>
+
+        {/* Максимальная высота и ширина */}
+        {maxSizes.length > 1 && (
+          <Col span={24}>
+          <Form.Item label={translations.maxSize} required>
+            <Radio.Group
+              buttonStyle="solid" 
+              onChange={(e) => {
+                const index = e.target.value;
+                setSelectedMaxSizeIndex(index);
+                // setDoorHeight(maxSizes[index].height);
+                // setDoorWidth(maxSizes[index].width);
+              }}
+              value={selectedMaxSizeIndex}
+            >
+              {maxSizes.map((size, index) => (
+                <Radio.Button key={index} value={index}>
+                  {/* {`${translations.height}: ${size.height}, ${translations.width}: ${size.width}`} */}
+                  {`${size.height} x ${size.width}`}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+          </Col>
+        )}
+
           <Col span={dimensionType === "door" ? 12 : 8}>
             <Form.Item label={translations.height} required>
               <InputNumber
-                // min={1000}
-                // max={3000}
+                min={1}
+                // max={maxSizes[selectedMaxSizeIndex]?.height || maxSizes[0]?.height}
+                // disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
+                max={maxSizes[selectedMaxSizeIndex]?.height ?? undefined}
+                disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
                 value={doorHeight}
                 onChange={setDoorHeight}
                 style={{ width: "100%" }}
@@ -279,8 +328,11 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
           <Col span={dimensionType === "door" ? 12 : 8}>
             <Form.Item label={translations.width} required>
               <InputNumber
-                // min={500}
-                // max={1500}
+                min={1}
+                // max={maxSizes[selectedMaxSizeIndex]?.width || maxSizes[0]?.width}
+                // disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
+                max={maxSizes[selectedMaxSizeIndex]?.width ?? undefined}
+                disabled={maxSizes.length > 1 && selectedMaxSizeIndex === -1}
                 value={doorWidth}
                 onChange={setDoorWidth}
                 style={{ width: "100%" }}

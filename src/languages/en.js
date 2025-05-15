@@ -150,6 +150,7 @@ const en = {
   company: 'Company',
   site: 'website',
   cost: 'Cost',
+  maxSizes: 'Maximum sizes',
 
   // MESSAGES
   success: "Success", 
