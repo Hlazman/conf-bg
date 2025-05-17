@@ -151,13 +151,16 @@ const en = {
   site: 'website',
   cost: 'Cost',
   maxSizes: 'Maximum sizes',
-  holeWidth: ' Wall opening width',
-  holeHeight: 'Wall opening height',
+  holeWall: 'Wall hole',
+  holeWidth: ' Wall hole width',
+  holeHeight: 'Wall hole height',
+  block: 'Block',
   blockWidth: 'Block width',
   blockHeight : 'Block height',
   knobOpen: 'Knobe opening',
   key: 'Key',
   latch: 'Latch',
+  frameTreshold: "Treshold for frame",
 
   // MESSAGES
   success: "Success", 

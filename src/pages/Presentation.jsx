@@ -129,6 +129,10 @@ const GET_ORDER = gql`
             width
             id
             units
+            holeWidth
+            holeHeight
+            blockWidth
+            blockHeight
           }
           spindleInsertion
           thresholdInsertion

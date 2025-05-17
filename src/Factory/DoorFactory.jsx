@@ -65,12 +65,24 @@ const DoorFactory = ({ suborder }) => {
               {translations[suborder.side] || '-'}
             </Descriptions.Item>
             
-            <Descriptions.Item label={`${translations.height} (${translations[sizes.type]})`}>
+            {/* <Descriptions.Item label={`${translations.height} (${translations[sizes.type]})`}>
               {sizes.height ? `${sizes.height} mm` : '-'}
             </Descriptions.Item>
             
             <Descriptions.Item label={`${translations.width} (${translations[sizes.type]})`}>
               {sizes.width ? `${sizes.width} mm` : '-'}
+            </Descriptions.Item> */}
+
+            <Descriptions.Item label={`${translations.height} (${translations.doorCanvas} / ${translations.block} / ${translations.holeWall})`}>
+              {sizes.height ? `${sizes.height} mm` : '-'} {"/ "}
+              {sizes.blockHeight ? `${sizes.blockHeight} mm` : '-'} {"/ "}
+              {sizes.holeHeight ? `${sizes.holeHeight} mm` : '-'}
+            </Descriptions.Item>
+            
+            <Descriptions.Item label={`${translations.width} (${translations.doorCanvas} / ${translations.block} / ${translations.holeWall})` }>
+              {sizes.width ? `${sizes.width} mm` : '-'} {"/ "}
+              {sizes.blockWidth ? `${sizes.blockWidth} mm` : '-'} {"/ "}
+              {sizes.holeWidth ? `${sizes.holeWidth} mm` : '-'}
             </Descriptions.Item>
             
             <Descriptions.Item label={translations.thickness}>

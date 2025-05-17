@@ -320,7 +320,8 @@ const FrameSelection = ({
 
   return (
     <div>
-      <Divider orientation="left">{translations.frame}, {translations.threshold}</Divider> 
+      {/* <Divider orientation="left">{translations.frame}, {translations.threshold}</Divider>  */}
+      <Divider orientation="left">{translations.frame}</Divider> 
        <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
         <Button 
           type="primary" 
@@ -333,16 +334,16 @@ const FrameSelection = ({
         </Button>
       </div>
 
-      <div style={{ marginBottom: 20 }}>
+      {/* <div style={{ marginBottom: 20 }}>
         <Checkbox
         checked={hasThreshold}
         onChange={handleThresholdChange}
         >
         {translations.add} {translations.threshold}
         </Checkbox>
-      </div>
+      </div> */}
 
-      <Divider orientation="left">{translations.selection} {translations.frame}</Divider>
+      {/* <Divider orientation="left">{translations.selection} {translations.frame}</Divider> */}
       <Row gutter={[16, 16]}>
         {frames.map(frame => (
           <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>

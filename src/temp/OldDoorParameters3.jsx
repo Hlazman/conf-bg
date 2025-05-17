@@ -86,6 +86,9 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
   // Дополнительные размеры для стены
   const [holeWidth, setHoleWidth] = useState(-1);
   const [holeHeight, setHoleHeight] = useState(-1);
+  const [frameProduct, setFrameProduct] = useState(null);
+  const [blockWidth, setBlockWidth] = useState(-1);
+  const [blockHeight, setBlockHeight] = useState(-1);
 
   // Запрос на получение существующего SuborderProduct
   const { data: suborderProductData, loading: loadingSuborderProduct } = useQuery(GET_SUBORDER_PRODUCT, {
@@ -130,94 +133,116 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     }
   });
 
-  // Объединенная инициализация данных из suborderProduct
+  // Эффект для загрузки данных при получении suborderProductData
   useEffect(() => {
-    if (!loadingSuborderProduct && suborderProductData?.suborderProducts?.[0]) {
-      const suborderProduct = suborderProductData.suborderProducts[0];
-      
-      // Основные параметры
-      setSuborderProductId(suborderProduct.documentId);
-      setDoorQuantity(suborderProduct.amount || 1);
-      
-      // Размеры
-      if (suborderProduct.sizes) {
-        const { height, width, thickness, type, holeWidth, holeHeight } = suborderProduct.sizes;
-        setDoorHeight(height);
-        setDoorWidth(width);
-        setWallThickness(thickness);
-        setDimensionType(type || "door");
-        setHoleWidth(holeWidth ?? -1);
-        setHoleHeight(holeHeight ?? -1);
+    if (!loadingSuborderProduct && suborderProductData) {
+      if (suborderProductData.suborderProducts && suborderProductData.suborderProducts.length > 0) {
+        const suborderProduct = suborderProductData.suborderProducts[0];
+        setSuborderProductId(suborderProduct.documentId);
+        
+        // Заполняем состояние данными из suborderProduct
+        if (suborderProduct.sizes) {
+          setDoorHeight(suborderProduct.sizes.height);
+          setDoorWidth(suborderProduct.sizes.width);
+          setWallThickness(suborderProduct.sizes.thickness);
+          setDimensionType(suborderProduct.sizes.type || "door");
+        }
+        
+        setDoorQuantity(suborderProduct.amount || 1);
+        setHandleCutout(suborderProduct.knobInsertion || false);
+        setLockCutout(suborderProduct.lockInsertion || false);
+        setBoltCutout(suborderProduct.spindleInsertion || false);
+        setThresholdCutout(suborderProduct.thresholdInsertion || false);
+        setDoorSeal(suborderProduct.doorSeal ? suborderProduct.doorSeal : "none");
       }
-      
-      // Врезки и уплотнение
-      setHandleCutout(suborderProduct.knobInsertion || false);
-      setLockCutout(suborderProduct.lockInsertion || false);
-      setBoltCutout(suborderProduct.spindleInsertion || false);
-      setThresholdCutout(suborderProduct.thresholdInsertion || false);
-      setDoorSeal(suborderProduct.doorSeal || "none");
     }
   }, [suborderProductData, loadingSuborderProduct]);
 
-  // Обработка данных рамы
-  const frameProduct = useMemo(() => 
-    frameProductData?.suborderProducts?.[0] || null,
-    [frameProductData]
+  // Мемоизация максимальных значений параметров.
+  const maxSizes = useMemo(() => 
+    selectedDoor?.maxSizes || [], 
+    [selectedDoor]
   );
 
-  // Вычисление размеров проема/двери
-  const frameSizes = useMemo(() => frameProduct?.product?.maxSizes?.[0], [frameProduct]);
+  const validateMaxSizes = (height, width) => {
+  if (!maxSizes || maxSizes.length === 0) return true; // Если нет ограничений
+  return maxSizes.some(size => height <= size.height && width <= size.width);
+};
 
+  // Эффект обработка данных рамы (frame) при получении с сервера
   useEffect(() => {
-    if (!frameSizes) return;
-    
-    const { deltaWidth, deltaHeight } = frameSizes;
+    if (frameProductData?.suborderProducts?.length > 0) {
+      setFrameProduct(frameProductData.suborderProducts[0]);
+    }
+  }, [frameProductData]);
+
+  // Эффект инициализациии размеров проема при загрузке данных
+  useEffect(() => {
+  if (frameProduct?.product?.maxSizes?.[0]) {
+    const { deltaWidth, deltaHeight } = frameProduct.product.maxSizes[0];
     
     if (dimensionType === "door") {
+      // Расчет проема при вводе размеров двери
       setHoleWidth(doorWidth + deltaWidth);
       setHoleHeight(doorHeight + deltaHeight);
     } else {
+      // Расчет размеров двери при вводе проема
       setDoorWidth(holeWidth - deltaWidth);
       setDoorHeight(holeHeight - deltaHeight);
     }
-  }, [doorWidth, doorHeight, holeWidth, holeHeight, dimensionType, frameSizes]);
+  }
+}, [doorWidth, doorHeight, holeWidth, holeHeight, dimensionType, frameProduct]);
 
-  // Вычисление размеров блока через useMemo
-  const [blockWidth, blockHeight] = useMemo(() => [
-    holeWidth != null ? holeWidth - 24 : -1,
-    holeHeight != null ? holeHeight - 12 : -1
-  ], [holeWidth, holeHeight]);
-
-  //Параметры для родителя через useMemo + useEffect
-  const parameters = useMemo(() => ({
-    dimensionType,
-    doorHeight,
-    doorWidth,
-    wallThickness,
-    doorQuantity,
-    handleCutout,
-    boltCutout,
-    thresholdCutout,
-    doorSeal,
-    lockCutout,
-  }), [
-    dimensionType, doorHeight, doorWidth, wallThickness, 
-    doorQuantity, handleCutout, boltCutout, thresholdCutout, 
-    doorSeal, lockCutout,
-  ]);
-
+  // Эффект инициализациии размеров проема при загрузке данных
   useEffect(() => {
-    onParametersChange?.(parameters);
-  }, [parameters, onParametersChange]);
+    if (!loadingSuborderProduct && suborderProductData) {
+      if (suborderProductData.suborderProducts?.length > 0) {
+        const sizes = suborderProductData.suborderProducts[0].sizes;
+        setHoleWidth(sizes?.holeWidth ?? -1);
+        setHoleHeight(sizes?.holeHeight ?? -1);
+      }
+    }
+  }, [suborderProductData, loadingSuborderProduct]);
 
-  // Мемоизация максимальных значений параметров.
-  const maxSizes = useMemo(() => selectedDoor?.maxSizes || [], [selectedDoor]);
+  // Эффект инициализациии размеров блока при загрузке данных
+  useEffect(() => {
+    if (holeWidth != null && holeHeight != null) {
+      setBlockWidth(holeWidth - 24);
+      setBlockHeight(holeHeight - 12);
+    }
+  }, [holeWidth, holeHeight]);
 
-  // Валтдация максимальных значений высоты и ширины
-  const validateMaxSizes = (height, width) => {
-    if (!maxSizes || maxSizes.length === 0) return true; // Если нет ограничений
-    return maxSizes.some(size => height <= size.height && width <= size.width);
-  };
+  // Эффект для отправки изменений параметров в родительский компонент
+  useEffect(() => {
+    if (onParametersChange) {
+      const parameters = {
+        dimensionType,
+        doorHeight,
+        doorWidth,
+        wallThickness,
+        doorQuantity,
+        handleCutout,
+        boltCutout,
+        thresholdCutout,
+        doorSeal,
+        lockCutout
+      };
+      
+      onParametersChange(parameters);
+    }
+  }, [
+    dimensionType, 
+    doorHeight, 
+    doorWidth, 
+    wallThickness, 
+    doorQuantity, 
+    handleCutout, 
+    boltCutout, 
+    thresholdCutout, 
+    doorSeal, 
+    lockCutout,
+    onParametersChange
+  ]);
 
   // Обработчики изменения параметров
   const handleDimensionTypeChange = (e) => {
@@ -328,7 +353,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       <Form>
         {/* Размеры */}
         <Divider orientation="left">{translations.sizes}</Divider>
-
         <Row gutter={[16, 16]}>
           <Col span={24}>
             <Form.Item label={translations.type}>
@@ -371,7 +395,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                     value={blockHeight}
                     readOnly
                     style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.blockHeight}
+                    // addonBefore={`${translations.doorCanvas} ${translations.height}`}
+                    addonBefore={`block`}
                     addonAfter={'mm'}
                   />
                 </>
@@ -402,7 +427,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                     value={blockHeight}
                     readOnly
                     style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.blockHeight}
+                    // addonBefore={`${translations.doorCanvas} ${translations.height}`}
+                    addonBefore={`block`}
                     addonAfter={'mm'}
                   />
                 </>
@@ -439,7 +465,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                     value={blockWidth}
                     readOnly
                     style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.blockWidth}
+                    // addonBefore={`${translations.doorCanvas} ${translations.height}`}
+                    addonBefore={`block`}
                     addonAfter={'mm'}
                   />
                 </>
@@ -471,7 +498,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                     value={blockWidth}
                     readOnly
                     style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.blockWidth}
+                    // addonBefore={`${translations.doorCanvas} ${translations.height}`}
+                    addonBefore={`block`}
                     addonAfter={'mm'}
                   />
                 </>
@@ -581,3 +609,4 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
 };
 
 export default DoorParameters;
+
