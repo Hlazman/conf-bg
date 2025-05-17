@@ -152,6 +152,8 @@ const ua = {
   maxSizes: 'Максимальні розміри',
   holeWidth: ' Ширина отвору стіни',
   holeHeight: 'Висота отвору стіни',
+  blockWidth: 'Ширина блоку',
+  blockHeight : 'Висота блоку',
   knobOpen: 'Відкривання ручки',
   key: 'Ключ',
   latch: 'Засувка',

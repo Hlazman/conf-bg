@@ -152,6 +152,8 @@ const pl = {
   maxSizes: 'Maksymalne rozmiary',
   holeWidth: 'Szerokość otworu ściennego',
   holeHeight: 'Wysokość otworu ściennego',
+  blockWidth: 'Szerokość bloku',
+  blockHeight : 'Wysokość bloku',
   knobOpen: 'Otwieranie gałką',
   key: 'Klucz',
   latch: 'Zatrzask',

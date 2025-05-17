@@ -325,7 +325,7 @@ const ElementSelection = ({
     }
 
     if (availableSizes.width && !sizes.width ) {
-      message.error(translations.enterwidth);
+      message.error(translations.enterWidth);
       return;
     }
 

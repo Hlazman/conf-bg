@@ -153,6 +153,8 @@ const en = {
   maxSizes: 'Maximum sizes',
   holeWidth: ' Wall opening width',
   holeHeight: 'Wall opening height',
+  blockWidth: 'Block width',
+  blockHeight : 'Block height',
   knobOpen: 'Knobe opening',
   key: 'Key',
   latch: 'Latch',
