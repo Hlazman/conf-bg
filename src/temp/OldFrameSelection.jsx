@@ -5,22 +5,23 @@ import { LanguageContext } from "../context/LanguageContext";
 
 const { Title  } = Typography;
 
+// GraphQL запрос для получения рам
 const GET_FRAMES = gql`
-query GetFrames($filters: ProductFiltersInput, $pagination: PaginationArg) {
-  products(filters: $filters, pagination: $pagination) {
-    documentId
-    title
-    type
-    image { 
-      url 
-    }
-    collections { 
-    documentId
-    title 
+  query GetFrames($filters: ProductFiltersInput) {
+    products(filters: $filters) {
+      documentId
+      title
+      type
+      image {
+        url
+      }
+      collections {
+        documentId
+        title
+      }
     }
   }
-}`;
-
+`;
 
 // Мутация для создания SuborderProduct
 const CREATE_SUBORDER_PRODUCT = gql`
@@ -96,8 +97,7 @@ const FrameSelection = ({
                 }
               } 
             : undefined
-      },
-          pagination: { limit: 20 },
+      }
     },
     skip: doorType !== "hiddenDoor" && !collectionId
   });
@@ -194,10 +194,8 @@ const FrameSelection = ({
   }, [data, doorType]);
 
 
-
   // Эффект для загрузки данных при изменении frames
   useEffect(() => {
-          console.log(frames)
     if (!loadingFrameProduct && frameProductData && frames.length > 0) {
       if (frameProductData.suborderProducts && frameProductData.suborderProducts.length > 0) {
         const frameProduct = frameProductData.suborderProducts[0];
@@ -213,6 +211,7 @@ const FrameSelection = ({
           }
         }
       }
+      console.log(frames)
     }
   }, [frames, frameProductData, loadingFrameProduct, onFrameSelect, selectedFrame]);
 
@@ -337,14 +336,14 @@ const FrameSelection = ({
         </Button>
       </div>
 
-      {/* <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 20 }}>
         <Checkbox
         checked={hasThreshold}
         onChange={handleThresholdChange}
         >
         {translations.add} {translations.threshold}
         </Checkbox>
-      </div> */}
+      </div>
 
       {/* <Divider orientation="left">{translations.selection} {translations.frame}</Divider> */}
       <Row gutter={[16, 16]}>

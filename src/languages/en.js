@@ -249,6 +249,7 @@ const en = {
   errAlertAlumCladding: "Error in aluminum cladding selection. Please check the selection of aluminum cladding.",
   errAlertOptions: "Error in option selection. Please check your option selection.",
   errAlertParameters: "The sizes do not match the selected door.",
+  "2 errors occurred": 'First choose a frame',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "A4-format coating sample (RAL/NCS/veneer / within 14 days)",

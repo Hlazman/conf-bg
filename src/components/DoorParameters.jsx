@@ -125,7 +125,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       setSaving(false);
     },
     onError: (error) => {
-      message.error(`${translations.err}: ${error.message}`);
+      message.error(`${translations.err}: ${error.message === "2 errors occurred" ? translations["2 errors occurred"] : error.message}`);
+
       setSaving(false);
     }
   });
@@ -181,6 +182,20 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       setDoorHeight(holeHeight - deltaHeight);
     }
   }, [doorWidth, doorHeight, holeWidth, holeHeight, dimensionType, frameSizes]);
+
+//   useEffect(() => {
+//   if (!frameSizes || doorWidth == null || doorHeight == null) return;
+//   const { deltaWidth, deltaHeight } = frameSizes;
+
+//   if (dimensionType === "door") {
+//     setHoleWidth(prev => doorWidth + deltaWidth);
+//     setHoleHeight(prev => doorHeight + deltaHeight);
+//   } else {
+//     setDoorWidth(prev => holeWidth - deltaWidth);
+//     setDoorHeight(prev => holeHeight - deltaHeight);
+//   }
+// }, [doorWidth, doorHeight, dimensionType, frameSizes]); // Убрали holeWidth/holeHeight из зависимостей
+
 
   // Вычисление размеров блока через useMemo
   const [blockWidth, blockHeight] = useMemo(() => [
@@ -581,3 +596,4 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
 };
 
 export default DoorParameters;
+

@@ -249,6 +249,7 @@ const pl = {
   errAlertAlumCladding: "Błąd w wyborze ramy aluminiowej skrzydła. Sprawdź wybór ramy aluminiowej skrzydła.",
   errAlertOptions: "Błąd w wyborze opcji. Sprawdź wybór opcji.",
   errAlertParameters: "Rozmiary nie pasują do wybranych drzwi.",
+  "2 errors occurred": 'Najpierw wybierz ramkę',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Próbka powłoki w formacie A4 (RAL/NCS/fornir / w ciągu 14 dni)",
