@@ -197,7 +197,6 @@ const FrameSelection = ({
 
   // Эффект для загрузки данных при изменении frames
   useEffect(() => {
-          console.log(frames)
     if (!loadingFrameProduct && frameProductData && frames.length > 0) {
       if (frameProductData.suborderProducts && frameProductData.suborderProducts.length > 0) {
         const frameProduct = frameProductData.suborderProducts[0];
@@ -337,14 +336,14 @@ const FrameSelection = ({
         </Button>
       </div>
 
-      {/* <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 20 }}>
         <Checkbox
         checked={hasThreshold}
         onChange={handleThresholdChange}
         >
         {translations.add} {translations.threshold}
         </Checkbox>
-      </div> */}
+      </div>
 
       {/* <Divider orientation="left">{translations.selection} {translations.frame}</Divider> */}
       <Row gutter={[16, 16]}>

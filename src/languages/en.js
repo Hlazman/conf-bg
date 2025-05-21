@@ -161,6 +161,7 @@ const en = {
   key: 'Key',
   latch: 'Latch',
   frameTreshold: "Treshold for frame",
+  treshold: "Treshold",
 
   // MESSAGES
   success: "Success", 
@@ -221,6 +222,9 @@ const en = {
   sureToDel: 'Are you sure you want to delete?', 
   selectThisDecor: 'Select this decor type to view content',
   removeSelected: 'Remove selected',
+  fillSizesFirst: 'First fill in all sizes',
+  confirmation: 'Confirm',
+  minusHeight: 'The height of the canvas will be subtracted',
 
   //ERRORS
   err: 'Error',

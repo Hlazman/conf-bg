@@ -11,9 +11,13 @@ const FramePresentation = ({ suborder }) => {
   // Находим продукты с типами frame и slidingFrame
   const frameProduct = suborder.suborder_products.find(product => product.type === "frame");
   const slidingFrameProduct = suborder.suborder_products.find(product => product.type === "slidingFrame");
-  const doorstepProduct = suborder.suborder_products.find(product => product.type === "treshold");
+  // const doorstepProduct = suborder.suborder_products.find(product => product.type === "treshold");
+  const doorProductTreshold = suborder.suborder_products.find(product => product.type === "door" || product.type === "hiddenDoor");
 
   if (!frameProduct && !slidingFrameProduct) return null;
+
+  // Проверяем наличие frameTreshold
+  const hasTreshold = doorProductTreshold?.frameTreshold === true;
 
   // Функция для конвертации цены
   const formatPrice = (price) => `${convertFromEUR(price || 0).toFixed(2)} ${getCurrencySymbol()}`;
@@ -34,25 +38,26 @@ const FramePresentation = ({ suborder }) => {
         {frameProduct && (
           <>
             <Descriptions.Item label={translations.frame}>
-              {translations[frameProduct.product?.title] || frameProduct.product?.title || '-'}
+              {/* {translations[frameProduct.product?.title] || frameProduct.product?.title || '-'} */}
+               {(translations[frameProduct.product?.title])} {hasTreshold && ` + ${translations.treshold}`}
             </Descriptions.Item>
             <Descriptions.Item label={translations.priceNetto}>
-            <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(frameProduct.productCostNetto)} </div>
               {/* {formatPrice(frameProduct.productCostNetto)} */}
+            <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(frameProduct.productCostNetto)} </div>
             </Descriptions.Item>
 
-            {/* Если есть doorstep для frame */}
-            {doorstepProduct && (
+            {/* Если есть doorstep (frame Treshold) для frame */}
+            {/* {doorstepProduct && (
               <>
                 <Descriptions.Item label={translations["frame Treshold"]}>
                   {translations[doorstepProduct.product?.title] || doorstepProduct.product?.title || '-'}
                 </Descriptions.Item>
                 <Descriptions.Item label={translations.priceNetto}>
-                <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(doorstepProduct.productCostNetto)} </div>
-                  {/* {formatPrice(doorstepProduct.productCostNetto)} */}
+                  <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(doorstepProduct.productCostNetto)} </div>
                 </Descriptions.Item>
               </>
-            )}
+            )} */}
+            
           </>
         )}
 

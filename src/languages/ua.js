@@ -161,6 +161,7 @@ const ua = {
   key: 'Ключ',
   latch: 'Засувка',
   frameTreshold: "Поріг для рами",
+  treshold: "Поріг",
 
   // MESSAGES
   success: "Успіх",
@@ -221,6 +222,9 @@ const ua = {
   sureToDel: 'Ви впевнені, що хочете видалити?',
   selectThisDecor: 'Виберіть цей тип декору, щоб переглянути вміст',
   removeSelected: 'Видалити вибране',
+  fillSizesFirst: 'Спочатку заповніть всі розміри',
+  confirmation: 'Підтвердити',
+  minusHeight: 'Від висоти полотна буде віднято',
 
   //ERRORS
   err: 'Помилка',

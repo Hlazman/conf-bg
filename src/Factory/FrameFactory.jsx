@@ -10,9 +10,13 @@ const FrameFactory = ({ suborder }) => {
   // Находим продукты с типами frame и slidingFrame
   const frameProduct = suborder.suborder_products.find(product => product.type === "frame");
   const slidingFrameProduct = suborder.suborder_products.find(product => product.type === "slidingFrame");
-  const doorstepProduct = suborder.suborder_products.find(product => product.type === "treshold");
+  // const doorstepProduct = suborder.suborder_products.find(product => product.type === "treshold");
+  const doorProductTreshold = suborder.suborder_products.find(product => product.type === "door" || product.type === "hiddenDoor");
 
   if (!frameProduct && !slidingFrameProduct) return null;
+
+  // Проверяем наличие frameTreshold
+  const hasTreshold = doorProductTreshold?.frameTreshold === true;
 
   // Функция для конвертации цены
   const formatPrice = (price) => `${convertFromEUR(price || 0).toFixed(2)} ${getCurrencySymbol()}`;
@@ -31,16 +35,24 @@ const FrameFactory = ({ suborder }) => {
         {/* Если есть продукт типа frame */}
         {frameProduct && (
           <>
-            <Descriptions.Item label={translations[[frameProduct.product?.title]]}>
+            {/* <Descriptions.Item label={translations[[frameProduct.product?.title]]}> */}
+            <Descriptions.Item 
+              label={
+                <>
+                  {translations[frameProduct.product?.title]}
+                  {hasTreshold && ` + ${translations.treshold}`}
+                </>
+                }
+              >
               <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(frameProduct.productCostBasic)} </div>
             </Descriptions.Item>
 
             {/* Если есть doorstep для frame */}
-            {doorstepProduct && (
+            {/* {doorstepProduct && (
               <Descriptions.Item label={translations[doorstepProduct.product?.title]}>
                 <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(doorstepProduct.productCostBasic)} </div>
               </Descriptions.Item>
-            )}
+            )} */}
           </>
         )}
 

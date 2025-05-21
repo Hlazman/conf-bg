@@ -160,7 +160,8 @@ const pl = {
   knobOpen: 'Otwieranie gałką',
   key: 'Klucz',
   latch: 'Zatrzask',
-  frameTreshold: "Próg",
+  frameTreshold: "Próg dla ramki",
+  treshold: "Próg",
 
   // MESSAGES
   success: "Sukces",
@@ -221,6 +222,9 @@ const pl = {
   sureToDel: 'Czy na pewno chcesz usunąć?',
   selectThisDecor: 'Wybierz ten typ dekoru, aby zobaczyć zawartość',
   removeSelected: 'Usuń wybrane',
+  fillSizesFirst: 'Najpierw wypełnij wszystkie rozmiary',
+  confirmation: 'Potwierdź',
+  minusHeight: 'Wysokość płótna zostanie odjęta od',
 
   //ERRORS
   err: 'Błąd',

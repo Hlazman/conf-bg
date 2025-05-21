@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
-import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Button, message, Typography } from "antd";
+import { Row, Col, Form, Radio, InputNumber, Select, Divider, Spin, Button, message, Typography, Modal, Checkbox } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
@@ -11,6 +11,7 @@ const UPDATE_SUBORDER_PRODUCT = gql`
   mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
     updateSuborderProduct(documentId: $documentId, data: $data) {
       documentId
+      frameTreshold
       sizes {
         holeWidth
         holeHeight
@@ -26,6 +27,7 @@ const GET_SUBORDER_PRODUCT = gql`
   query GetSuborderProduct($filters: SuborderProductFiltersInput) {
     suborderProducts(filters: $filters) {
       documentId
+      frameTreshold
       amount
       doorSeal
       knobInsertion
@@ -87,6 +89,13 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
   const [holeWidth, setHoleWidth] = useState(-1);
   const [holeHeight, setHoleHeight] = useState(-1);
 
+  // Добавляем состояние для frameTreshold
+  const [frameTreshold, setFrameTreshold] = useState(false);
+  // Состояние для отслеживания, было ли уже применено изменение
+  const [tresholdAdjustmentApplied, setTresholdAdjustmentApplied] = useState(false);
+  // Состояние для отслеживания изменений высоты
+  const [heightModified, setHeightModified] = useState(false);
+
   // Запрос на получение существующего SuborderProduct
   const { data: suborderProductData, loading: loadingSuborderProduct } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {
@@ -125,8 +134,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       setSaving(false);
     },
     onError: (error) => {
-      message.error(`${translations.err}: ${error.message === "2 errors occurred" ? translations["2 errors occurred"] : error.message}`);
-
+      // message.error(`${translations.err}: ${error.message}`);
+          message.error(`${translations.err}: ${error.message === "2 errors occurred" ? (translations["2 errors occurred"]) : error.message}`);
       setSaving(false);
     }
   });
@@ -157,8 +166,18 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       setBoltCutout(suborderProduct.spindleInsertion || false);
       setThresholdCutout(suborderProduct.thresholdInsertion || false);
       setDoorSeal(suborderProduct.doorSeal || "none");
+      setFrameTreshold(suborderProduct.frameTreshold || false); // frameTreshold
     }
   }, [suborderProductData, loadingSuborderProduct]);
+
+  // Отслеживаем изменения высоты (frameTreshold)
+  useEffect(() => {
+    if (doorHeight || holeHeight) {
+      setHeightModified(true);
+      // Сбрасываем флаг применения корректировки при изменении высоты
+      setTresholdAdjustmentApplied(false);
+    }
+  }, [doorHeight, holeHeight]);
 
   // Обработка данных рамы
   const frameProduct = useMemo(() => 
@@ -183,25 +202,58 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     }
   }, [doorWidth, doorHeight, holeWidth, holeHeight, dimensionType, frameSizes]);
 
-//   useEffect(() => {
-//   if (!frameSizes || doorWidth == null || doorHeight == null) return;
-//   const { deltaWidth, deltaHeight } = frameSizes;
-
-//   if (dimensionType === "door") {
-//     setHoleWidth(prev => doorWidth + deltaWidth);
-//     setHoleHeight(prev => doorHeight + deltaHeight);
-//   } else {
-//     setDoorWidth(prev => holeWidth - deltaWidth);
-//     setDoorHeight(prev => holeHeight - deltaHeight);
-//   }
-// }, [doorWidth, doorHeight, dimensionType, frameSizes]); // Убрали holeWidth/holeHeight из зависимостей
-
-
   // Вычисление размеров блока через useMemo
   const [blockWidth, blockHeight] = useMemo(() => [
     holeWidth != null ? holeWidth - 24 : -1,
     holeHeight != null ? holeHeight - 12 : -1
   ], [holeWidth, holeHeight]);
+
+  // Функция для обработки изменения frameTreshold
+  const handleFrameTresholdChange = (e) => {
+    const value = e.target.value;
+    
+    // Если выбрано false (No), просто отменяем без уведомления
+    if (!value) {
+      // Если корректировка была применена, возвращаем исходные значения
+      if (tresholdAdjustmentApplied) {
+        const adjustmentValue = selectedDoor?.type === "hiddenDoor" ? 25 : 30;
+        setDoorHeight(prev => prev + adjustmentValue);
+        setHoleHeight(prev => prev - adjustmentValue);
+        setTresholdAdjustmentApplied(false);
+      }
+      setFrameTreshold(false);
+      return;
+    }
+    
+    // Проверяем, есть ли все необходимые данные (только для true)
+    if (doorHeight && doorWidth && holeWidth !== -1 && holeHeight !== -1) {
+      // Определяем значение корректировки в зависимости от типа двери
+      const adjustmentValue = selectedDoor?.type === "hiddenDoor" ? 25 : 30;
+      
+      // Показываем модальное окно с подтверждением
+      Modal.confirm({
+        title: translations.confirmation,
+        content: `${translations.minusHeight} ${adjustmentValue} mm.`,
+        cancelText: translations.cancel,
+        onOk: () => {
+          setFrameTreshold(true);
+          if (!tresholdAdjustmentApplied) {
+            // Применяем изменения только если они еще не были применены
+            setDoorHeight(prev => prev - adjustmentValue);
+            // Обновляем holeHeight, чтобы вызвать пересчет blockHeight через useMemo
+            setHoleHeight(prev => prev + adjustmentValue);
+            setTresholdAdjustmentApplied(true);
+          }
+        },
+        onCancel: () => {
+          setFrameTreshold(false);
+        }
+      });
+    } else {
+      message.warning(translations.fillSizesFirst);
+      setFrameTreshold(false);
+    }
+  };
 
   //Параметры для родителя через useMemo + useEffect
   const parameters = useMemo(() => ({
@@ -215,10 +267,11 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     thresholdCutout,
     doorSeal,
     lockCutout,
+    frameTreshold // frameTreshold
   }), [
     dimensionType, doorHeight, doorWidth, wallThickness, 
     doorQuantity, handleCutout, boltCutout, thresholdCutout, 
-    doorSeal, lockCutout,
+    doorSeal, lockCutout, frameTreshold // frameTreshold
   ]);
 
   useEffect(() => {
@@ -288,6 +341,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       lockInsertion: lockCutout,
       spindleInsertion: boltCutout,
       thresholdInsertion: thresholdCutout,
+      frameTreshold: frameTreshold, // frameTreshold
       sizes: {
         height: doorHeight,
         width: doorWidth,
@@ -518,6 +572,34 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
             </Form.Item>
           </Col>
         </Row>
+
+        {/* Добавляем чекбокс для frameTreshold */}
+        <Divider orientation="left">{translations.frameTreshold}</Divider>
+        {/* <Form.Item label={translations.frameTreshold || "Порог рамы"}>
+          <Checkbox 
+            checked={frameTreshold}
+            onChange={(e) => handleFrameTresholdChange(e.target.checked)}
+            disabled={
+              selectedDoor?.type === "door" && 
+              !frameProductData?.suborderProducts?.length
+            }
+          />
+        </Form.Item> */}
+          
+        <Form.Item style={{marginBottom: '50px'}} label={translations.treshold}>
+          <Radio.Group
+          buttonStyle="solid"
+            value={frameTreshold} 
+            onChange={handleFrameTresholdChange}
+            disabled={
+              selectedDoor?.type === "door" && 
+              !frameProductData?.suborderProducts?.length
+            }
+          >
+            <Radio.Button value={false}>{translations.no}</Radio.Button>
+            <Radio.Button value={true}>{translations.yes}</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
 
         {/* Врезка и уплотнение */}
         <Divider orientation="left">{translations.tapSeal}</Divider>

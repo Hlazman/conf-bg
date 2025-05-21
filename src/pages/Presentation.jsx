@@ -65,6 +65,7 @@ const GET_ORDER = gql`
         }
         suborder_products(pagination: $productsPagination) {
           amount
+          frameTreshold
           type
           colorCode
           customImage {
