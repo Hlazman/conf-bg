@@ -225,6 +225,7 @@ const en = {
   fillSizesFirst: 'First fill in all sizes',
   confirmation: 'Confirm',
   minusHeight: 'The height of the canvas will be subtracted',
+  hingesCount: 'Recommended count for hinges',
 
   //ERRORS
   err: 'Error',

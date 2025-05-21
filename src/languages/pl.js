@@ -225,6 +225,7 @@ const pl = {
   fillSizesFirst: 'Najpierw wypełnij wszystkie rozmiary',
   confirmation: 'Potwierdź',
   minusHeight: 'Wysokość płótna zostanie odjęta od',
+  hingesCount: 'Zalecana liczba zawiasów',
 
   //ERRORS
   err: 'Błąd',

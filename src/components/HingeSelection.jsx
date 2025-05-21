@@ -272,6 +272,13 @@ const { loading, error, data } = useQuery(GET_HINGES, {
               value={hingeAmount} 
               onChange={handleAmountChange} 
             />
+
+          {suborderData?.suborder?.hingesCalculatedCount !== undefined && (
+              <p style={{margin: "10px 0 30px 0", color: '#677' }}>
+                {translations.hingesCount}: <strong> {suborderData.suborder.hingesCalculatedCount} </strong>
+              </p>
+            )}
+
           </div>
         </Col>
       </Row>

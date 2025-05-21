@@ -225,6 +225,7 @@ const ua = {
   fillSizesFirst: 'Спочатку заповніть всі розміри',
   confirmation: 'Підтвердити',
   minusHeight: 'Від висоти полотна буде віднято',
+  hingesCount: 'Рекомендована кількість петель',
 
   //ERRORS
   err: 'Помилка',

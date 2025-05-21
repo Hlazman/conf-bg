@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Spin, Empty, Checkbox, Button, message, Divider, Typography } from "antd";
+import { Card, Row, Col, Spin, Empty, Button, message, Divider, Typography } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 
@@ -56,14 +56,6 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
   }
 }`;
 
-// Мутация для удаления SuborderProduct
-const DELETE_SUBORDER_PRODUCT = gql`
-mutation DeleteSuborderProduct($documentId: ID!) {
-  deleteSuborderProduct(documentId: $documentId) {
-    documentId
-  }
-}`;
-
 const FrameSelection = ({
   doorId,
   collectionId,
@@ -73,10 +65,7 @@ const FrameSelection = ({
   onAfterSubmit
 }) => {
   const [frameProductId, setFrameProductId] = useState(null);
-  const [thresholdProductId, setThresholdProductId] = useState(null);
-  const [hasThreshold, setHasThreshold] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [thresholdChanged, setThresholdChanged] = useState(false);
   const { translations } = useContext(LanguageContext);
   const doorType = localStorage.getItem('currentType');
 
@@ -121,31 +110,13 @@ const FrameSelection = ({
     fetchPolicy: "network-only"
   });
 
-  // Запрос для получения существующего SuborderProduct типа treshold
-  const { data: thresholdProductData, loading: loadingThresholdProduct, refetch: refetchThreshold } = useQuery(GET_SUBORDER_PRODUCT, {
-    variables: {
-      filters: {
-        suborder: {
-          documentId: {
-            eq: suborderId
-          }
-        },
-        type: {
-          eq: "treshold"
-        }
-      }
-    },
-    skip: !suborderId,
-    fetchPolicy: "network-only"
-  });
-
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
       message.success(translations.dataSaved);
       setSaving(false);
       refetchFrame();
-      refetchThreshold();
+      // refetchThreshold();
     },
     onError: (error) => {
       message.error(`${translations.err}: ${error.message}`);
@@ -162,18 +133,6 @@ const FrameSelection = ({
     },
     onError: (error) => {
       message.error(`${translations.editError}: ${error.message}`);
-      setSaving(false);
-    }
-  });
-
-  // Мутация для удаления SuborderProduct
-  const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
-    onCompleted: () => {
-      refetchThreshold();
-      setSaving(false);
-    },
-    onError: (error) => {
-      message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   });
@@ -215,26 +174,6 @@ const FrameSelection = ({
     }
   }, [frames, frameProductData, loadingFrameProduct, onFrameSelect, selectedFrame]);
 
-  // Эффект для проверки наличия порога
-  useEffect(() => {
-    if (!loadingThresholdProduct && thresholdProductData) {
-      if (thresholdProductData.suborderProducts && thresholdProductData.suborderProducts.length > 0) {
-        const thresholdProduct = thresholdProductData.suborderProducts[0];
-        setThresholdProductId(thresholdProduct.documentId);
-        setHasThreshold(true);
-      } else {
-        setThresholdProductId(null);
-        setHasThreshold(false);
-      }
-    }
-  }, [thresholdProductData, loadingThresholdProduct]);
-
-  // Функция для обработки изменения состояния порога
-  const handleThresholdChange = (e) => {
-    setHasThreshold(e.target.checked);
-    setThresholdChanged(true);
-  };
-
   // Функция сохранения выбранной рамы и порога
   const handleSave = async () => {
     if (!suborderId) {
@@ -271,34 +210,6 @@ const FrameSelection = ({
         }
       }
 
-      // Обрабатываем порог только если его состояние изменилось
-      if (thresholdChanged) {
-        if (hasThreshold) {
-          // Если порог нужен, но его еще нет - создаем
-          if (!thresholdProductId) {
-            await createSuborderProduct({
-              variables: {
-                data: {
-                  suborder: suborderId,
-                  type: "treshold",
-                  product: "220" // ID продукта Frame Treshold
-                }
-              }
-            });
-          }
-        } else {
-          // Если порог не нужен, но он есть - удаляем
-          if (thresholdProductId) {
-            await deleteSuborderProduct({
-              variables: {
-                documentId: thresholdProductId
-              }
-            });
-          }
-        }
-        setThresholdChanged(false);
-      }
-
       // Update title in collapse
       if (onAfterSubmit) {
         await onAfterSubmit();
@@ -309,7 +220,6 @@ const FrameSelection = ({
       
       // Обновляем данные
       refetchFrame();
-      refetchThreshold();
     } catch (error) {
       message.error(`${translations.err}: ${error.message}`);
       setSaving(false);
@@ -322,30 +232,19 @@ const FrameSelection = ({
 
   return (
     <div>
-      {/* <Divider orientation="left">{translations.frame}, {translations.threshold}</Divider>  */}
       <Divider orientation="left">{translations.frame}</Divider> 
        <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
         <Button 
           type="primary" 
           onClick={handleSave}
           loading={saving}
-          disabled={!selectedFrame && !thresholdChanged}
+          disabled={!selectedFrame}
           style={!frameProductId? {} : { backgroundColor: '#52C41A' }}
         >
           {frameProductId? translations.update : translations.save}
         </Button>
       </div>
 
-      <div style={{ marginBottom: 20 }}>
-        <Checkbox
-        checked={hasThreshold}
-        onChange={handleThresholdChange}
-        >
-        {translations.add} {translations.threshold}
-        </Checkbox>
-      </div>
-
-      {/* <Divider orientation="left">{translations.selection} {translations.frame}</Divider> */}
       <Row gutter={[16, 16]}>
         {frames.map(frame => (
           <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>
