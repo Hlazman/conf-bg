@@ -29,6 +29,11 @@ const authLink = setContext((_, { headers }) => {
   const user = userStr ? JSON.parse(userStr) : null;
   const token = user?.jwt;
   
+  // console.log("Headers being sent:", {
+  //   ...headers,
+  //   authorization: token ? `Bearer ${token}` : "",
+  // });
+  
   return {
     headers: {
       ...headers,
@@ -36,6 +41,26 @@ const authLink = setContext((_, { headers }) => {
     }
   };
 });
+
+// export const client = new ApolloClient({
+//   link: errorLink.concat(authLink.concat(httpLink)),
+//   cache: new InMemoryCache({
+//     typePolicies: {
+//       Suborder: {
+//         keyFields: ["documentId"],
+//         merge(existing, incoming) {
+//           return { ...existing, ...incoming };
+//         }
+//       },
+//       SuborderProduct: {
+//         keyFields: ["documentId"],
+//         merge(existing, incoming) {
+//           return { ...existing, ...incoming };
+//         }
+//       }
+//     }
+//   }),
+// });
 
 export const client = new ApolloClient({
   link: errorLink.concat(authLink.concat(httpLink)),
@@ -63,4 +88,3 @@ export const client = new ApolloClient({
     }
   }),
 })
-
