@@ -51,6 +51,17 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
         documentId
         url
       }
+      maxSizes {
+        height
+        width
+      }
+      collections { 
+        documentId
+        title 
+      }
+      description
+      guarantee
+      type
     }
     type
   }

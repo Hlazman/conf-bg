@@ -13,6 +13,13 @@ export const validateSuborderProducts = async (client, documentId) => {
               sizes {
                 height
                 width
+                length
+                thickness
+                blockHeight
+                blockWidth
+                holeHeight
+                holeWidth
+                type
               }
               product {
                 title
@@ -54,8 +61,8 @@ export const validateSuborderProducts = async (client, documentId) => {
     let doorProduct = null;
 
     suborderData.suborder.suborder_products.forEach(product => {
-      const productType = product.product.type;
-      const productId = product.product.documentId;
+      const productType = product?.product?.type;
+      const productId = product?.product?.documentId;
       
       if (["door", "hiddenDoor", "slidingDoor"].includes(productType)) {
         products[productType] = {

@@ -17,6 +17,11 @@ const UPDATE_SUBORDER_PRODUCT = gql`
         holeHeight
         blockWidth
         blockHeight
+        height
+        length
+        thickness
+        type
+        width
       }
     }
   }
@@ -56,10 +61,24 @@ const GET_FRAME_PRODUCT = gql`
       documentId
       product {
         documentId
+        title
         maxSizes {
           deltaWidth
           deltaHeight
         }
+        collections { 
+          documentId
+          title 
+        }
+        description
+        guarantee
+        brand
+        description
+        image {
+          documentId
+          url
+        }
+        type
       }
     }
   }

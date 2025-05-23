@@ -20,6 +20,10 @@ query Suborder($documentId: ID!, $pagination: PaginationArg) {
         brand
         description
         guarantee
+        maxSizes {
+          height
+          width
+        }
         image {
           documentId
           url
@@ -35,6 +39,11 @@ query Suborder($documentId: ID!, $pagination: PaginationArg) {
         length
         thickness
         width
+        blockHeight
+        blockWidth
+        holeHeight
+        holeWidth
+        type
       }
       secondSideDecorType {
         documentId

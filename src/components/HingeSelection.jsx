@@ -43,6 +43,17 @@ const GET_SUBORDER_PRODUCT = gql`
       amount
       product {
         documentId
+        description
+        type
+      maxSizes {
+        height
+        width
+      }
+      collections { 
+        documentId
+        title 
+      }
+        guarantee
         brand
         title
         image {

@@ -38,6 +38,21 @@ const UPDATE_SUBORDER_PRODUCT = gql`
         documentId
         title
         description
+        brand
+        image {
+          url
+          documentId
+        }
+        collections { 
+          documentId
+          title 
+        }
+        maxSizes {
+          height
+          width
+        }
+        guarantee
+        type
       }
     }
   }
@@ -53,9 +68,19 @@ const GET_SUBORDER_PRODUCT = gql`
         description
         brand
         image {
-        url
-        documentId
+          url
+          documentId
         }
+        collections { 
+          documentId
+          title 
+        }
+        maxSizes {
+          height
+          width
+        }
+        guarantee
+        type
       }
     }
   }

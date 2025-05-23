@@ -92,6 +92,10 @@ const GET_SUBORDER_PRODUCTS = gql`
           documentId
           title
         }
+        maxSizes {
+          height
+          width
+        }
         type
       }
       amount

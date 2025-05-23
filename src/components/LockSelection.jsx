@@ -43,6 +43,8 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
       documentId
       brand
       title
+      description
+      guarantee
       image {
         url
         documentId
@@ -50,6 +52,10 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
       collections {
         documentId
         title
+      }
+      maxSizes {
+        height
+        width
       }
       type
     }

@@ -69,6 +69,10 @@ mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
         url
         documentId
       }
+      maxSizes {
+        height
+        width
+      }
     }
     colorCode
   }
