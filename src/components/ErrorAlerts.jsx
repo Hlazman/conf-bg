@@ -92,35 +92,35 @@ const ErrorAlerts = ({ suborderId, onErrorsUpdate }) => {
     }
     
     if (errors.extenderError) {
-      messages.push(translations.errAlertExtender);
+      messages.push(translations.errAlertExtender + " " + translations.doorClickAgain);
     }
     
     if (errors.platbandError) {
-      messages.push(translations.errAlertPlatband);
+      messages.push(translations.errAlertPlatband + " " + translations.doorClickAgain);
     }
     
     if (errors.platbandThreadError) {
-      messages.push(translations.errAlertPlatbandThreaded);
+      messages.push(translations.errAlertPlatbandThreaded + " " + translations.doorClickAgain);
     }
     
     if (errors.platbandFrontError) {
-      messages.push(translations.errAlertPlatbandFront);
+      messages.push(translations.errAlertPlatbandFront+ " " + translations.doorClickAgain);
     }
     
     if (errors.platbandBackError) {
-      messages.push(translations.errAlertPlatbandBack);
+      messages.push(translations.errAlertPlatbandBack+ " " + translations.doorClickAgain);
     }
     
     if (errors.aluminumMoldingError) {
-      messages.push(translations.errAlertAlumMolding);
+      messages.push(translations.errAlertAlumMolding+ " " + translations.doorClickAgain);
     }
     
     if (errors.aluminumFrameError) {
-      messages.push(translations.errAlertAlumFrame);
+      messages.push(translations.errAlertAlumFrame+ " " + translations.doorClickAgain);
     }
     
     if (errors.aluminumCladdingError) {
-      messages.push(translations.errAlertAlumCladding);
+      messages.push(translations.errAlertAlumCladding+ " " + translations.doorClickAgain);
     }
     
     if (errors.optionError) {

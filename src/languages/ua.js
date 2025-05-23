@@ -255,6 +255,7 @@ const ua = {
   errAlertOptions: "Помилка у виборі опцій. Будь ласка, перевірте вибір опцій.",
   errAlertParameters: "Розміри не відповідають обраній двері",
   "2 errors occurred": 'Спочатку оберіть раму',
+  doorClickAgain: 'Або ще раз натисніть Оновити у розділі Дверне полотно',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Зразок покриття формату А4 (RAL/NCS/шпон / протягом 14 днів)",

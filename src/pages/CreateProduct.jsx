@@ -105,17 +105,6 @@ const formatItemLabel = (baseLabel, additionalInfo, errorKey) => {
   );
 };
 
-// const formatItemLabel = (baseLabel, additionalInfo) => {
-//   if (!additionalInfo) return baseLabel;
-  
-//   return (
-//     <span>
-//       {baseLabel} <span style={{ color: '#00A651', fontWeight: 'bold' }}>: {additionalInfo}</span>
-//     </span>
-//   );
-// };
-
-
 const updateFormattedTitles = async () => {
   if (suborderId) {
     const titles = await fetchSuborderData(client, suborderId);

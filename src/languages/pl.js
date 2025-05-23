@@ -255,6 +255,7 @@ const pl = {
   errAlertOptions: "Błąd w wyborze opcji. Sprawdź wybór opcji.",
   errAlertParameters: "Rozmiary nie pasują do wybranych drzwi.",
   "2 errors occurred": 'Najpierw wybierz ramkę',
+  doorClickAgain: 'Lub kliknij Odśwież ponownie w sekcji Skrzydło drzwiowe drzwi',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Próbka powłoki w formacie A4 (RAL/NCS/fornir / w ciągu 14 dni)",

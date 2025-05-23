@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 
 export const validateSuborderProducts = async (client, documentId) => {
   try {
-    
     // 1. Получаем данные о субордере
     const { data: suborderData } = await client.query({
       query: gql`
@@ -53,7 +52,7 @@ export const validateSuborderProducts = async (client, documentId) => {
           }
         }
       `,
-      variables: { documentId },
+      variables: { documentId }
     });
 
     // 2. Создаем объект с продуктами
@@ -119,7 +118,6 @@ export const validateSuborderProducts = async (client, documentId) => {
 
     // Проверяем совместимость обычных продуктов
     for (const type of productTypesToCheck) {
-      
       if (products[type]) {
         const { data: compatibilityData } = await client.query({
           query: gql`
@@ -148,8 +146,7 @@ export const validateSuborderProducts = async (client, documentId) => {
       }
     }
 
-
-    // 5. Проверяем совместимость опций с дверью
+    // Проверяем совместимость опций с дверью
     let hasIncompatibleOption = false;
     
     for (const option of optionProducts) {
@@ -183,7 +180,36 @@ export const validateSuborderProducts = async (client, documentId) => {
     // Устанавливаем ошибку optionError, если хотя бы одна опция несовместима
     errors.optionError = hasIncompatibleOption ? true : null;
 
-    // 6. Проверяем совместимость рамы с коллекцией двери
+    // 5. Проверяем совместимость рамы с коллекцией двери
+    // if (products.frame && doorProduct.collections && doorProduct.collections.length > 0) {
+    //   const { data: frameData } = await client.query({
+    //     query: gql`
+    //       query Products($documentId: ID!) {
+    //         product(documentId: $documentId) {
+    //           collections {
+    //             documentId
+    //             title
+    //           }
+    //         }
+    //       }
+    //     `,
+    //     variables: {
+    //       documentId: products.frame.documentId
+    //     }
+    //   });
+
+    //   const frameCollections = frameData.product.collections || [];
+    //   const frameCollectionIds = frameCollections.map(c => c.documentId);
+      
+    //   // Проверяем, есть ли хотя бы одна общая коллекция
+    //   const hasMatchingCollection = doorProduct.collections.some(
+    //     doorCollection => frameCollectionIds.includes(doorCollection.documentId)
+    //   );
+      
+    //   errors.frameError = !hasMatchingCollection ? true : null;
+    // }
+
+    // 5. Проверяем совместимость рамы с коллекцией двери
     if (products.frame && doorProduct.collections && doorProduct.collections.length > 0) {
       const { data: frameData } = await client.query({
         query: gql`
@@ -215,7 +241,7 @@ export const validateSuborderProducts = async (client, documentId) => {
       }
     }
 
-    // 7. Проверяем совместимость декоров
+    // 6. Проверяем совместимость декоров
     if (doorProduct) {
       const { data: decorTypesData } = await client.query({
         query: gql`
@@ -247,7 +273,21 @@ export const validateSuborderProducts = async (client, documentId) => {
       errors.decorError = (!frontDecorTypeValid || !backDecorTypeValid) ? true : null;
     }
 
-    // 8. Проверяем дверные параматре относительно высоты и ширины
+    // 7. Проверяем дверные параматре относительно высоты и ширины
+    // const doorParamsError = suborderData.suborder.suborder_products.some(p => {
+    //   if (!p.sizes || !p.product.maxSizes?.length) return false;
+      
+    //   const savedHeight = p.sizes.height;
+    //   const savedWidth = p.sizes.width;
+      
+    //   return !p.product.maxSizes.some(size => 
+    //     savedHeight <= size.height && 
+    //     savedWidth <= size.width
+    //   );
+    // });
+
+    // errors.doorParamsError = doorParamsError ? true : null;
+
     const doorProducts = suborderData.suborder.suborder_products
     .filter(p => ["door", "hiddenDoor", "slidingDoor"].includes(p?.product?.type));
 
@@ -265,7 +305,7 @@ export const validateSuborderProducts = async (client, documentId) => {
 
     errors.doorParamsError = !allDoorParamsValid ? true : null;
 
-    // 9. Отправляем обновленные ошибки на сервер
+    // 8. Отправляем обновленные ошибки на сервер
     await client.mutate({
       mutation: gql`
         mutation Mutation($documentId: ID!, $data: SuborderInput!) {
