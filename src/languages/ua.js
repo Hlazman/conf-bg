@@ -162,6 +162,8 @@ const ua = {
   latch: 'Засувка',
   frameTreshold: "Поріг для рами",
   treshold: "Поріг",
+  customProductCostNetto: 'Індивідуальна вартість',
+  mountingSystem: 'Система кріплення',
 
   // MESSAGES
   success: "Успіх",

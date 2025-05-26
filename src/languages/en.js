@@ -162,6 +162,8 @@ const en = {
   latch: 'Latch',
   frameTreshold: "Treshold for frame",
   treshold: "Treshold",
+  customProductCostNetto: 'Individual cost',
+  mountingSystem: 'Mounting System',
 
   // MESSAGES
   success: "Success", 

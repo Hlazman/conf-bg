@@ -11,12 +11,17 @@ const WallPanelPresentation = ({ suborder, renderImage }) => {
   const wallPanelProduct = suborder.suborder_products.find(product => 
     product.type === 'wallPanel'
   );
+
+    const mountingSystem = suborder.suborder_products.find(product => 
+    product.type === 'mountingSystem'
+  );
   
   if (!wallPanelProduct) return null;
   
   const productImage = wallPanelProduct.product?.image?.url || wallPanelProduct.customImage?.url;
   const sizes = wallPanelProduct.sizes || {};
-  const area = sizes.height && sizes.width ? Math.round((sizes.height * sizes.width) / 1000000) : 0;
+  // const area = sizes.height && sizes.width ? Math.round((sizes.height * sizes.width) / 1000000) : 0;
+  const area = parseFloat(((sizes.height * sizes.width) / 1000000).toFixed(2));
 
     // Функция для конвертации цены
     const formatPrice = (price) => `${convertFromEUR(price || 0).toFixed(2)} ${getCurrencySymbol()}`;
@@ -75,9 +80,6 @@ const WallPanelPresentation = ({ suborder, renderImage }) => {
               )
             }
           >
-            {/* <div style={{ textAlign: 'center' }}>
-              {translations.wallPanelImage || 'Wall Panel Image'}
-            </div> */}
           </Card>
         </Col>
         <Col span={14}>
@@ -100,8 +102,21 @@ const WallPanelPresentation = ({ suborder, renderImage }) => {
             </Descriptions.Item>
             
             <Descriptions.Item label={translations.area}>
-              {area > 0 ? `${area} m²` : '-'}
+              {/* {area > 0 ? `${area} m²` : '-'} */}
+              {`${area} m²`}
             </Descriptions.Item>
+
+            {wallPanelProduct?.product.brand === 'CharmWood' && (
+            <Descriptions.Item label={`${translations.block} ${translations.amount}`}>
+              {wallPanelProduct?.amount}
+            </Descriptions.Item>
+            )}
+
+            {wallPanelProduct?.product.brand === 'CharmWood' && mountingSystem && (
+            <Descriptions.Item label={`${translations.mountingSystem}`}>
+              <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(mountingSystem.productCostNetto)} </div>
+            </Descriptions.Item>
+            )}
 
             <Descriptions.Item label={translations.priceNetto}>
               <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(wallPanelProduct.productCostNetto)} </div>

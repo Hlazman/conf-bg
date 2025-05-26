@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useMemo, useContext, useRef } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
-import { CurrencyContext } from "../context/CurrencyContext";
-import MountingSystemSelection from './MountingSystemSelection';
 
 const { Title } = Typography;
 
@@ -52,16 +50,6 @@ const GET_SUBORDER_PRODUCT = gql`
         documentId
         title
         brand
-        description
-        guarantee
-        maxSizes {
-          height
-          width
-        }
-        collections {
-          documentId
-        }
-        type
         image {
           documentId
           url
@@ -73,11 +61,6 @@ const GET_SUBORDER_PRODUCT = gql`
         length
         width
         thickness
-        blockHeight
-        blockWidth
-        holeHeight
-        holeWidth
-        type
       }
       decor {
         documentId
@@ -97,8 +80,6 @@ const GET_SUBORDER_PRODUCT = gql`
       }
       colorCode
       secondSideColorCode
-      customProductCostNetto
-      amount
     }
   }`;
 
@@ -114,18 +95,11 @@ const WallPanelSelection = ({
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
   const { translations } = useContext(LanguageContext);
-  const { convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
-  const mountingSystemRef = useRef(null);
 
   // Состояние для лицевой стороны декора
   const [selectedFrontDecorType, setSelectedFrontDecorType] = useState(null);
   const [selectedFrontDecor, setSelectedFrontDecor] = useState(null);
   const [frontColorCode, setFrontColorCode] = useState("");
-
-  const [customProductCostNetto, setCustomProductCostNetto] = useState(0);
-  const [amount, setAmount] = useState(0);
-  const [isCustomCostEnabled, setIsCustomCostEnabled] = useState(false);
-  const [isAmountEnabled, setIsAmountEnabled] = useState(false);
 
   // Запрос для получения элементов продукта
   const { loading, error, data } = useQuery(GET_PRODUCT_ELEMENTS, {
@@ -208,16 +182,6 @@ const WallPanelSelection = ({
           setSizes(newSizes);
         }
 
-        // Добавить загрузку новых полей
-        if (product.customProductCostNetto !== undefined) {
-          // setCustomProductCostNetto(product.customProductCostNetto);
-          setCustomProductCostNetto(convertFromEUR(product.customProductCostNetto) || 0);
-        }
-        
-        if (product.amount !== undefined) {
-          setAmount(product.amount);
-        }
-
         // Если есть продукт и пользователь еще не выбрал его, устанавливаем его
         if (product.product) {
           const productFromElements = productElements.find(elem =>
@@ -225,13 +189,6 @@ const WallPanelSelection = ({
           );
           if (productFromElements) {
             setSelectedProduct(productFromElements);
-
-            // Проверяем, нужно ли включить customProductCostNetto по умолчанию
-            if (brand !== "Danapris" && 
-                (productFromElements.title === "Individual light & mirror" || 
-                productFromElements.title === "Individual mdf")) {
-              setIsCustomCostEnabled(true);
-            }
           }
         }
 
@@ -249,25 +206,13 @@ const WallPanelSelection = ({
         }
       }
     }
-  }, [productElements, productData, loadingProduct, brand, convertFromEUR]);
+  }, [productElements, productData, loadingProduct]);
 
   // Эффект для расчета площади в квадратных метрах
   useEffect(() => {
-    // const area = (sizes.height * sizes.width) / 1000000;
-    const area = parseFloat(((sizes.height * sizes.width) / 1000000).toFixed(2))
+    const area = (sizes.height * sizes.width) / 1000000;
     setSquareMeters(area);
   }, [sizes.height, sizes.width]);
-
-
-  // Эффект для отмены disabled customProductCostNetto
-  useEffect(() => {
-    if (selectedProduct && brand !== "Danapris") {
-      if (selectedProduct.title === "Individual light & mirror" || 
-          selectedProduct.title === "Individual mdf") {
-        setIsCustomCostEnabled(true);
-      }
-    }
-  }, [selectedProduct, brand]);
 
   // Функция для выбора продукта
   const handleProductSelect = (product) => {
@@ -322,23 +267,6 @@ const WallPanelSelection = ({
         decor_type: selectedFrontDecorType ? selectedFrontDecorType.documentId : null,
         colorCode: isPaintType(selectedFrontDecorType?.typeName) ? frontColorCode : null
       };
-
-      // Добавляем новые поля только если brand !== "Danapris"
-      if (brand !== "Danapris") {
-        if (isCustomCostEnabled) {
-          // productData.customProductCostNetto = customProductCostNetto;
-          productData.customProductCostNetto = convertToEUR(parseFloat(customProductCostNetto));
-        }
-
-        if (isAmountEnabled) {
-          productData.amount = amount;
-        }
-      }
-
-      // Сохранить mounting system если brand !== "Danapris"
-      if (mountingSystemRef.current) {
-        await mountingSystemRef.current.saveMountingSystem();
-      }
 
       if (productId) {
         // Обновляем существующий SuborderProduct
@@ -454,80 +382,10 @@ const WallPanelSelection = ({
               />
             </Col>
           </Row>
-
-          {brand !== "Danapris" && (
-            <Row gutter={16} style={{ marginTop: 16 }}>
-              <Col span={12}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Typography.Text strong>
-                    {translations.customProductCostNetto}:
-                  </Typography.Text>
-                  <input
-                    type="checkbox"
-                    checked={isCustomCostEnabled}
-                    onChange={(e) => setIsCustomCostEnabled(e.target.checked)}
-                    disabled={selectedProduct && 
-                      (selectedProduct.title === "Individual light & mirror" || 
-                      selectedProduct.title === "Individual mdf")}
-                  />
-                </div>
-                <InputNumber
-                  style={{ width: '100%', marginTop: 8 }}
-                  value={customProductCostNetto}
-                  onChange={(value) => setCustomProductCostNetto(value || 0)}
-                  disabled={!isCustomCostEnabled}
-                  placeholder={`${translations.customProductCostNetto} (${getCurrencySymbol()})`}
-                  addonAfter={getCurrencySymbol()}
-                />
-              </Col>
-              <Col span={12}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Typography.Text strong>
-                    {translations.amount}:
-                  </Typography.Text>
-                  <input
-                    type="checkbox"
-                    checked={isAmountEnabled}
-                    onChange={(e) => setIsAmountEnabled(e.target.checked)}
-                  />
-                </div>
-                <InputNumber
-                  style={{ width: '100%', marginTop: 8 }}
-                  value={amount}
-                  onChange={(value) => setAmount(value || 0)}
-                  disabled={!isAmountEnabled}
-                  min={0}
-                  step={1}
-                  placeholder={translations.enterAmount}
-                />
-              </Col>
-            </Row>
-          )}
         </Card>
       )
     }
   ];
-
-  if (brand !== "Danapris") {
-    // Вставить новую вкладку mounting system после sizes
-    items.splice(2, 0, {
-      key: "3",
-      label: "Mounting System",
-      disabled: !selectedProduct,
-      children: (
-        <Card>
-          <MountingSystemSelection
-            ref={mountingSystemRef}
-            suborderId={suborderId}
-            selectedProduct={selectedProduct}
-            onMountingSystemChange={() => {
-              // Обновить данные если нужно
-            }}
-          />
-        </Card>
-      )
-    });
-  }
 
   // Добавляем вкладку декора только для бренда Danapris
   if (brand === "Danapris") {

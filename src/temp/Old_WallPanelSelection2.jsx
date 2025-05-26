@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo, useContext, useRef } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
-import MountingSystemSelection from './MountingSystemSelection';
 
 const { Title } = Typography;
 
@@ -52,16 +51,6 @@ const GET_SUBORDER_PRODUCT = gql`
         documentId
         title
         brand
-        description
-        guarantee
-        maxSizes {
-          height
-          width
-        }
-        collections {
-          documentId
-        }
-        type
         image {
           documentId
           url
@@ -73,11 +62,6 @@ const GET_SUBORDER_PRODUCT = gql`
         length
         width
         thickness
-        blockHeight
-        blockWidth
-        holeHeight
-        holeWidth
-        type
       }
       decor {
         documentId
@@ -115,7 +99,6 @@ const WallPanelSelection = ({
   const [activeTab, setActiveTab] = useState("1");
   const { translations } = useContext(LanguageContext);
   const { convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
-  const mountingSystemRef = useRef(null);
 
   // Состояние для лицевой стороны декора
   const [selectedFrontDecorType, setSelectedFrontDecorType] = useState(null);
@@ -253,8 +236,7 @@ const WallPanelSelection = ({
 
   // Эффект для расчета площади в квадратных метрах
   useEffect(() => {
-    // const area = (sizes.height * sizes.width) / 1000000;
-    const area = parseFloat(((sizes.height * sizes.width) / 1000000).toFixed(2))
+    const area = (sizes.height * sizes.width) / 1000000;
     setSquareMeters(area);
   }, [sizes.height, sizes.width]);
 
@@ -329,15 +311,9 @@ const WallPanelSelection = ({
           // productData.customProductCostNetto = customProductCostNetto;
           productData.customProductCostNetto = convertToEUR(parseFloat(customProductCostNetto));
         }
-
         if (isAmountEnabled) {
           productData.amount = amount;
         }
-      }
-
-      // Сохранить mounting system если brand !== "Danapris"
-      if (mountingSystemRef.current) {
-        await mountingSystemRef.current.saveMountingSystem();
       }
 
       if (productId) {
@@ -507,27 +483,6 @@ const WallPanelSelection = ({
       )
     }
   ];
-
-  if (brand !== "Danapris") {
-    // Вставить новую вкладку mounting system после sizes
-    items.splice(2, 0, {
-      key: "3",
-      label: "Mounting System",
-      disabled: !selectedProduct,
-      children: (
-        <Card>
-          <MountingSystemSelection
-            ref={mountingSystemRef}
-            suborderId={suborderId}
-            selectedProduct={selectedProduct}
-            onMountingSystemChange={() => {
-              // Обновить данные если нужно
-            }}
-          />
-        </Card>
-      )
-    });
-  }
 
   // Добавляем вкладку декора только для бренда Danapris
   if (brand === "Danapris") {

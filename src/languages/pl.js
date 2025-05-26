@@ -162,6 +162,8 @@ const pl = {
   latch: 'Zatrzask',
   frameTreshold: "Próg dla ramki",
   treshold: "Próg",
+  customProductCostNetto: 'Koszt indywidualny',
+  mountingSystem: 'System montażowy',
 
   // MESSAGES
   success: "Sukces",
