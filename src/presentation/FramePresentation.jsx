@@ -3,8 +3,10 @@ import React, { useContext } from "react";
 import { Descriptions, Divider } from "antd";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
+import DecorPresentation from "./DecorPresentation";
 
-const FramePresentation = ({ suborder }) => {
+
+const FramePresentation = ({ suborder, getColorFromCode }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
@@ -39,8 +41,11 @@ const FramePresentation = ({ suborder }) => {
           <>
             <Descriptions.Item label={translations.frame}>
               {/* {translations[frameProduct.product?.title] || frameProduct.product?.title || '-'} */}
-               {(translations[frameProduct.product?.title])} {hasTreshold && ` + ${translations.treshold}`}
+               {(translations[frameProduct.product?.title])} 
+               {hasTreshold && ` + ${translations.treshold}`}
+               {frameProduct.framePainting && ` + ${translations.framePainting}`}
             </Descriptions.Item>
+      
             <Descriptions.Item label={translations.priceNetto}>
               {/* {formatPrice(frameProduct.productCostNetto)} */}
             <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(frameProduct.productCostNetto)} </div>
@@ -57,7 +62,6 @@ const FramePresentation = ({ suborder }) => {
                 </Descriptions.Item>
               </>
             )} */}
-            
           </>
         )}
 
@@ -77,6 +81,15 @@ const FramePresentation = ({ suborder }) => {
           </>
         )}
       </Descriptions>
+
+      {/* Декор продукта */}
+      {(frameProduct.decor_type || frameProduct.colorCode) && (
+        <DecorPresentation
+          product={frameProduct}
+          isFrontSide={true}
+          getColorFromCode={getColorFromCode}
+        />
+      )}
     </div>
   );
 };

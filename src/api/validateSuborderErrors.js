@@ -23,6 +23,12 @@ export const validateSuborderProducts = async (client, documentId) => {
                 type
               }
               product {
+                compatibleHiddenFrames {
+                  documentId
+                }
+                compatibleSimpleFrames {
+                  documentId
+                }
                 title
                 type
                 documentId
@@ -70,7 +76,7 @@ export const validateSuborderProducts = async (client, documentId) => {
           documentId: productId,
           decorType: product.decor_type?.typeName,
           secondSideDecorType: product.secondSideDecorType?.typeName,
-          collections: product.product.collections
+          collections: product.product.collections, 
         };
         doorProduct = products[productType];
       } else if (productType === "option") {
@@ -184,34 +190,75 @@ export const validateSuborderProducts = async (client, documentId) => {
     errors.optionError = hasIncompatibleOption ? true : null;
 
     // 6. Проверяем совместимость рамы с коллекцией двери
-    if (products.frame && doorProduct.collections && doorProduct.collections.length > 0) {
-      const { data: frameData } = await client.query({
-        query: gql`
-          query Products($documentId: ID!) {
-            product(documentId: $documentId) {
-              collections {
-                documentId
-                title
+    // if (products.frame && doorProduct.collections && doorProduct.collections.length > 0) {
+    //   const { data: frameData } = await client.query({
+    //     query: gql`
+    //       query Products($documentId: ID!) {
+    //         product(documentId: $documentId) {
+    //           collections {
+    //             documentId
+    //             title
+    //           }
+    //         }
+    //       }
+    //     `,
+    //     variables: {
+    //       documentId: products.frame.documentId
+    //     }
+    //   });
+
+    //   const frameCollections = frameData.product.collections || [];
+    //   // если у рамы нет коллекций - ошибки нет
+    //   if (frameCollections.length === 0) {
+    //     errors.frameError = null;
+    //   } else {
+    //     const frameCollectionIds = frameCollections.map(c => c.documentId);
+    //     // Проверяем, есть ли хотя бы одна общая коллекция
+    //     const hasMatchingCollection = doorProduct.collections.some(
+    //       doorCollection => frameCollectionIds.includes(doorCollection.documentId)
+    //     );
+    //     errors.frameError = !hasMatchingCollection ? true : null;
+    //   }
+    // }
+
+    // 6. Проверяем совместимость рамы с дверью
+    if (products.frame && doorProduct) {
+      const currentType = localStorage.getItem('currentType');
+      let compatibilityField;
+
+      if (currentType === "hiddenDoor") {
+        compatibilityField = "compatibleHiddenFrames";
+      } else if (currentType === "door" || currentType === "slidingDoor") {
+        compatibilityField = "compatibleSimpleFrames";
+      }
+      
+      if (compatibilityField) {
+        const { data: frameData } = await client.query({
+          query: gql`
+            query Products($documentId: ID!) {
+              product(documentId: $documentId) {
+                ${compatibilityField} {
+                  documentId
+                }
               }
             }
+          `,
+          variables: {
+            documentId: products.frame.documentId
           }
-        `,
-        variables: {
-          documentId: products.frame.documentId
-        }
-      });
+        });
 
-      const frameCollections = frameData.product.collections || [];
-      // если у рамы нет коллекций - ошибки нет
-      if (frameCollections.length === 0) {
-        errors.frameError = null;
-      } else {
-        const frameCollectionIds = frameCollections.map(c => c.documentId);
-        // Проверяем, есть ли хотя бы одна общая коллекция
-        const hasMatchingCollection = doorProduct.collections.some(
-          doorCollection => frameCollectionIds.includes(doorCollection.documentId)
+        const compatibleFrames = frameData.product[compatibilityField] || [];
+        
+        // Проверяем, есть ли дверь в списке совместимых рам
+        const isDoorCompatible = compatibleFrames.some(
+          frame => frame.documentId === doorProduct.documentId
         );
-        errors.frameError = !hasMatchingCollection ? true : null;
+        
+        errors.frameError = !isDoorCompatible ? true : null;
+      } else {
+        // Если тип двери не определен, считаем что ошибки нет
+        errors.frameError = null;
       }
     }
 

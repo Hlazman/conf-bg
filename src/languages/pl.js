@@ -164,6 +164,7 @@ const pl = {
   treshold: "Próg",
   customProductCostNetto: 'Koszt indywidualny',
   mountingSystem: 'System montażowy',
+  framePainting: 'Malowanie ramy jak drzwi',
 
   // MESSAGES
   success: "Sukces",

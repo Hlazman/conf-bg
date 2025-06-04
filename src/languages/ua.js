@@ -164,6 +164,7 @@ const ua = {
   treshold: "Поріг",
   customProductCostNetto: 'Індивідуальна вартість',
   mountingSystem: 'Система кріплення',
+  framePainting: 'Фарбування рами як у дверей',
 
   // MESSAGES
   success: "Успіх",

@@ -170,7 +170,11 @@ const ClientPresentation = ({ orderData, companyData }) => {
                 <InsertionPresentation suborder={suborder} />
               ) : null}
 
-              <FramePresentation suborder={suborder} />
+              {/* <FramePresentation suborder={suborder} /> */}
+              <FramePresentation 
+                suborder={suborder} 
+                getColorFromCode={getColorFromCode}
+              />
 
               <ElementPresentation
               suborder={suborder}

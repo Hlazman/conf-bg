@@ -15,7 +15,7 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
   
   // Проверяем, есть ли decorType и (decor ИЛИ colorCode для типов Paint)
   if (!decorType || (!decor && !colorCode)) return null;
-  
+    
   const isPaintType = decorType && ['Paint', 'Paint glass', 'Paint veneer'].includes(decorType.typeName);
   const title = customTitle || (isFrontSide ? translations.decorFront : translations.decorBack);
   

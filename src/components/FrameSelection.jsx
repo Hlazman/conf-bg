@@ -1,32 +1,40 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Spin, Empty, Button, message, Divider, Typography } from "antd";
+import { Card, Row, Col, Spin, Empty, Button, message, Divider, Typography, Checkbox, Tabs } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
+import DecorSelection from './DecorSelection';
 
 const { Title  } = Typography;
 
 const GET_FRAMES = gql`
-query GetFrames($filters: ProductFiltersInput, $pagination: PaginationArg) {
-  products(filters: $filters, pagination: $pagination) {
-    documentId
-    title
-    type
-    image { 
-      url 
-    }
-    collections { 
-    documentId
-    title 
+  query GetFrames($filters: ProductFiltersInput, $pagination: PaginationArg) {
+    products(filters: $filters, pagination: $pagination) {
+      documentId
+      title
+      type
+      image {
+        url
+      }
+      compatibleHiddenFrames {
+        documentId
+      }
+      compatibleSimpleFrames {
+        documentId
+      }
+      collections {
+        documentId
+        title
+      }
     }
   }
-}`;
-
+`;
 
 // Мутация для создания SuborderProduct
 const CREATE_SUBORDER_PRODUCT = gql`
 mutation CreateSuborderProduct($data: SuborderProductInput!) {
   createSuborderProduct(data: $data) {
     documentId
+    framePainting
   }
 }`;
 
@@ -35,6 +43,7 @@ const UPDATE_SUBORDER_PRODUCT = gql`
 mutation UpdateSuborderProduct($documentId: ID!, $data: SuborderProductInput!) {
   updateSuborderProduct(documentId: $documentId, data: $data) {
     documentId
+    framePainting
   }
 }`;
 
@@ -43,7 +52,32 @@ const GET_SUBORDER_PRODUCT = gql`
 query GetSuborderProduct($filters: SuborderProductFiltersInput) {
   suborderProducts(filters: $filters) {
     documentId
+    framePainting
+    decor {
+      documentId
+      title
+    }
+    decor_type {
+      documentId
+      typeName
+    }
+    secondSideDecor {
+      documentId
+      title
+    }
+    secondSideDecorType {
+      documentId
+      typeName
+    }
+    colorCode
+    secondSideColorCode
     product {
+      compatibleHiddenFrames {
+        documentId
+      }
+      compatibleSimpleFrames {
+        documentId
+      }
       documentId
       title
       brand
@@ -76,9 +110,16 @@ const FrameSelection = ({
   onAfterSubmit
 }) => {
   const [frameProductId, setFrameProductId] = useState(null);
+  const [framePainting, setFramePainting] = useState(false);
   const [saving, setSaving] = useState(false);
   const { translations } = useContext(LanguageContext);
   const doorType = localStorage.getItem('currentType');
+  const [activeTab, setActiveTab] = useState("1");
+
+  // Состояние для лицевой стороны декора
+  const [selectedFrontDecorType, setSelectedFrontDecorType] = useState(null);
+  const [selectedFrontDecor, setSelectedFrontDecor] = useState(null);
+  const [frontColorCode, setFrontColorCode] = useState("");
 
   // Запрос для получения рам
   const { loading, error, data } = useQuery(GET_FRAMES, {
@@ -87,22 +128,31 @@ const FrameSelection = ({
         type: {
           eqi: "frame"
         },
-        collections: doorType === "hiddenDoor" 
-          ? undefined  // Для hiddenDoor не фильтруем по коллекции
-          : collectionId 
-            ? {
+        ...(doorType === "hiddenDoor" 
+          ? {
+              compatibleHiddenFrames: {
                 documentId: {
-                  eq: collectionId
+                  eq: doorId
                 }
-              } 
-            : undefined
+              }
+            }
+          : doorType === "door" 
+          ? {
+              compatibleSimpleFrames: {
+                documentId: {
+                  eq: doorId
+                }
+              }
+            }
+          : {}
+        )
       },
-          pagination: { limit: 20 },
+      pagination: { limit: 20 },
     },
-    skip: doorType !== "hiddenDoor" && !collectionId
+    skip: !doorId || (!doorType)
   });
-  
 
+  
   // Запрос для получения существующего SuborderProduct типа frame
   const { data: frameProductData, loading: loadingFrameProduct, refetch: refetchFrame } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {
@@ -147,23 +197,22 @@ const FrameSelection = ({
       setSaving(false);
     }
   });
-  
-  // Получаем рамы из результатов запроса
+
   const frames = useMemo(() => {
     if (!data?.products) return [];
     
-    // Если тип двери hiddenDoor, фильтруем рамы без коллекций
-    if (doorType === "hiddenDoor") {
-      return data.products.filter(frame => 
-        !frame.collections || frame.collections.length === 0
-      );
-    }
-    
-    // Для других типов дверей возвращаем все полученные рамы
+    // Теперь все рамы уже отфильтрованы на уровне запроса
     return data.products;
-  }, [data, doorType]);
+  }, [data]);
 
-
+  // Функция для определения типов декора, для которых нужно показывать ColorPicker
+  const isPaintType = (typeName) => {
+    return typeName && (
+      typeName === "Paint" ||
+      typeName === "Paint glass" ||
+      typeName === "Paint veneer"
+    );
+  };
 
   // Эффект для загрузки данных при изменении frames
   useEffect(() => {
@@ -171,6 +220,20 @@ const FrameSelection = ({
       if (frameProductData.suborderProducts && frameProductData.suborderProducts.length > 0) {
         const frameProduct = frameProductData.suborderProducts[0];
         setFrameProductId(frameProduct.documentId);
+
+        // Загружаем значение framePainting
+        setFramePainting(frameProduct.framePainting || false);
+
+        // Устанавливаем декор и тип декора для лицевой стороны
+        if (frameProduct.decor_type) {
+          setSelectedFrontDecorType(frameProduct.decor_type);
+        }
+        if (frameProduct.decor) {
+          setSelectedFrontDecor(frameProduct.decor);
+        }
+        if (frameProduct.colorCode) {
+          setFrontColorCode(frameProduct.colorCode);
+        }
         
         // Если есть продукт и пользователь еще не выбрал раму, устанавливаем её
         if (frameProduct.product && !selectedFrame) {
@@ -184,6 +247,25 @@ const FrameSelection = ({
       }
     }
   }, [frames, frameProductData, loadingFrameProduct, onFrameSelect, selectedFrame]);
+
+  // Эффект для сброса декора при выборе покраски
+  useEffect(() => {
+    if (framePainting) {
+      // Сбрасываем выбранный декор при включении покраски
+      setSelectedFrontDecorType(null);
+      setSelectedFrontDecor(null);
+      setFrontColorCode("");
+    }
+  }, [framePainting]);
+
+  // Эффект для сброса покраски при выборе декора
+  useEffect(() => {
+    if (selectedFrontDecor || selectedFrontDecorType) {
+      // Сбрасываем покраску при выборе декора
+      setFramePainting(false);
+    }
+  }, [selectedFrontDecor, selectedFrontDecorType]);
+
 
   // Функция сохранения выбранной рамы и порога
   const handleSave = async () => {
@@ -200,7 +282,15 @@ const FrameSelection = ({
         const frameData = {
           suborder: suborderId,
           product: selectedFrame.documentId,
-          type: "frame"
+          type: "frame",
+          framePainting: framePainting, // Добавляем поле framePainting
+          // Если выбрана покраска, устанавливаем декор в null
+          decor: framePainting ? null : (selectedFrontDecor ? selectedFrontDecor.documentId : null),
+          decor_type: framePainting ? null : (selectedFrontDecorType ? selectedFrontDecorType.documentId : null),
+          colorCode: framePainting ? null : (isPaintType(selectedFrontDecorType?.typeName) ? frontColorCode : null),
+          // decor: selectedFrontDecor ? selectedFrontDecor.documentId : null,
+          // decor_type: selectedFrontDecorType ? selectedFrontDecorType.documentId : null,
+          // colorCode: isPaintType(selectedFrontDecorType?.typeName) ? frontColorCode : null,
         };
 
         if (frameProductId) {
@@ -241,45 +331,116 @@ const FrameSelection = ({
   if (error) return <Empty description={translations.loadError} />;
   if (frames.length === 0) return <Empty description={translations.noData} />;
 
+  const items = [
+    {
+      key: "1",
+      label: translations.frame,
+      children: (
+        <div>
+
+          {selectedFrame && (
+            <div style={{ margin: "20px 0" }}>
+              <Checkbox 
+                checked={framePainting}
+                onChange={(e) => setFramePainting(e.target.checked)}
+              >
+                {translations.framePainting || "Покраска рамы"}
+              </Checkbox>
+            </div>
+          )}
+
+          <Row gutter={[16, 16]}>
+            {frames.map(frame => (
+              <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>
+                <Card
+                  hoverable
+                  style={{ 
+                    borderColor: selectedFrame?.documentId === frame.documentId ? '#1890ff' : undefined,
+                    borderWidth: selectedFrame?.documentId === frame.documentId ? '2px' : '1px'
+                  }}
+                  styles={{ body: { padding: '12px' } }}
+                  onClick={() => onFrameSelect(frame)}
+                >
+                  <Card.Meta 
+                    title={
+                      <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '20px' }}>
+                        {translations[frame.title]}
+                      </Title >
+                    }
+                  />           
+                </Card>
+              </Col>
+            ))}
+          </Row>
+          
+          {/* {selectedFrame && (
+            <div style={{ marginTop: 16 }}>
+              <Checkbox 
+                checked={framePainting}
+                onChange={(e) => setFramePainting(e.target.checked)}
+              >
+                {translations.framePainting || "Покраска рамы"}
+              </Checkbox>
+            </div>
+          )} */}
+        </div>
+      )
+    },
+    {
+      key: "2",
+      label: (
+        <span>
+          {translations.decorFront}
+          <span style={{ color: '#00A651' }}>
+            {selectedFrontDecorType ? ` - ${selectedFrontDecorType.typeName}` : ""}
+            {selectedFrontDecor ? ` - ${selectedFrontDecor.title}` : ""}
+            {selectedFrontDecorType && isPaintType(selectedFrontDecorType.typeName) && frontColorCode ? ` - ${frontColorCode}` : ""}
+          </span>
+        </span>
+      ),
+      disabled: !selectedFrame || framePainting, // Отключаем вкладку если выбрана покраска
+      children: (
+        <DecorSelection
+          doorId={selectedFrame?.documentId}
+          selectedDecorType={selectedFrontDecorType}
+          selectedDecor={selectedFrontDecor}
+          colorCode={frontColorCode}
+          onDecorTypeSelect={setSelectedFrontDecorType}
+          onDecorSelect={setSelectedFrontDecor}
+          onColorChange={setFrontColorCode}
+          isFrontSide={true}
+          suborderId={suborderId}
+          productType="frame"
+        />
+      )
+    }
+  ];
+
   return (
     <div>
       <Divider orientation="left">{translations.frame}</Divider> 
-       <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
+
+      <div style={{ marginBottom: 32, marginTop: -45, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
         <Button 
           type="primary" 
           onClick={handleSave}
           loading={saving}
           disabled={!selectedFrame}
-          style={!frameProductId? {} : { backgroundColor: '#52C41A' }}
+          style={{
+            ...{ marginRight: 8 },
+            ...(!frameProductId ? {} : { backgroundColor: '#52C41A' })
+          }}
         >
-          {frameProductId? translations.update : translations.save}
+          {frameProductId ? translations.update : translations.save}
         </Button>
+        
       </div>
 
-      <Row gutter={[16, 16]}>
-        {frames.map(frame => (
-          <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>
-            <Card
-              hoverable
-              style={{ 
-                borderColor: selectedFrame?.documentId === frame.documentId ? '#1890ff' : undefined,
-                borderWidth: selectedFrame?.documentId === frame.documentId ? '2px' : '1px'
-              }}
-              styles={{ body: { padding: '12px' } }}
-              onClick={() => onFrameSelect(frame)}
-            >
-              {/* <Card.Meta title={translations[frame.title]} /> */}
-              <Card.Meta 
-                title={
-                  <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '20px' }}>
-                    {translations[frame.title]}
-                  </Title >
-                }
-              />           
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={items}
+      />
     </div>
   );
 };

@@ -15,6 +15,12 @@ query Suborder($documentId: ID!, $pagination: PaginationArg) {
         typeName
       }
       product {
+        compatibleHiddenFrames {
+          documentId
+        }
+        compatibleSimpleFrames {
+          documentId
+        }
         documentId
         title
         brand

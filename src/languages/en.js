@@ -164,6 +164,7 @@ const en = {
   treshold: "Treshold",
   customProductCostNetto: 'Individual cost',
   mountingSystem: 'Mounting System',
+  framePainting: 'Painting the frame like the doors',
 
   // MESSAGES
   success: "Success", 
