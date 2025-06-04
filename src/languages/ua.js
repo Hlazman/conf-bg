@@ -121,7 +121,9 @@ const ua = {
   thresholdInsert: 'Вставка порога',
   doorSeal: 'Ущільнювач дверей',
   black: 'чорний',
+  brown: 'коричневий',
   grey: 'сірий',
+  white: 'білий',
   door: 'Двері',
   remove: 'видалити',
   removed: 'видалено',
@@ -167,6 +169,7 @@ const ua = {
   framePainting: 'Фарбування рами як у дверей',
 
   // MESSAGES
+  doorSealRequired: 'Оберіть ущільнювач дверей ',
   success: "Успіх",
   loading: "Завантаження даних...",
   firstDoor: 'Спочатку виберіть двері',

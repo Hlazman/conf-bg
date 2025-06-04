@@ -364,7 +364,8 @@ const items = [
           collectionId={selectedDoor?.collections?.[0]?.documentId}
           selectedHinge={selectedHinge}
           onHingeSelect={handleHingeSelect}
-          onAfterSubmit={updateFormattedTitles} 
+          onAfterSubmit={updateFormattedTitles}
+          doorId={selectedDoor?.documentId}
         />
       )
     },

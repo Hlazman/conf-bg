@@ -121,7 +121,9 @@ const pl = {
   thresholdInsert: 'Wkładka progu',
   doorSeal: 'Uszczelka drzwiowa',
   black: 'czarny',
+  brown: 'brązowy',
   grey: 'szary',
+  white: 'biały',
   door: 'Drzwi',
   remove: 'usuń',
   removed: 'usunięto',
@@ -167,6 +169,7 @@ const pl = {
   framePainting: 'Malowanie ramy jak drzwi',
 
   // MESSAGES
+  doorSealRequired: 'Wybierać uszczelka drzwiowa ',
   success: "Sukces",
   loading: "Ładowanie danych...",
   firstDoor: 'Najpierw wybierz drzwi',

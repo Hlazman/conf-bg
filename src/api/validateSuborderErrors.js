@@ -29,6 +29,12 @@ export const validateSuborderProducts = async (client, documentId) => {
                 compatibleSimpleFrames {
                   documentId
                 }
+                compatibleHiddenHinges { 
+                  documentId
+                }
+                compatibleSimpleHinges { 
+                  documentId
+                }
                 title
                 type
                 documentId
@@ -235,16 +241,17 @@ export const validateSuborderProducts = async (client, documentId) => {
       if (compatibilityField) {
         const { data: frameData } = await client.query({
           query: gql`
-            query Products($documentId: ID!) {
+            query Products($documentId: ID!, $pagination: PaginationArg) {
               product(documentId: $documentId) {
-                ${compatibilityField} {
+                ${compatibilityField}(pagination: $pagination) {
                   documentId
                 }
               }
             }
           `,
           variables: {
-            documentId: products.frame.documentId
+            documentId: products.frame.documentId,
+            pagination: { limit: 200 }
           }
         });
 

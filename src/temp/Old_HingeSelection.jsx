@@ -16,12 +16,6 @@ const GET_HINGES = gql`
         documentId
         title
       }
-      compatibleHiddenHinges { 
-        documentId
-      }
-      compatibleSimpleHinges { 
-        documentId
-      }
     }
   }
 `;
@@ -59,24 +53,16 @@ const GET_SUBORDER_PRODUCT = gql`
         documentId
         title 
       }
-      compatibleHiddenHinges { 
-        documentId
-      }
-      compatibleSimpleHinges { 
-        documentId
-      }
-      compatibleHiddenFrames {
-        documentId
-      }
-      compatibleSimpleFrames {
-        documentId
-      }
-      guarantee
-      brand
-      title
-      image {
-        url
-        documentId
+        guarantee
+        brand
+        title
+        image {
+          url
+          documentId
+        }
+        collections {
+          documentId
+          title
         }
       }
       type
@@ -93,44 +79,35 @@ const GET_SUBORDER = gql`
   }
 `;
 
-const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect, onAfterSubmit, doorId }) => {
+const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect, onAfterSubmit }) => {
   const [hingeProductId, setHingeProductId] = useState(null);
   const [hingeAmount, setHingeAmount] = useState(0);
   const [saving, setSaving] = useState(false);
   const doorType = localStorage.getItem('currentType');
   const { translations } = useContext(LanguageContext);
 
-  const { loading, error, data } = useQuery(GET_HINGES, {
-      variables: {
-        filters: {
-          type: {
-            eqi: "hinge"
-          },
-          ...(doorType === "hiddenDoor"
-            ? { // Фильтруем по compatibleHiddenHinges, если doorType - hiddenDoor
-                compatibleHiddenHinges: {
-                  documentId: {
-                    eq: doorId // Используем doorId
-                  }
-                }
-              }
-            : doorType === "door"
-            ? { // Фильтруем по compatibleSimpleHinges, если doorType - door
-                compatibleSimpleHinges: {
-                  documentId: {
-                    eq: doorId // Используем doorId
-                  }
-                }
-              }
-            : {}
-          )
+const { loading, error, data } = useQuery(GET_HINGES, {
+    variables: {
+      filters: {
+        type: {
+          eqi: "hinge"
         },
-        pagination: {
-          limit: 100
-        }
+        collections: doorType === "hiddenDoor"
+          ? undefined // Для hiddenDoor не фильтруем по коллекции
+          : collectionId
+            ? {
+                documentId: {
+                  eq: collectionId
+                }
+              }
+            : undefined
       },
-      skip: !doorId // Пропускаем запрос, если doorId недоступен
-    });
+      pagination: {
+        limit: 30
+      }
+    },
+    skip: doorType !== "hiddenDoor" && !collectionId
+  });
   
   const { data: hingeProductData, loading: loadingHingeProduct, refetch: refetchHinge } = useQuery(GET_SUBORDER_PRODUCT, {
     variables: {

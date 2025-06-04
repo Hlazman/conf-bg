@@ -101,7 +101,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
   const [handleCutout, setHandleCutout] = useState(false);
   const [boltCutout, setBoltCutout] = useState(false);
   const [thresholdCutout, setThresholdCutout] = useState(false);
-  const [doorSeal, setDoorSeal] = useState("none");
+  // const [doorSeal, setDoorSeal] = useState("none");
+  const [doorSeal, setDoorSeal] = useState();
   const [lockCutout, setLockCutout] = useState(false);
 
   // Дополнительные размеры для стены
@@ -184,7 +185,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       setLockCutout(suborderProduct.lockInsertion || false);
       setBoltCutout(suborderProduct.spindleInsertion || false);
       setThresholdCutout(suborderProduct.thresholdInsertion || false);
-      setDoorSeal(suborderProduct.doorSeal || "none");
+      // setDoorSeal(suborderProduct.doorSeal || "none");
+      setDoorSeal(suborderProduct.doorSeal);
       setFrameTreshold(suborderProduct.frameTreshold || false); // frameTreshold
     }
   }, [suborderProductData, loadingSuborderProduct]);
@@ -350,12 +352,18 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       message.error(translations.enterThickness);
       return;
     }
+
+    if (!doorSeal) {
+      message.error(translations.doorSealRequired);
+      return;
+    }
     
     setSaving(true);
 
     const parameterData = {
       amount: doorQuantity,
-      doorSeal: doorSeal !== "none" ? doorSeal : null,
+      // doorSeal: doorSeal !== "none" ? doorSeal : null,
+      doorSeal: doorSeal,
       knobInsertion: handleCutout,
       lockInsertion: lockCutout,
       spindleInsertion: boltCutout,
@@ -678,15 +686,15 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
         </Row>
         <Row style={{ marginTop: 16 }}>
           <Col span={8}>
-            <Form.Item label={translations.doorSeal}>
+            <Form.Item label={translations.doorSeal} required>
               <Select
                 value={doorSeal}
                 onChange={setDoorSeal}
                 style={{ width: "100%" }}
               >
-                <Option value="none">{translations.no}</Option>
+                <Option value="brown">{translations.brown}</Option>
                 <Option value="black">{translations.black}</Option>
-                <Option value="grey">{translations.grey}</Option>
+                <Option value="white">{translations.white}</Option>
               </Select>
             </Form.Item>
           </Col>

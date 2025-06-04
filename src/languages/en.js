@@ -121,7 +121,9 @@ const en = {
   thresholdInsert: 'Threshold insert',
   doorSeal: 'Door seal',
   black: 'black',
+  brown: 'brown',
   grey: 'grey',
+  white: 'white',
   door: 'Door',
   remove: 'remove',
   removed: 'removed',
@@ -167,6 +169,7 @@ const en = {
   framePainting: 'Painting the frame like the doors',
 
   // MESSAGES
+  doorSealRequired: 'Сhoose door seal',
   success: "Success", 
   loading: "Loading data...",
   firstDoor: 'First, choose a door',
