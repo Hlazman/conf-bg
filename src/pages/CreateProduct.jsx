@@ -221,7 +221,8 @@ const items = [
         productType="extender"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
-        onAfterSubmit={updateFormattedTitles} 
+        onAfterSubmit={updateFormattedTitles}
+        isBackDecorDisabled={true}
       />
     )
   },
@@ -236,7 +237,8 @@ const items = [
         productType="platband"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
-        onAfterSubmit={updateFormattedTitles} 
+        onAfterSubmit={updateFormattedTitles}
+        isBackDecorDisabled={false} 
       />
     )
   },
@@ -251,7 +253,8 @@ const items = [
         productType="platbandThread"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
-        onAfterSubmit={updateFormattedTitles} 
+        onAfterSubmit={updateFormattedTitles}
+        isBackDecorDisabled={false} 
       />
     )
   },
@@ -266,7 +269,8 @@ const items = [
         productType="platbandFront"
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
-        onAfterSubmit={updateFormattedTitles} 
+        onAfterSubmit={updateFormattedTitles}
+        isBackDecorDisabled={true} 
       />
     )
   },
@@ -282,6 +286,7 @@ const items = [
         availableSizes={{ width: true, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
+        isBackDecorDisabled={true}
       />
     )
   },
@@ -297,6 +302,7 @@ const items = [
         availableSizes={{ width: false, height: true, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
+        isBackDecorDisabled={true}
       />
     )
   },
@@ -312,6 +318,7 @@ const items = [
         availableSizes={{ width: false, height: false, length: true, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
+        isBackDecorDisabled={true}
       />
     )
   },
@@ -327,6 +334,7 @@ const items = [
         availableSizes={{ width: false, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
+        isBackDecorDisabled={true}
       />
     )
   },
@@ -342,6 +350,7 @@ const items = [
         availableSizes={{ width: false, height: false, length: false, thickness: false }}
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles} 
+        isBackDecorDisabled={true}
       />
     )
   },

@@ -107,7 +107,8 @@ const ElementSelection = ({
   productType, // тип продукта (extender, и т.д.)
   availableSizes = { height: true, length: true, width: true, thickness: true }, // какие размеры доступны
   defaultSizes = { height: 0, length: 0, width: 100, thickness: 0 }, // значения по умолчанию
-  onAfterSubmit
+  onAfterSubmit,
+  isBackDecorDisabled
 }) => {
   const [productId, setProductId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -527,7 +528,7 @@ const ElementSelection = ({
           </span>
         </span>
       ),
-      disabled: !selectedProduct,
+      disabled: !selectedProduct || isBackDecorDisabled,
       children: (
         <DecorSelection
           doorId={selectedProduct?.documentId}

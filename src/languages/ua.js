@@ -139,7 +139,7 @@ const ua = {
   collection: 'Колекція',
   wall: 'Стіна',
   guarantee: 'Гарантія',
-  years: 'років',
+  years: 'р.',
   direction: 'Direction',
   description: 'Опис',
   information: 'Інформація',

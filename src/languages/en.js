@@ -139,7 +139,7 @@ const en = {
   collection: 'Collection',
   wall: 'Wall',
   guarantee: 'Guarantee',
-  years: 'years',
+  years: 'yr.',
   direction: 'Direction',
   description: 'Description',
   information: 'Information',

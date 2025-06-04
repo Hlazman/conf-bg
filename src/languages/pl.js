@@ -139,7 +139,7 @@ const pl = {
   collection: 'Kolekcja',
   wall: 'Ściana',
   guarantee: 'Gwarancja',
-  years: 'lat',
+  years: 'l.',
   direction: 'напрямок',
   description: 'Opis',
   information: 'informacja',
