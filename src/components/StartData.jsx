@@ -27,6 +27,7 @@ const GET_SUBORDER = gql`
 const StartData = ({ onDataChange, suborderId, onAfterSubmit }) => {
   const [form] = Form.useForm();
   const { translations } = useContext(LanguageContext);
+  const doorType = localStorage.getItem('currentType');
   
   // Стартовые данные с измененными значениями по умолчанию
   const [isDoubleDoor, setIsDoubleDoor] = useState(false);
@@ -108,7 +109,12 @@ const StartData = ({ onDataChange, suborderId, onAfterSubmit }) => {
       return;
     }
     
-    if (!doorOpening) {
+    // if (!doorOpening) {
+    //   message.error(`${translations.doorOpening} ${translations.isRequired}`);
+    //   return;
+    // }
+
+    if (doorType !== "slidingDoor" && !doorOpening) {
       message.error(`${translations.doorOpening} ${translations.isRequired}`);
       return;
     }
@@ -167,12 +173,22 @@ const StartData = ({ onDataChange, suborderId, onAfterSubmit }) => {
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <label style={{ marginRight: '16px', color: doorOpening ? 'inherit' : 'red' }}>{translations.doorOpening}:*</label>
+                {/* <label style={{ marginRight: '16px', color: doorOpening ? 'inherit' : 'red' }}>{translations.doorOpening}:*</label> */}
+                <label
+                  style={{
+                    marginRight: '16px',
+                    color: doorType === "slidingDoor" || doorOpening ? 'inherit' : 'red'
+                  }}
+                >
+                  {translations.doorOpening}
+                  {doorType !== "slidingDoor" && ':*'}
+                </label>
                 <Radio.Group
                   value={doorOpening}
                   onChange={handleDoorOpeningChange}
                   optionType="button"
                   buttonStyle="solid"
+                  disabled={doorType === "slidingDoor"}
                 >
                   <Radio.Button value="inside">{translations.inside}</Radio.Button>
                   <Radio.Button value="outside">{translations.outside}</Radio.Button>

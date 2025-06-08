@@ -223,6 +223,7 @@ const items = [
         defaultSizes={{ width: null, height: null, length: null, thickness: null }}
         onAfterSubmit={updateFormattedTitles}
         isBackDecorDisabled={true}
+        selectedFrame={selectedFrame}
       />
     )
   },

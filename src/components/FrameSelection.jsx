@@ -10,6 +10,7 @@ const GET_FRAMES = gql`
   query GetFrames($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
       documentId
+      description
       title
       type
       image {

@@ -235,6 +235,8 @@ const pl = {
   minusHeight: 'Wysokość płótna zostanie odjęta od',
   hingesCount: 'Zalecana liczba zawiasów',
   noNCS: 'Uwaga! Kolorów NCS nie można używać do malowania ramy.',
+  standardPlatbandSize: 'Rozmiar standardowy: 80mm',
+  extenderRecomendedWidth: 'Zalecana szerokość',
 
   //ERRORS
   err: 'Błąd',
@@ -266,6 +268,7 @@ const pl = {
   errAlertHinge: "Zawiasy nie pasują do wybranych drzwi.",
   "2 errors occurred": 'Najpierw wybierz ramkę',
   doorClickAgain: 'Lub kliknij Odśwież ponownie w sekcji Skrzydło drzwiowe drzwi',
+  moveBackProduct: 'Jeśli zmieniłeś ramkę na monoblok i nie usunąłeś zaznaczenia. Musisz wrócić do poprzedniej ramki i usunąć zaznaczenie.',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Próbka powłoki w formacie A4 (RAL/NCS/fornir / w ciągu 14 dni)",
@@ -344,6 +347,12 @@ const pl = {
   "frame type 1 outside Loft": "Ościeżnica typ 1 Loft (na zewnątrz)",
   "frame type 1 outside Neo Classic": "Ościeżnica typ 1 Neo Classic (na zewnątrz)",
   "frame type 1 outside Art Decor": "Ościeżnica typ 1 Art Decor (na zewnątrz)",
+  "frame new type 3 inside Art Decor": "Ościeżnica Monoblok typ 3 rewersyjna (Art Decor)",
+  "frame new type 3 inside Loft": "Ościeżnica Monoblok typ 3 rewersyjna (Loft)",
+  "frame new type 3 inside Neo Classic": "Ościeżnica Monoblok typ 3 rewersyjna (Neo Classic)",
+  "frame new type 1 outside Loft": "Ościeżnica Monoblok typ 1 Loft (na zewnątrz)",
+  "frame new type 1 outside Neo Classic": "Ościeżnica Monoblok typ 1 Neo Classic (na zewnątrz)",
+  "frame new type 1 outside Art Decor": "Ościeżnica Monoblok typ 1 Art Decor (na zewnątrz)",
   "Glass": "Szkło",
   "HPL": "HPL",
   "Metallization": "Metalizacja",

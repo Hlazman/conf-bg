@@ -20,6 +20,8 @@ query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
     maxSizes {
       height
       width
+      minWidth
+      recomendedWidth
     }
   }
 }`;
@@ -53,6 +55,8 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
       maxSizes {
         height
         width
+        minWidth
+        recomendedWidth
       }
       collections { 
         documentId
@@ -108,7 +112,8 @@ const ElementSelection = ({
   availableSizes = { height: true, length: true, width: true, thickness: true }, // какие размеры доступны
   defaultSizes = { height: 0, length: 0, width: 100, thickness: 0 }, // значения по умолчанию
   onAfterSubmit,
-  isBackDecorDisabled
+  isBackDecorDisabled,
+  selectedFrame
 }) => {
   const [productId, setProductId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -133,7 +138,10 @@ const ElementSelection = ({
       filters: {
         compatibleProductss: {
           title: {
-            eqi: selectedDoor?.title
+            // eqi: selectedDoor?.title
+             eqi: productType === "extender"
+            ? selectedFrame?.title
+            : selectedDoor?.title
           }
         },
         type: {
@@ -141,7 +149,8 @@ const ElementSelection = ({
         }
       }
     },
-    skip: !selectedDoor
+    // skip: !selectedDoor
+    skip: !selectedDoor || (productType === "extender" && !selectedFrame)
   });
 
   // Запрос для получения существующего SuborderProduct заданного типа
@@ -393,7 +402,20 @@ const ElementSelection = ({
     }
   };
 
+  const compatibleProducts = useMemo(() => {
+    return productElements.filter(p => p.type?.toLowerCase() === productType.toLowerCase());
+  }, [productElements, productType]);
+
+
   if (loading || loadingProduct) return <Spin size="large" />;
+
+  if (compatibleProducts.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: 32, color: '#999' }}>
+        <Typography.Text>{translations.noData}</Typography.Text>
+      </div>
+    );
+  }
 
   if (error) return <Empty description={`${translations.loadError}: ${error.message}`} />;
 
@@ -405,7 +427,8 @@ const ElementSelection = ({
       children: (
         <Card>
           <Row gutter={[16, 16]}>
-            {productElements.map(product => (
+            {/* {productElements.map(product => ( */}
+            {compatibleProducts.map(product => (
               <Col span={6} key={product.documentId}>
                 <Card
                   hoverable
@@ -428,9 +451,28 @@ const ElementSelection = ({
     {
       key: "2",
       label: translations.sizes,
-      disabled: !selectedProduct,
+      // disabled: !selectedProduct,
+      disabled: !selectedProduct || !(
+        availableSizes.height ||
+        availableSizes.width ||
+        availableSizes.length ||
+        availableSizes.thickness
+      ),
       children: (
         <Card>
+          
+          {productType === "platband" && (
+            <Typography.Paragraph style={{ color: '#888' }}>
+              {translations.standardPlatbandSize}
+            </Typography.Paragraph>
+          )}
+
+          {productType === "extender" && (
+            <Typography.Paragraph style={{ color: '#888' }}>
+              {translations.extenderRecomendedWidth }: {selectedProduct?.maxSizes[0]?.recomendedWidth}
+            </Typography.Paragraph>
+          )}
+
           <Row gutter={[16, 16]}>
             {availableSizes.height && (
               <Col span={6}>
@@ -449,7 +491,8 @@ const ElementSelection = ({
               <Col span={6}>
                 <Title level={5}>{translations.width}</Title>
                 <InputNumber
-                  min={0}
+                  // min={0}
+                  min={selectedProduct?.maxSizes[0]?.minWidth}
                   max={selectedProduct?.maxSizes[0]?.width}
                   value={sizes.width}
                   onChange={(value) => handleSizeChange('width', value)}

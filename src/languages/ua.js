@@ -235,6 +235,8 @@ const ua = {
   minusHeight: 'Від висоти полотна буде віднято',
   hingesCount: 'Рекомендована кількість петель',
   noNCS: 'Зверніть увагу! Колир NCS не може застосовуватись для покраски рами',
+  standardPlatbandSize: 'Стандартний розмір: 80 мм',
+  extenderRecomendedWidth: 'Рекомендована ширина',
 
   //ERRORS
   err: 'Помилка',
@@ -266,6 +268,7 @@ const ua = {
   errAlertHinge: "Петлі не підходять для обраної двері",
   "2 errors occurred": 'Спочатку оберіть раму',
   doorClickAgain: 'Або ще раз натисніть Оновити у розділі Дверне полотно',
+  moveBackProduct: 'Якщо ви змінили раму на моноблок і не прибрали добір. Вам потрібно повернути минулу рами і видалити добір.',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Зразок покриття формату А4 (RAL/NCS/шпон / протягом 14 днів)",
@@ -344,6 +347,12 @@ const ua = {
   "frame type 1 outside Loft": "Рама тип 1 зовнішня (Loft)",
   "frame type 1 outside Neo Classic": "Рама тип 1 зовнішня (Neo Classic)",
   "frame type 1 outside Art Decor": "Рама тип 1 зовнішня (Art Decor)",
+  "frame new type 3 inside Art Decor": "Рама моноблок тип 3 внутрішня (Art Decor)",
+  "frame new type 3 inside Loft": "Рама моноблок тип 3 внутрішня (Loft)",
+  "frame new type 3 inside Neo Classic": "Рама моноблок тип 3 внутрішня (Neo Classic)",
+  "frame new type 1 outside Loft": "Рама моноблок тип 1 зовнішня (Loft)",
+  "frame new type 1 outside Neo Classic": "Рама моноблок тип 1 зовнішня (Neo Classic)",
+  "frame new type 1 outside Art Decor": "Рама моноблок тип 1 зовнішня (Art Decor)",
   "Glass": "Скло",
   "HPL": "HPL",
   "Metallization": "Металізація",

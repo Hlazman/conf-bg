@@ -235,6 +235,8 @@ const en = {
   minusHeight: 'The height of the canvas will be subtracted',
   hingesCount: 'Recommended count for hinges',
   noNCS: 'Pay attention! NCS color cannot be used to paint the frame.',
+  standardPlatbandSize: 'Standard size: 80mm',
+  extenderRecomendedWidth: 'Recommended width',
 
 
   //ERRORS
@@ -267,6 +269,7 @@ const en = {
   errAlertHinge: "The hinges do not fit the selected door.",
   "2 errors occurred": 'First choose a frame',
   doorClickAgain: 'Or click Update again in the Door canvas section Door canvas',
+  moveBackProduct: 'If you changed the frame to a monoblock and did not remove the extender. You need to return the previous frame and remove the extender.',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "A4-format coating sample (RAL/NCS/veneer / within 14 days)",
@@ -345,6 +348,12 @@ const en = {
   "frame type 1 outside Loft": "Frame type 1 outside (Loft)",
   "frame type 1 outside Neo Classic": "Frame type 1 outside (Neo Classic)",
   "frame type 1 outside Art Decor": "Frame type 1 outside (Art Decor)",
+  "frame new type 3 inside Art Decor": "Frame monoblock type 3 inside (Art Decor)",
+  "frame new type 3 inside Loft": "Frame monoblock type 3 inside (Loft)",
+  "frame new type 3 inside Neo Classic": "Frame monoblock type 3 inside (Neo Classic)",
+  "frame new type 1 outside Loft": "Frame monoblock type 1 outside (Loft)",
+  "frame new type 1 outside Neo Classic": "Frame monoblock type 1 outside (Neo Classic)",
+  "frame new type 1 outside Art Decor": "Frame monoblock type 1 outside (Art Decor)",
   "Glass": "Glass",
   "HPL": "HPL",
   "Metallization": "Metallization",

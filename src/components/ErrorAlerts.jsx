@@ -94,7 +94,7 @@ const ErrorAlerts = ({ suborderId, onErrorsUpdate }) => {
     }
     
     if (errors.extenderError) {
-      messages.push(translations.errAlertExtender + " " + translations.doorClickAgain);
+      messages.push(translations.errAlertExtender + " " + translations.doorClickAgain + " " + translations.moveBackProduct);
     }
     
     if (errors.platbandError) {

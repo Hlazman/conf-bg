@@ -161,6 +161,14 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     }
   });
 
+  // Обнуление пройома в стене если doorType равен slidingDoor
+  useEffect(() => {
+    if (doorType === "slidingDoor") {
+      setHoleWidth(0);
+      setHoleHeight(0);
+    }
+  }, [doorType]);
+
   // Объединенная инициализация данных из suborderProduct
   useEffect(() => {
     if (!loadingSuborderProduct && suborderProductData?.suborderProducts?.[0]) {
@@ -224,11 +232,19 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     }
   }, [doorWidth, doorHeight, holeWidth, holeHeight, dimensionType, frameSizes]);
 
-  // Вычисление размеров блока через useMemo
-  const [blockWidth, blockHeight] = useMemo(() => [
-    holeWidth != null ? holeWidth - 24 : -1,
-    holeHeight != null ? holeHeight - 12 : -1
-  ], [holeWidth, holeHeight]);
+  // // Вычисление размеров блока через useMemo
+  const [blockWidth, blockHeight] = useMemo(() => {
+    if (doorType === "slidingDoor") return [0, 0];
+    return [
+      holeWidth != null ? holeWidth - 24 : -1,
+      holeHeight != null ? holeHeight - 12 : -1
+    ];
+  }, [holeWidth, holeHeight, doorType]);
+
+  // const [blockWidth, blockHeight] = useMemo(() => [
+  //   holeWidth != null ? holeWidth - 24 : -1,
+  //   holeHeight != null ? holeHeight - 12 : -1
+  // ], [holeWidth, holeHeight]);
 
   // Функция для обработки изменения frameTreshold
   const handleFrameTresholdChange = (e) => {
@@ -433,8 +449,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                 value={dimensionType}
                 onChange={handleDimensionTypeChange}
               >
-                <Radio value="door">{translations.canvasSize}</Radio>
-                <Radio value="wall">{translations.wallSize}</Radio>
+                <Radio value="door"> {translations.canvasSize} </Radio>
+                <Radio value="wall" disabled={doorType === "slidingDoor"}> {translations.wallSize}</Radio>
               </Radio.Group>
             </Form.Item>
           </Col>
@@ -488,20 +504,26 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                     addonAfter={'mm'}
                     readOnly={false}
                   />
-                  <InputNumber
-                    value={holeHeight}
-                    readOnly
-                    style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.holeHeight}
-                    addonAfter={'mm'}
-                  />
-                  <InputNumber
-                    value={blockHeight}
-                    readOnly
-                    style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.blockHeight}
-                    addonAfter={'mm'}
-                  />
+                  
+                  {doorType !== "slidingDoor" && (
+                    <InputNumber
+                      value={holeHeight}
+                      readOnly
+                      style={{ marginTop: 8, width: "100%" }}
+                      addonBefore={translations.holeHeight}
+                      addonAfter={'mm'}
+                    />
+                  )}
+
+                  {doorType !== "slidingDoor" && (
+                    <InputNumber
+                      value={blockHeight}
+                      readOnly
+                      style={{ marginTop: 8, width: "100%" }}
+                      addonBefore={translations.blockHeight}
+                      addonAfter={'mm'}
+                    />
+                  )}
                 </>
               )}
             </Form.Item>
@@ -556,21 +578,24 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                     addonAfter={'mm'}
                     readOnly={false}
                   />
-                  <InputNumber
-                    value={holeWidth}
-                    readOnly
-                    style={{ marginTop: 8, width: "100%" }}
-                    addonAfter={'mm'}
-                    addonBefore={translations.holeWidth}
-                  />
-
-                  <InputNumber
-                    value={blockWidth}
-                    readOnly
-                    style={{ marginTop: 8, width: "100%" }}
-                    addonBefore={translations.blockWidth}
-                    addonAfter={'mm'}
-                  />
+                  {doorType !== "slidingDoor" && (               
+                    <InputNumber
+                      value={holeWidth}
+                      readOnly
+                      style={{ marginTop: 8, width: "100%" }}
+                      addonAfter={'mm'}
+                      addonBefore={translations.holeWidth}
+                    />
+                  )}
+                  {doorType !== "slidingDoor" && (
+                    <InputNumber
+                      value={blockWidth}
+                      readOnly
+                      style={{ marginTop: 8, width: "100%" }}
+                      addonBefore={translations.blockWidth}
+                      addonAfter={'mm'}
+                    />
+                  )}
                 </>
               )}
             </Form.Item>
@@ -588,17 +613,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
               </Form.Item>
             </Col>
           )}
-          {/* <Col span={8}>
-            <Form.Item label={translations.amount}>
-              <InputNumber
-                min={1}
-                max={100}
-                value={doorQuantity}
-                onChange={setDoorQuantity}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Col> */}
         </Row>
 
         {/* Добавляем чекбокс для frameTreshold */}

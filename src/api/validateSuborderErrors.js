@@ -269,7 +269,29 @@ export const validateSuborderProducts = async (client, documentId) => {
       }
     }
 
-    // 7. Проверяем совместимость петель с дверью
+    // 7. Проверяем, несовместим ли extender с рамой
+    if (products.frame && products.extender) {
+      const { data: frameIncompatibilityData } = await client.query({
+        query: gql`
+          query FrameWithIncompatibilities($documentId: ID!) {
+            product(documentId: $documentId) {
+              incompatibleProducts {
+                documentId
+              }
+            }
+          }
+        `,
+        variables: {
+          documentId: products.frame.documentId
+        }
+      });
+
+      const incompatibleIds = frameIncompatibilityData?.product?.incompatibleProducts?.map(p => p.documentId) || [];
+
+      errors.extenderError = incompatibleIds.includes(products.extender.documentId) ? true : null;
+    }
+
+    // 8. Проверяем совместимость петель с дверью
       if (products.hinge && doorProduct) {
         const currentType = localStorage.getItem('currentType');
         let compatibilityField;
@@ -311,7 +333,7 @@ export const validateSuborderProducts = async (client, documentId) => {
         }
       }
 
-    // 8. Проверяем совместимость декоров
+    // 9. Проверяем совместимость декоров
     if (doorProduct) {
       const { data: decorTypesData } = await client.query({
         query: gql`
@@ -343,7 +365,7 @@ export const validateSuborderProducts = async (client, documentId) => {
       errors.decorError = (!frontDecorTypeValid || !backDecorTypeValid) ? true : null;
     }
 
-    // 9. Проверяем дверные параматре относительно высоты и ширины
+    // 10. Проверяем дверные параматре относительно высоты и ширины
     const doorProducts = suborderData.suborder.suborder_products
     .filter(p => ["door", "hiddenDoor", "slidingDoor"].includes(p?.product?.type));
 
@@ -361,7 +383,7 @@ export const validateSuborderProducts = async (client, documentId) => {
 
     errors.doorParamsError = !allDoorParamsValid ? true : null;
 
-    // 10. Отправляем обновленные ошибки на сервер
+    // 11. Отправляем обновленные ошибки на сервер
     await client.mutate({
       mutation: gql`
         mutation Mutation($documentId: ID!, $data: SuborderInput!) {
