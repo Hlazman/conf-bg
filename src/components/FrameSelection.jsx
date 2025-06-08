@@ -338,7 +338,7 @@ const FrameSelection = ({
       children: (
         <div>
 
-          {selectedFrame && (
+          {/* {selectedFrame && (
             <div style={{ margin: "20px 0" }}>
               <Checkbox 
                 checked={framePainting}
@@ -347,7 +347,7 @@ const FrameSelection = ({
                 {translations.framePainting || "Покраска рамы"}
               </Checkbox>
             </div>
-          )}
+          )} */}
 
           <Row gutter={[16, 16]}>
             {frames.map(frame => (
@@ -411,6 +411,7 @@ const FrameSelection = ({
           isFrontSide={true}
           suborderId={suborderId}
           productType="frame"
+          noNCS = {true}
         />
       )
     }

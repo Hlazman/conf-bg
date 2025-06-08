@@ -143,7 +143,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
         type: { eq: "frame" }
       }
     },
-    skip: !suborderId,
+    // skip: !suborderId,
+    skip: !suborderId || doorType === "slidingDoor",
     fetchPolicy: "network-only"
   });
 
@@ -353,7 +354,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       return;
     }
 
-    if (!doorSeal) {
+    if (doorType !== "slidingDoor" && !doorSeal) {
       message.error(translations.doorSealRequired);
       return;
     }
@@ -587,7 +588,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
               </Form.Item>
             </Col>
           )}
-          <Col span={8}>
+          {/* <Col span={8}>
             <Form.Item label={translations.amount}>
               <InputNumber
                 min={1}
@@ -597,108 +598,107 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                 style={{ width: "100%" }}
               />
             </Form.Item>
-          </Col>
+          </Col> */}
         </Row>
 
         {/* Добавляем чекбокс для frameTreshold */}
-        <Divider orientation="left">{translations.frameTreshold}</Divider>
-        {/* <Form.Item label={translations.frameTreshold || "Порог рамы"}>
-          <Checkbox 
-            checked={frameTreshold}
-            onChange={(e) => handleFrameTresholdChange(e.target.checked)}
-            disabled={
-              selectedDoor?.type === "door" && 
-              !frameProductData?.suborderProducts?.length
-            }
-          />
-        </Form.Item> */}
-          
-        <Form.Item style={{marginBottom: '50px'}} label={translations.treshold}>
-          <Radio.Group
-          buttonStyle="solid"
-            value={frameTreshold} 
-            onChange={handleFrameTresholdChange}
-            disabled={
-              selectedDoor?.type === "door" && 
-              !frameProductData?.suborderProducts?.length
-            }
-          >
-            <Radio.Button value={false}>{translations.no}</Radio.Button>
-            <Radio.Button value={true}>{translations.yes}</Radio.Button>
-          </Radio.Group>
-        </Form.Item>
+        {doorType !== "slidingDoor" && (
+          <>
+            <Divider style={{marginBottom: '25px'}} orientation="left">{translations.frameTreshold}</Divider>          
+            <Form.Item style={{marginBottom: '50px'}} label={translations.treshold}>
+              <Radio.Group
+              buttonStyle="solid"
+                value={frameTreshold} 
+                onChange={handleFrameTresholdChange}
+                // disabled={
+                //   selectedDoor?.type === "door" && 
+                //   !frameProductData?.suborderProducts?.length
+                // }
+              >
+                <Radio.Button value={false}>{translations.no}</Radio.Button>
+                <Radio.Button value={true}>{translations.yes}</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          </>
+        )}
 
         {/* Врезка и уплотнение */}
-        <Divider orientation="left">{translations.tapSeal}</Divider>
-        <Row gutter={[16, 16]}>
-          <Col span={6}>
-            <Form.Item label={translations.handleInsert} style={{ marginBottom: 0 }}>
-              <Radio.Group
-                value={handleCutout}
-                onChange={(e) => setHandleCutout(e.target.value)}
-                optionType="button"
-                buttonStyle="solid"
-              >
-                <Radio.Button value={false}>{translations.no}</Radio.Button>
-                <Radio.Button value={true}>{translations.yes}</Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label={translations.mortiseLock} style={{ marginBottom: 0 }}>
-              <Radio.Group
-                value={lockCutout}
-                onChange={(e) => setLockCutout(e.target.value)}
-                optionType="button"
-                buttonStyle="solid"
-              >
-                <Radio.Button value={false}>{translations.no}</Radio.Button>
-                <Radio.Button value={true}>{translations.yes}</Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label={translations.lbInsert} style={{ marginBottom: 0 }}>
-              <Radio.Group
-                value={boltCutout}
-                onChange={(e) => setBoltCutout(e.target.value)}
-                optionType="button"
-                buttonStyle="solid"
-              >
-                <Radio.Button value={false}>{translations.no}</Radio.Button>
-                <Radio.Button value={true}>{translations.yes}</Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label={translations.thresholdInsert} style={{ marginBottom: 0 }}>
-              <Radio.Group
-                value={thresholdCutout}
-                onChange={(e) => setThresholdCutout(e.target.value)}
-                optionType="button"
-                buttonStyle="solid"
-              >
-                <Radio.Button value={false}>{translations.no}</Radio.Button>
-                <Radio.Button value={true}>{translations.yes}</Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row style={{ marginTop: 16 }}>
-          <Col span={8}>
-            <Form.Item label={translations.doorSeal} required>
-              <Select
-                value={doorSeal}
-                onChange={setDoorSeal}
-                style={{ width: "100%" }}
-              >
-                <Option value="brown">{translations.brown}</Option>
-                <Option value="black">{translations.black}</Option>
-                <Option value="white">{translations.white}</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
+        {doorType !== "slidingDoor" && (
+          <>
+            <Divider style={{marginBottom: '25px'}} orientation="left">{translations.tapSeal}</Divider>
+            <Row gutter={[16, 16]}>
+              <Col span={6}>
+                <Form.Item label={translations.handleInsert} style={{ marginBottom: 0 }}>
+                  <Radio.Group
+                    value={handleCutout}
+                    onChange={(e) => setHandleCutout(e.target.value)}
+                    optionType="button"
+                    buttonStyle="solid"
+                  >
+                    <Radio.Button value={false}>{translations.no}</Radio.Button>
+                    <Radio.Button value={true}>{translations.yes}</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label={translations.mortiseLock} style={{ marginBottom: 0 }}>
+                  <Radio.Group
+                    value={lockCutout}
+                    onChange={(e) => setLockCutout(e.target.value)}
+                    optionType="button"
+                    buttonStyle="solid"
+                  >
+                    <Radio.Button value={false}>{translations.no}</Radio.Button>
+                    <Radio.Button value={true}>{translations.yes}</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label={translations.lbInsert} style={{ marginBottom: 0 }}>
+                  <Radio.Group
+                    value={boltCutout}
+                    onChange={(e) => setBoltCutout(e.target.value)}
+                    optionType="button"
+                    buttonStyle="solid"
+                  >
+                    <Radio.Button value={false}>{translations.no}</Radio.Button>
+                    <Radio.Button value={true}>{translations.yes}</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label={translations.thresholdInsert} style={{ marginBottom: 0 }}>
+                  <Radio.Group
+                    value={thresholdCutout}
+                    onChange={(e) => setThresholdCutout(e.target.value)}
+                    optionType="button"
+                    buttonStyle="solid"
+                  >
+                    <Radio.Button value={false}>{translations.no}</Radio.Button>
+                    <Radio.Button value={true}>{translations.yes}</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row style={{ marginTop: 16 }}>
+              <Col span={8}>
+                <Form.Item label={translations.doorSeal} required>
+                  <Select
+                    value={doorSeal}
+                    onChange={setDoorSeal}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="brown">{translations.brown}</Option>
+                    <Option value="black">{translations.black}</Option>
+                    <Option value="white">{translations.white}</Option>
+                    <Option value="beige">{translations.beige}</Option>
+                    <Option value="grey">{translations.grey}</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+          </>
+        )}
       </Form>
     </div>
   );

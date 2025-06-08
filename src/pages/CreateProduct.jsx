@@ -357,7 +357,7 @@ const items = [
   ...(type !== 'slidingDoor' ? [
     {
       key: '16',
-      label: formatItemLabel(translations.hinge, formattedTitles.hingeSelection),
+      label: formatItemLabel(translations.hinge, formattedTitles.hingeSelection, 'hingeError'),
       children: (
         <HingeSelection 
           suborderId={suborderId}

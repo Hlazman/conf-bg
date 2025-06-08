@@ -11,11 +11,11 @@ import ElementsFactory from "../Factory/ElementsFactory";
 import FrameFactory from "../Factory/FrameFactory";
 import HardwareFactory from "../Factory/HardwareFactory";
 import OptionsFactory from "../Factory/OptionsFactory";
+import TotalPriceFactory from "../Factory/TotalPriceFactory";
 
 
 const FactoryPresentation = ({ orderData }) => {
   const { translations } = useContext(LanguageContext);
-
   // Функция для сохранения в PDF
   const saveToPDF = () => {
     const element = document.getElementById('factory-presentation-content');
@@ -96,6 +96,7 @@ const FactoryPresentation = ({ orderData }) => {
           </div>
         ))}
       </div>
+      <TotalPriceFactory suborders={orderData.suborders}></TotalPriceFactory>
     </div>
   );
 };

@@ -95,6 +95,7 @@ const DecorSelection = ({
   suborderId, // ID подзаказа для сохранения
   productType,
   onAfterSubmit,
+  noNCS,
 }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -534,7 +535,8 @@ const handleSaveDecor = async () => {
                 <div style={{ padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <ColorPicker 
                     value={colorCode} 
-                    onChange={onColorChange} 
+                    onChange={onColorChange}
+                    noNCS={noNCS}
                   />
                 </div>
               ) : (

@@ -6,7 +6,7 @@ import { LanguageContext } from "../context/LanguageContext";
 import { Space, Button} from "antd";
 
 // Компонент для выбора цвета по коду RAL или NCS
-const ColorPicker = ({ value, onChange }) => {
+const ColorPicker = ({ value, onChange, noNCS }) => {
     const [colorCode, setColorCode] = useState(value || "");
     const [colorHex, setColorHex] = useState(null);
     const { translations } = useContext(LanguageContext);
@@ -101,6 +101,7 @@ const ColorPicker = ({ value, onChange }) => {
         </div>
 
         <div style={{ padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          {noNCS && (<p style={{color: '#ff0000', fontWeight: 'bold'}}>{translations.noNCS}</p>)}
           <Input
               value={colorCode}
               onChange={handleChange}

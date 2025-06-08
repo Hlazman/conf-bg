@@ -126,7 +126,7 @@ const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect
           )
         },
         pagination: {
-          limit: 100
+          limit: 200
         }
       },
       skip: !doorId // Пропускаем запрос, если doorId недоступен
@@ -181,19 +181,26 @@ const HingeSelection = ({ suborderId, collectionId, selectedHinge, onHingeSelect
     }
   });
 
-  const hinges = useMemo(() => {
+  // const hinges = useMemo(() => {
+  //   if (!data?.products) return [];
+    
+  //   // Если тип двери hiddenDoor, фильтруем петли без коллекций
+  //   if (doorType === "hiddenDoor") {
+  //     return data.products.filter(hinge =>
+  //       !hinge.collections || hinge.collections.length === 0
+  //     );
+  //   }
+
+  //   // Для других типов дверей возвращаем все полученные петли
+  //   return data.products;
+  // }, [data, doorType]);
+
+
+    const hinges = useMemo(() => {
     if (!data?.products) return [];
     
-    // Если тип двери hiddenDoor, фильтруем петли без коллекций
-    if (doorType === "hiddenDoor") {
-      return data.products.filter(hinge =>
-        !hinge.collections || hinge.collections.length === 0
-      );
-    }
-
-    // Для других типов дверей возвращаем все полученные петли
     return data.products;
-  }, [data, doorType]);
+  }, [data]);
 
   useEffect(() => {
     if (!loadingHingeProduct && hingeProductData && hinges.length > 0) {

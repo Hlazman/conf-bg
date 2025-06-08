@@ -110,7 +110,7 @@ export const validateSuborderProducts = async (client, documentId) => {
       aluminumMoldingError: null,
       decorError: null,
       extenderError: null,
-      frameError: null,
+      hingeError: null,
       optionError: null,
       platbandBackError: null,
       platbandError: null,
@@ -262,14 +262,56 @@ export const validateSuborderProducts = async (client, documentId) => {
           frame => frame.documentId === doorProduct.documentId
         );
         
-        errors.frameError = !isDoorCompatible ? true : null;
+        errors.hingeError = !isDoorCompatible ? true : null;
       } else {
         // Если тип двери не определен, считаем что ошибки нет
-        errors.frameError = null;
+        errors.hingeError = null;
       }
     }
 
-    // 7. Проверяем совместимость декоров
+    // 7. Проверяем совместимость петель с дверью
+      if (products.hinge && doorProduct) {
+        const currentType = localStorage.getItem('currentType');
+        let compatibilityField;
+
+        if (currentType === "hiddenDoor") {
+          compatibilityField = "compatibleHiddenHinges";
+        } else if (currentType === "door" || currentType === "slidingDoor") {
+          compatibilityField = "compatibleSimpleHinges";
+        }
+        
+        if (compatibilityField) {
+          const { data: hingeData } = await client.query({
+            query: gql`
+              query Products($documentId: ID!, $pagination: PaginationArg) {
+                product(documentId: $documentId) {
+                  ${compatibilityField}(pagination: $pagination) {
+                    documentId
+                  }
+                }
+              }
+            `,
+            variables: {
+              documentId: products.hinge.documentId,
+              pagination: { limit: 200 }
+            }
+          });
+
+          const compatibleHinges = hingeData.product[compatibilityField] || [];
+          
+          // Проверяем, есть ли дверь в списке совместимых рам
+          const isDoorCompatible = compatibleHinges.some(
+            hinge => hinge.documentId === doorProduct.documentId
+          );
+          
+          errors.hingeError = !isDoorCompatible ? true : null;
+        } else {
+          // Если тип двери не определен, считаем что ошибки нет
+          errors.hingeError = null;
+        }
+      }
+
+    // 8. Проверяем совместимость декоров
     if (doorProduct) {
       const { data: decorTypesData } = await client.query({
         query: gql`
@@ -301,7 +343,7 @@ export const validateSuborderProducts = async (client, documentId) => {
       errors.decorError = (!frontDecorTypeValid || !backDecorTypeValid) ? true : null;
     }
 
-    // 8. Проверяем дверные параматре относительно высоты и ширины
+    // 9. Проверяем дверные параматре относительно высоты и ширины
     const doorProducts = suborderData.suborder.suborder_products
     .filter(p => ["door", "hiddenDoor", "slidingDoor"].includes(p?.product?.type));
 
@@ -319,7 +361,7 @@ export const validateSuborderProducts = async (client, documentId) => {
 
     errors.doorParamsError = !allDoorParamsValid ? true : null;
 
-    // 9. Отправляем обновленные ошибки на сервер
+    // 10. Отправляем обновленные ошибки на сервер
     await client.mutate({
       mutation: gql`
         mutation Mutation($documentId: ID!, $data: SuborderInput!) {

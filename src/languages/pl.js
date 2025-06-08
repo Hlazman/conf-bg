@@ -58,7 +58,7 @@ const pl = {
   editAgent: "Edytuj agenta",
   doorCanvas: "Skrzydło drzwiowe",
   doorParameters: "Parametry drzwi",
-  decorFront: "Dekor (strona przednia)",
+  decorFront: "Dekor",
   decorBack: "Dekor (strona tylna)",
   slidingFrame: "System przesuwny",
   frame: "Ościeżnica",
@@ -100,6 +100,7 @@ const pl = {
   newOption: 'Nowa opcja',
   title: 'Tytuł',
   price: 'Cena',
+  totalPrice: 'Cena całkowita',
   vertical: 'Pionowy',
   horizontal: 'Poziomy',
   frontSide: "Strona przednia",
@@ -124,6 +125,7 @@ const pl = {
   brown: 'brązowy',
   grey: 'szary',
   white: 'biały',
+  beige: 'beżowy',
   door: 'Drzwi',
   remove: 'usuń',
   removed: 'usunięto',
@@ -232,6 +234,7 @@ const pl = {
   confirmation: 'Potwierdź',
   minusHeight: 'Wysokość płótna zostanie odjęta od',
   hingesCount: 'Zalecana liczba zawiasów',
+  noNCS: 'Uwaga! Kolorów NCS nie można używać do malowania ramy.',
 
   //ERRORS
   err: 'Błąd',
@@ -260,6 +263,7 @@ const pl = {
   errAlertAlumCladding: "Błąd w wyborze ramy aluminiowej skrzydła. Sprawdź wybór ramy aluminiowej skrzydła.",
   errAlertOptions: "Błąd w wyborze opcji. Sprawdź wybór opcji.",
   errAlertParameters: "Rozmiary nie pasują do wybranych drzwi.",
+  errAlertHinge: "Zawiasy nie pasują do wybranych drzwi.",
   "2 errors occurred": 'Najpierw wybierz ramkę',
   doorClickAgain: 'Lub kliknij Odśwież ponownie w sekcji Skrzydło drzwiowe drzwi',
 

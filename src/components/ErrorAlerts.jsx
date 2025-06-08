@@ -21,6 +21,7 @@ const GET_SUBORDER_ERRORS = gql`
         platbandFrontError
         platbandThreadError
         doorParamsError
+        hingeError
       }
     }
   }
@@ -52,7 +53,8 @@ export const checkSuborderErrors = async (client, suborderId) => {
         'aluminumFrameError',
         'aluminumCladdingError',
         'optionError',
-        'doorParamsError'
+        'doorParamsError',
+        'hingeError'
       ];
       
       // Возвращаем true, если хотя бы одно поле ошибки равно true
@@ -129,6 +131,10 @@ const ErrorAlerts = ({ suborderId, onErrorsUpdate }) => {
 
     if (errors.doorParamsError) {
       messages.push(translations.errAlertParameters);
+    }
+
+    if (errors.hingeError) {
+      messages.push(translations.errAlertHinge);
     }
     
     return messages;

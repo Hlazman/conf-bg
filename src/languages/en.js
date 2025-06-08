@@ -58,7 +58,7 @@ const en = {
   editAgent: "Edit Agent",
   doorCanvas: "Door canvas", 
   doorParameters: "Door parameters",      
-  decorFront: "Decor (front side)",
+  decorFront: "Decor",
   decorBack: "Decor (back side)",  
   slidingFrame: "Sliding system",  
   frame: "Frame",  
@@ -100,6 +100,7 @@ const en = {
   newOption: 'New option',
   title: 'Title',
   price: 'Price',
+  totalPrice: 'Total price',
   vertical: 'Vertical',
   horizontal: 'Horizontal',
   frontSide: "Front side",
@@ -124,6 +125,7 @@ const en = {
   brown: 'brown',
   grey: 'grey',
   white: 'white',
+  beige: 'beige',
   door: 'Door',
   remove: 'remove',
   removed: 'removed',
@@ -232,6 +234,8 @@ const en = {
   confirmation: 'Confirm',
   minusHeight: 'The height of the canvas will be subtracted',
   hingesCount: 'Recommended count for hinges',
+  noNCS: 'Pay attention! NCS color cannot be used to paint the frame.',
+
 
   //ERRORS
   err: 'Error',
@@ -260,6 +264,7 @@ const en = {
   errAlertAlumCladding: "Error in aluminum cladding selection. Please check the selection of aluminum cladding.",
   errAlertOptions: "Error in option selection. Please check your option selection.",
   errAlertParameters: "The sizes do not match the selected door.",
+  errAlertHinge: "The hinges do not fit the selected door.",
   "2 errors occurred": 'First choose a frame',
   doorClickAgain: 'Or click Update again in the Door canvas section Door canvas',
 
