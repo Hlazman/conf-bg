@@ -363,6 +363,9 @@ const pl = {
   "Primer": "Grunt",
   "Stoneware": "Spiek kamienny",
   "Veneer": "Fornir",
+  "finishingSelectionWood": "Wybór płótna do dekoracji",
+  "finishingSelectionUniqueLine": "Wybór płótna do dekoracji",
+  "finishingSelectionPremium": "Wybór płótna do dekoracji",
 
     // ORDER Warning: 
     colorWarning: 'Należy pamiętać, że kolory wyświetlane na ekranie mogą nieznacznie różnić się od wydrukowanych lub w rzeczywistości. Różnica ta może wynikać z różnic w ustawieniach reprodukcji kolorów monitora i potencjalnych różnic w procesie drukowania. Zaleca się uwzględnienie ww. informacji przy podjęciu decyzji.',

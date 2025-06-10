@@ -364,6 +364,9 @@ const en = {
   "Primer": "Primer",
   "Stoneware": "Stoneware",
   "Veneer": "Veneer",
+  "finishingSelectionWood": "Finishing selection",
+  "finishingSelectionUniqueLine": "Finishing selection",
+  "finishingSelectionPremium": "Finishing selection",
 
   // ORDER Warning: 
   colorWarning: 'Please be aware that the colors displayed on screen may slightly differ from those in print or in real life. This variation could be attributed to differences in monitor color reproduction settings and potential variations in the printing process. It is advisable to take this into consideration when evaluating the color scheme of the presentation.',

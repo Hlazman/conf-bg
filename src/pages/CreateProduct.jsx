@@ -142,7 +142,8 @@ const items = [
     label: 
       type === 'slidingDoor' 
           ? formatItemLabel(translations.slidingFrame, formattedTitles.slidingSelection) 
-          : formatItemLabel(translations.frame, formattedTitles.frameSelection, 'frameError'),
+          // : formatItemLabel(translations.frame, formattedTitles.frameSelection, 'frameError'),
+          : formatItemLabel(translations.frame, translations[formattedTitles.frameSelection], 'frameError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: type === 'slidingDoor' ? (
       <SlidingSelection 
@@ -173,7 +174,8 @@ const items = [
   },
   {
     key: '5',
-    label: formatItemLabel(translations.decorFront, formattedTitles.frontDecorSelection, 'decorError'),
+    // label: formatItemLabel(translations.decorFront, formattedTitles.frontDecorSelection, 'decorError'),
+    label: formatItemLabel(translations.decorFront, translations[formattedTitles.frontDecorSelection], 'decorError'),
     children: (
       <DecorSelection 
         doorId={selectedDoor?.documentId}
@@ -192,7 +194,8 @@ const items = [
   },
   {
     key: '6',
-    label: formatItemLabel(translations.decorBack, formattedTitles.backDecorSelection, 'decorError'),
+    // label: formatItemLabel(translations.decorBack, formattedTitles.backDecorSelection, 'decorError'),
+    label: formatItemLabel(translations.decorBack, translations[formattedTitles.backDecorSelection], 'decorError'),
     children: (
       <DecorSelection 
         doorId={selectedDoor?.documentId}
@@ -212,7 +215,8 @@ const items = [
   },
   {
     key: '7',
-    label: formatItemLabel(translations.extender, formattedTitles.extenderSelection, 'extenderError'),
+    // label: formatItemLabel(translations.extender, formattedTitles.extenderSelection, 'extenderError'),
+    label: formatItemLabel(translations.extender, translations[formattedTitles.extenderSelection], 'extenderError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -229,7 +233,8 @@ const items = [
   },
   {
     key: '8',
-    label: formatItemLabel(translations.platband, formattedTitles.platbandSelection, 'platbandError'),
+    // label: formatItemLabel(translations.platband, formattedTitles.platbandSelection, 'platbandError'),
+    label: formatItemLabel(translations.platband, translations[formattedTitles.platbandSelection], 'platbandError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -245,7 +250,8 @@ const items = [
   },
   {
     key: '9',
-    label: formatItemLabel(translations.platbandThread, formattedTitles.platbandThreadSelection, 'platbandThreadError'),
+    // label: formatItemLabel(translations.platbandThread, formattedTitles.platbandThreadSelection, 'platbandThreadError'),
+    label: formatItemLabel(translations.platbandThread, translations[formattedTitles.platbandThreadSelection], 'platbandThreadError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -261,7 +267,8 @@ const items = [
   },
   {
     key: '10',
-    label: formatItemLabel(translations.platbandFront, formattedTitles.platbandFrontSelection, 'platbandFrontError'),
+    // label: formatItemLabel(translations.platbandFront, formattedTitles.platbandFrontSelection, 'platbandFrontError'),
+    label: formatItemLabel(translations.platbandFront, translations[formattedTitles.platbandFrontSelection], 'platbandFrontError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -277,7 +284,8 @@ const items = [
   },
   {
     key: '11',
-    label: formatItemLabel(translations.platbandBack, formattedTitles.platbandBackSelection, 'platbandBackError'),
+    // label: formatItemLabel(translations.platbandBack, formattedTitles.platbandBackSelection, 'platbandBackError'),
+    label: formatItemLabel(translations.platbandBack, translations[formattedTitles.platbandBackSelection], 'platbandBackError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -293,7 +301,8 @@ const items = [
   },
   {
     key: '12',
-    label: formatItemLabel(translations.kapitel, formattedTitles.kapitelSelection),
+    // label: formatItemLabel(translations.kapitel, formattedTitles.kapitelSelection),
+    label: formatItemLabel(translations.kapitel, translations[formattedTitles.kapitelSelection]),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -309,7 +318,8 @@ const items = [
   },
   {
     key: '13',
-    label: formatItemLabel(translations.aluminumMolding, formattedTitles.aluminumMoldingSelection, 'aluminumMoldingError'),
+    // label: formatItemLabel(translations.aluminumMolding, formattedTitles.aluminumMoldingSelection, 'aluminumMoldingError'),
+    label: formatItemLabel(translations.aluminumMolding, translations[formattedTitles.aluminumMoldingSelection], 'aluminumMoldingError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -325,7 +335,8 @@ const items = [
   },
   {
     key: '14',
-    label: formatItemLabel(translations.aluminumFrame, formattedTitles.aluminumFrameSelection, 'aluminumFrameError'),
+    // label: formatItemLabel(translations.aluminumFrame, formattedTitles.aluminumFrameSelection, 'aluminumFrameError'),
+    label: formatItemLabel(translations.aluminumFrame, translations[formattedTitles.aluminumFrameSelection], 'aluminumFrameError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
@@ -341,7 +352,8 @@ const items = [
   },
   {
     key: '15',
-    label: formatItemLabel(translations.aluminumCladding, formattedTitles.aluminumCladdingSelection, 'aluminumCladdingError'),
+    // label: formatItemLabel(translations.aluminumCladding, formattedTitles.aluminumCladdingSelection, 'aluminumCladdingError'),
+    label: formatItemLabel(translations.aluminumCladding, translations[formattedTitles.aluminumCladdingSelection], 'aluminumCladdingError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: (
       <ElementSelection
