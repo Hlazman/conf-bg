@@ -439,7 +439,8 @@ const handleSampleClick = async (record) => {
         title: translations.suborderType, 
         dataIndex: 'suborder_type', 
         key: 'typeName',
-        render: (suborder_type) => suborder_type?.typeName || '-'
+        // render: (suborder_type) => suborder_type?.typeName || '-'
+        render: (suborder_type) => translations[suborder_type?.typeName] || '-'
       },
       { 
         title: translations.products, 

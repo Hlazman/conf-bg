@@ -96,7 +96,6 @@ const DecorSelection = ({
   productType,
   onAfterSubmit,
   noNCS,
-  decorCombinations = {},
 }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -163,6 +162,7 @@ const DecorSelection = ({
     return decorTypesData?.decorTypes || [];
   }, [decorTypesData]);
 
+  
   // Запрос декоров для выбранного типа декора
   const { 
     data: decorsData, 
@@ -187,23 +187,6 @@ const DecorSelection = ({
   const decors = useMemo(() => {
     return decorsData?.decors || [];
   }, [decorsData]);
-
-  // Фильтрация декоров для тыльной стороны
-  const filteredDecorTypes = useMemo(() => {
-    if (isFrontSide) return decorTypes;
-    
-    const frontTypeName = suborderProductData?.suborderProducts?.[0]?.decor_type?.typeName;
-    if (!frontTypeName || !decorCombinations) return [];
-
-    const allowedTypes = decorCombinations[frontTypeName] || [];
-
-    // Обработка special case: если decorCombinations.available содержит нужный тип
-    const availableOverride = decorCombinations.available || [];
-
-    return decorTypes.filter(dt =>
-      allowedTypes.includes(dt.typeName) || availableOverride.includes(dt.typeName)
-    );
-  }, [isFrontSide, decorTypes, suborderProductData, decorCombinations]);
   
   // Эффект для загрузки данных из SuborderProduct
   useEffect(() => {
@@ -219,7 +202,7 @@ const DecorSelection = ({
               
           if (decorTypeId) {
               // Находим тип декора в списке
-              const decorType = filteredDecorTypes.find(dt => dt.documentId === decorTypeId);
+              const decorType = decorTypes.find(dt => dt.documentId === decorTypeId);
               if (decorType) {
                   // Устанавливаем активную вкладку
                   setActiveDecorTabKey(decorTypeId);
@@ -230,8 +213,7 @@ const DecorSelection = ({
           }
       }
     }
-  // }, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect]);
-  }, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect, filteredDecorTypes]);
+  }, [suborderProductData, loadingSuborderProduct, decorTypes, isFrontSide, onDecorTypeSelect]);
 
   // Отдельный эффект для установки декора и других параметров после загрузки декоров
   useEffect(() => {
@@ -288,7 +270,7 @@ const DecorSelection = ({
       }
     }
   }, [suborderProductData, selectedDecorType, isFrontSide, onColorChange]);
-
+  
   // Функция для определения типов декора, для которых нужно показывать ColorPicker
   const isPaintType = (typeName) => {
     return typeName && (
@@ -450,7 +432,7 @@ const handleSaveDecor = async () => {
   }
   
   // Создаем items для Tabs декоров
-  const decorTabItems = filteredDecorTypes.map(decorType => {
+  const decorTabItems = decorTypes.map(decorType => {
     // Если это тип Veneer, создаем вложенные табы для категорий
     if (decorType.typeName === "Veneer") {
       const veneerCategories = getVeneerCategories(decors);
@@ -614,34 +596,6 @@ const handleSaveDecor = async () => {
     }
   });
   
-  if (!isFrontSide && filteredDecorTypes.length === 0) {
-    return (
-      <>
-        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
-          <Button 
-            type="primary" 
-            onClick={async () => {
-              if (onClearSelection) {
-                onClearSelection(); // если вдруг она синхронная
-              }
-              await handleSaveDecor();
-            }}
-            loading={saving}
-            disabled={!suborderProductData?.suborderProducts[0]?.secondSideDecorType?.documentId}
-            style={!suborderProductData?.suborderProducts[0]?.secondSideDecorType?.documentId ? {} : { backgroundColor: '#52C41A' }}
-          >
-            {translations.removeSelected}
-          </Button>
-        </div>
-
-        <Empty 
-          description={translations.noAvDecor} 
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      </>
-    );
-  }
-
   return (
     <div>
       <Divider orientation="left">{isFrontSide ? translations.decorFront : translations.decorBack}</Divider> 
@@ -668,7 +622,7 @@ const handleSaveDecor = async () => {
         type="card" 
         items={decorTabItems} 
         onChange={(key) => {
-          const selected = filteredDecorTypes.find(dt => dt.documentId === key);
+          const selected = decorTypes.find(dt => dt.documentId === key);
           if (selected) handleDecorTypeSelect(selected);
         }}
         activeKey={activeDecorTabKey || (selectedDecorType ? selectedDecorType.documentId : null)}
@@ -678,6 +632,3 @@ const handleSaveDecor = async () => {
 };
 
 export default DecorSelection;
-
-
-

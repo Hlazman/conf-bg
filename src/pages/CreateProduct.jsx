@@ -210,6 +210,7 @@ const items = [
         suborderId={suborderId}
         productType={doorType}
         onAfterSubmit={updateFormattedTitles}
+        decorCombinations={selectedDoor?.decorCombinations}
       />
     )
   },

@@ -357,13 +357,67 @@ export const validateSuborderProducts = async (client, documentId) => {
 
       const availableDecorTypes = decorTypesData.decorTypes || [];
       const decorTypeNames = availableDecorTypes.map(dt => dt.typeName);
-      
-      // Проверяем, соответствуют ли типы декора доступным для данной двери
-      const frontDecorTypeValid = !doorProduct.decorType || decorTypeNames.includes(doorProduct.decorType);
-      const backDecorTypeValid = !doorProduct.secondSideDecorType || decorTypeNames.includes(doorProduct.secondSideDecorType);
-      
+
+      let frontDecorTypeValid = true;
+      let backDecorTypeValid = true;
+
+      const frontType = doorProduct.decorType;
+      const backType = doorProduct.secondSideDecorType;
+
+      frontDecorTypeValid = !frontType || decorTypeNames.includes(frontType);
+
+      if (frontType && backType) {
+        const { data: productData } = await client.query({
+          query: gql`
+            query GetProduct($id: ID!) {
+              product(documentId: $id) {
+                decorCombinations
+              }
+            }
+          `,
+          variables: {
+            id: doorProduct.documentId
+          }
+        });
+
+        const combinations = productData?.product?.decorCombinations || {};
+        const allowedBackTypes = combinations[frontType] || [];
+
+        backDecorTypeValid = allowedBackTypes.includes(backType);
+      }
+
       errors.decorError = (!frontDecorTypeValid || !backDecorTypeValid) ? true : null;
     }
+    // if (doorProduct) {
+    //   const { data: decorTypesData } = await client.query({
+    //     query: gql`
+    //       query Query($filters: DecorTypeFiltersInput) {
+    //         decorTypes(filters: $filters) {
+    //           typeName
+    //           documentId
+    //         }
+    //       }
+    //     `,
+    //     variables: {
+    //       filters: {
+    //         products: {
+    //           documentId: {
+    //             eqi: doorProduct.documentId
+    //           }
+    //         }
+    //       }
+    //     }
+    //   });
+
+    //   const availableDecorTypes = decorTypesData.decorTypes || [];
+    //   const decorTypeNames = availableDecorTypes.map(dt => dt.typeName);
+      
+    //   // Проверяем, соответствуют ли типы декора доступным для данной двери
+    //   const frontDecorTypeValid = !doorProduct.decorType || decorTypeNames.includes(doorProduct.decorType);
+    //   const backDecorTypeValid = !doorProduct.secondSideDecorType || decorTypeNames.includes(doorProduct.secondSideDecorType);
+      
+    //   errors.decorError = (!frontDecorTypeValid || !backDecorTypeValid) ? true : null;
+    // }
 
     // 10. Проверяем дверные параматре относительно высоты и ширины
     const doorProducts = suborderData.suborder.suborder_products

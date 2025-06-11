@@ -12,6 +12,7 @@ query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
   products(pagination: $pagination, filters: $filters) {
     title
     type
+    decorCombinations
     decor_types {
       typeName
       documentId
@@ -585,6 +586,7 @@ const ElementSelection = ({
           onClearSelection={clearBackSelection}
           suborderId={suborderId}
           productType={productType}
+          decorCombinations={selectedProduct?.decorCombinations}
         />
       )
     }
