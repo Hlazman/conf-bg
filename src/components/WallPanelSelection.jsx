@@ -5,6 +5,7 @@ import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
 import MountingSystemSelection from './MountingSystemSelection';
+import ArchiveOverlay from './ArchiveOverlay';
 
 const { Title } = Typography;
 
@@ -13,6 +14,7 @@ const GET_PRODUCT_ELEMENTS = gql`
   query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
     products(pagination: $pagination, filters: $filters) {
       title
+      archive
       type
       brand
       image {
@@ -386,7 +388,8 @@ const WallPanelSelection = ({
             ) : (
               productElements.map(product => (
                 <Col span={6} key={product.documentId}>
-                  <Card
+
+                  {/* <Card
                     hoverable
                     cover={
                       product.image?.url ? 
@@ -406,10 +409,48 @@ const WallPanelSelection = ({
                         : '1px solid #d9d9d9'
                     }}
                   >
-                    {/* <Card.Meta title={product.title} /> */}
-                    {/* <Card.Meta title={translations[product.title]} /> */}
+                    <Card.Meta title={translations[product.title] || product.title} />
+                  </Card> */}
+
+                  <Card
+                    hoverable={!product.archive}
+                    cover={
+                      <div style={{ position: 'relative' }}>
+                        {product.image?.url ? (
+                          <img
+                            alt={product.title}
+                            src={`https://dev.api.boki-groupe.com${product.image.url}`}
+                            style={{ height: 200, objectFit: 'cover', width: '100%' }}
+                          />
+                        ) : (
+                          <div style={{
+                            height: 200,
+                            background: '#f0f0f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            {translations.noImage}
+                          </div>
+                        )}
+                        {product.archive && <ArchiveOverlay text={translations.notAvailable} />}
+                      </div>
+                    }
+                    onClick={() => {
+                      if (!product.archive) handleProductSelect(product);
+                    }}
+                    style={{
+                      border: selectedProduct?.documentId === product.documentId
+                        ? '2px solid #1890ff'
+                        : '1px solid #d9d9d9',
+                      cursor: product.archive ? 'not-allowed' : 'pointer',
+                      position: 'relative'
+                    }}
+                  >
                     <Card.Meta title={translations[product.title] || product.title} />
                   </Card>
+
+
                 </Col>
               ))
             )}

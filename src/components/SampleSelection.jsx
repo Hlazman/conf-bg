@@ -3,6 +3,7 @@ import { Card, Typography, Spin, Checkbox, Button, message, Empty, Divider } fro
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import DecorSelection from './DecorSelection';
+import ArchiveOverlay from './ArchiveOverlay';
 
 const { Text } = Typography;
 
@@ -11,6 +12,7 @@ const GET_SAMPLES = gql`
 query Products($filters: ProductFiltersInput) {
   products(filters: $filters) {
     documentId
+    archive
     title
     type
     brand
@@ -338,12 +340,32 @@ const SampleSelection = ({ suborderId, onAfterSubmit }) => {
       </div>
 
         {samples.map(sample => (
-          <Card key={sample.documentId} style={{marginBottom: 16}}>
-            <Checkbox 
+          
+          // <Card key={sample.documentId} style={{marginBottom: 16}}>
+          //   <Checkbox 
+          //     checked={selectedSamples[sample.documentId] || false}
+          //     onChange={(e) => handleSampleChange(e.target.checked, sample)}
+          //   />
+          //   <Text> {translations[sample.title]}</Text>
+          // </Card>
+
+          <Card
+            key={sample.documentId}
+            style={{
+              marginBottom: 16,
+              opacity: sample.archive ? 0.6 : 1,
+              position: 'relative',
+              cursor: sample.archive ? 'not-allowed' : 'default'
+            }}
+          >
+            <Checkbox
               checked={selectedSamples[sample.documentId] || false}
               onChange={(e) => handleSampleChange(e.target.checked, sample)}
+              disabled={sample.archive}
             />
             <Text> {translations[sample.title]}</Text>
+
+            {sample.archive && <ArchiveOverlay text={translations.notAvailable} />}
           </Card>
         ))}
     </Card>

@@ -237,6 +237,7 @@ const pl = {
   noNCS: 'Uwaga! Kolorów NCS nie można używać do malowania ramy.',
   standardPlatbandSize: 'Rozmiar standardowy: 80mm',
   extenderRecomendedWidth: 'Zalecana szerokość',
+  notAvailable: 'Niedostępne',
 
   //ERRORS
   err: 'Błąd',

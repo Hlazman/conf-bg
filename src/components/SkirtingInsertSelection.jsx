@@ -3,12 +3,14 @@ import { Card, Row, Col, Spin, Empty, Button, message, Tabs, Divider } from "ant
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 // Запрос для получения элементов продукта
 const GET_PRODUCT_ELEMENTS = gql`
 query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
   products(pagination: $pagination, filters: $filters) {
     title
+    archive
     type
     decor_types {
       typeName
@@ -353,7 +355,8 @@ const SkirtingInsertSelection = ({
             ) : (
               productElements.map(product => (
                 <Col span={6} key={product.documentId}>
-                  <Card
+
+                  {/* <Card
                     hoverable
                     onClick={() => handleProductSelect(product)}
                     style={{
@@ -362,9 +365,26 @@ const SkirtingInsertSelection = ({
                         : '1px solid #d9d9d9'
                     }}
                   >
-                    {/* <Card.Meta title={product.title} /> */}
                     <Card.Meta title={translations[product.title]} />
+                  </Card> */}
+
+                  <Card
+                    hoverable={!product.archive}
+                    onClick={() => {
+                      if (!product.archive) handleProductSelect(product);
+                    }}
+                    style={{
+                      border: selectedProduct?.documentId === product.documentId
+                        ? '2px solid #1890ff'
+                        : '1px solid #d9d9d9',
+                      cursor: product.archive ? 'not-allowed' : 'pointer',
+                      position: 'relative'
+                    }}
+                  >
+                    <Card.Meta title={translations[product.title]} />
+                    {product.archive && <ArchiveOverlay text={translations.notAvailable} />}
                   </Card>
+
                 </Col>
               ))
             )}

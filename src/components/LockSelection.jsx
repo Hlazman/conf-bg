@@ -2,12 +2,14 @@ import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Spin, Empty, Button, message, Alert, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 
 const GET_LOCKS = gql`
 query GetLocks($filters: ProductFiltersInput, $pagination: PaginationArg) {
   products(filters: $filters, pagination: $pagination) {
     documentId
+    archive
     title
     type
     image {
@@ -215,7 +217,7 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
       <Row gutter={[16, 16]}>
         {locks.map(lock => (
           <Col span={4} key={lock.documentId}>
-          <Card
+          {/* <Card
             hoverable
             cover={
               lock.image?.url ? 
@@ -234,7 +236,38 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
             }}
           >
           <Card.Meta title={lock.title} />
+          </Card> */}
+
+          <Card
+            hoverable={!lock.archive}
+            cover={
+              <div style={{ position: 'relative' }}>
+                {lock.image?.url ? (
+                  <img
+                    alt={lock.title}
+                    src={`https://dev.api.boki-groupe.com${lock.image.url}`}
+                    style={{ height: 200, objectFit: 'cover', width: '100%' }}
+                  />
+                ) : (
+                  <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {translations.noImage}
+                  </div>
+                )}
+                {lock.archive && <ArchiveOverlay text={translations.notAvailable} />}
+              </div>
+            }
+            onClick={() => {
+              if (!lock.archive) onLockSelect(lock);
+            }}
+            style={{
+              border: selectedLock?.documentId === lock.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0',
+              cursor: lock.archive ? 'not-allowed' : 'pointer',
+              position: 'relative'
+            }}
+          >
+            <Card.Meta title={lock.title} />
           </Card>
+          
           </Col>
         ))}
       </Row>

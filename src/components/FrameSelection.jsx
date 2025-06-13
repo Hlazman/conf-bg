@@ -3,6 +3,7 @@ import { Card, Row, Col, Spin, Empty, Button, message, Divider, Typography, Chec
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import DecorSelection from './DecorSelection';
+import ArchiveOverlay from './ArchiveOverlay';
 
 const { Title  } = Typography;
 
@@ -10,6 +11,7 @@ const GET_FRAMES = gql`
   query GetFrames($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
       documentId
+      archive
       description
       title
       type
@@ -351,7 +353,8 @@ const FrameSelection = ({
           )} */}
 
           <Row gutter={[16, 16]}>
-            {frames.map(frame => (
+            
+            {/* {frames.map(frame => (
               <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>
                 <Card
                   hoverable
@@ -369,6 +372,35 @@ const FrameSelection = ({
                       </Title >
                     }
                   />           
+                </Card>
+              </Col>
+            ))} */}
+
+            {frames.map(frame => (
+              <Col xs={24} sm={12} md={8} lg={6} key={frame.documentId}>
+                <Card
+                  hoverable={!frame.archive}
+                  onClick={() => {
+                    if (!frame.archive) {
+                      onFrameSelect(frame);
+                    }
+                  }}
+                  style={{ 
+                    borderColor: selectedFrame?.documentId === frame.documentId ? '#1890ff' : undefined,
+                    borderWidth: selectedFrame?.documentId === frame.documentId ? '2px' : '1px',
+                    cursor: frame.archive ? 'not-allowed' : 'pointer',
+                    position: 'relative'
+                  }}
+                  styles={{ body: { padding: '12px' } }}
+                >
+                  <Card.Meta 
+                    title={
+                      <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '20px', margin: 0 }}>
+                        {translations[frame.title] || frame.title}
+                      </Title>
+                    }
+                  />
+                  {frame.archive && <ArchiveOverlay text={translations.notAvailable}/>}
                 </Card>
               </Col>
             ))}

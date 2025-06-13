@@ -237,6 +237,7 @@ const en = {
   noNCS: 'Pay attention! NCS color cannot be used to paint the frame.',
   standardPlatbandSize: 'Standard size: 80mm',
   extenderRecomendedWidth: 'Recommended width',
+  notAvailable: 'Not available',
 
 
   //ERRORS

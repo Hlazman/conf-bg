@@ -3,6 +3,7 @@ import { Tabs, Card, Row, Col, Spin, Empty, Button, message, Divider } from "ant
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { useApolloClient } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 // GraphQL запрос для получения продуктов (дверей)
 export const GET_PRODUCTS = gql`
@@ -254,6 +255,7 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
       <Row gutter={[16, 16]}>
         {doorsByCollection[collection.documentId].map(door => (
           <Col span={4} key={door.documentId}>
+            
             {/* <Card
               hoverable
               cover={
@@ -279,7 +281,6 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
               <Card.Meta title={door.title} />
             </Card> */}
 
-
             <Card
               hoverable={!door.archive}
               cover={
@@ -295,30 +296,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
                       {translations.noImages}
                     </div>
                   )}
-                  {door.archive && (
-                    <div style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      height: '100%',
-                      width: '100%',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      pointerEvents: 'none'
-                    }}>
-                      <span style={{
-                        color: '#fff',
-                        fontSize: 18,
-                        transform: 'rotate(-20deg)',
-                        fontWeight: 'bold',
-                        opacity: 0.8
-                      }}>
-                        Not available
-                      </span>
-                    </div>
-                  )}
+
+                  {door.archive && <ArchiveOverlay text={translations.notAvailable}/>}
                 </div>
               }
               onClick={() => {

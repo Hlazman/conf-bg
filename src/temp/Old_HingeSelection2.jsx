@@ -2,13 +2,11 @@ import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Spin, Empty, Button, message, InputNumber, Alert, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
-import ArchiveOverlay from './ArchiveOverlay';
 
 const GET_HINGES = gql`
   query GetHinges($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
       documentId
-      archive
       decorCombinations
       title
       type
@@ -96,26 +94,6 @@ const GET_SUBORDER = gql`
   }
 `;
 
-const GET_SUBORDER_DOORPRODUCT = gql`
-  query GetSuborderProduct($filters: SuborderProductFiltersInput) {
-    suborderProducts(filters: $filters) {
-      documentId
-      decor_type {
-        documentId
-        typeName
-      }
-      sizes {
-        height
-      }
-      product {
-        documentId
-        title
-      }
-      type
-    }
-  }
-`;
-
 const HingeSelection = ({ 
   suborderId, 
   collectionId, 
@@ -179,22 +157,14 @@ const HingeSelection = ({
     fetchPolicy: "network-only"
   });
 
-  const { data: doorDecorData, loading: loadingDoorDecor } = useQuery(GET_SUBORDER_DOORPRODUCT, {
-    variables: {
-      filters: {
-        suborder: {
-          documentId: {
-            eq: suborderId
-          }
-        },
-        type: {
-          in: ["door", "hiddenDoor"]
-        }
-      }
-    },
-    skip: !suborderId,
-    fetchPolicy: "network-only"
-  });
+
+
+
+
+
+
+
+
 
   const { data: suborderData, loading: loadingSuborder } = useQuery(GET_SUBORDER, {
     variables: {
@@ -228,7 +198,22 @@ const HingeSelection = ({
     }
   });
 
-  const hinges = useMemo(() => {
+  // const hinges = useMemo(() => {
+  //   if (!data?.products) return [];
+    
+  //   // Если тип двери hiddenDoor, фильтруем петли без коллекций
+  //   if (doorType === "hiddenDoor") {
+  //     return data.products.filter(hinge =>
+  //       !hinge.collections || hinge.collections.length === 0
+  //     );
+  //   }
+
+  //   // Для других типов дверей возвращаем все полученные петли
+  //   return data.products;
+  // }, [data, doorType]);
+
+
+    const hinges = useMemo(() => {
     if (!data?.products) return [];
     
     return data.products;
@@ -359,8 +344,7 @@ const HingeSelection = ({
       <Row gutter={[16, 16]}>
         {hinges.map(hinge => (
           <Col span={4} key={hinge.documentId}>
-            
-            {/* <Card
+            <Card
               hoverable
               cover={
                 hinge.image?.url ? 
@@ -379,38 +363,7 @@ const HingeSelection = ({
               }}
             >
               <Card.Meta title={hinge.title} />
-            </Card> */}
-
-            <Card
-              hoverable={!hinge.archive}
-              cover={
-                <div style={{ position: 'relative' }}>
-                  {hinge.image?.url ? (
-                    <img
-                      alt={hinge.title}
-                      src={`https://dev.api.boki-groupe.com${hinge.image.url}`}
-                      style={{ height: 200, objectFit: 'cover', width: '100%' }}
-                    />
-                  ) : (
-                    <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {translations.noImages}
-                    </div>
-                  )}
-                  {hinge.archive && <ArchiveOverlay text={translations.notAvailable} />}
-                </div>
-              }
-              onClick={() => {
-                if (!hinge.archive) onHingeSelect(hinge);
-              }}
-              style={{
-                border: selectedHinge?.documentId === hinge.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0',
-                cursor: hinge.archive ? 'not-allowed' : 'pointer',
-                position: 'relative'
-              }}
-            >
-              <Card.Meta title={hinge.title} />
             </Card>
-
           </Col>
         ))}
       </Row>

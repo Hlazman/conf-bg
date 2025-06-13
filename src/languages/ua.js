@@ -237,6 +237,7 @@ const ua = {
   noNCS: 'Зверніть увагу! Колир NCS не може застосовуватись для покраски рами',
   standardPlatbandSize: 'Стандартний розмір: 80 мм',
   extenderRecomendedWidth: 'Рекомендована ширина',
+  notAvailable: 'Недоступно',
 
   //ERRORS
   err: 'Помилка',

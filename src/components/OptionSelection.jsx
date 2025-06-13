@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Checkbox, Button, message, InputNumber, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 const { Title, Text } = Typography;
 
@@ -9,6 +10,7 @@ const GET_OPTIONS = gql`
   query Products($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
       documentId
+      archive
       title
       type
       brand
@@ -423,9 +425,49 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
       )}
 
       {options.map(option => (
+        
+        // <Card 
+        //   key={option.documentId} 
+        //   style={{ marginBottom: "16px" }}
+        //   size="small"
+        // >
+        //   <Row align="middle">
+        //     <Col span={16}>
+        //       <Checkbox
+        //         checked={!!selectedOptions[option.documentId]}
+        //         onChange={(e) => handleOptionChange(e.target.checked, option)}
+        //       >
+        //         {/* <Text strong>{option.title}</Text> */}
+        //         <Text strong>{translations[option.title]}</Text>
+        //       </Checkbox>
+        //     </Col>
+        //     {option.brand === "countOptions" && selectedOptions[option.documentId] && (
+        //       <Col span={8}>
+        //         <Row justify="end">
+        //           <Col>
+        //             <Text style={{ marginRight: "8px" }}>{translations.amount}:</Text>
+        //           </Col>
+        //           <Col>
+        //             <InputNumber
+        //               min={1}
+        //               value={optionAmounts[option.documentId] || 1}
+        //               onChange={(value) => handleAmountChange(value, option.documentId)}
+        //               style={{ width: "80px" }}
+        //             />
+        //           </Col>
+        //         </Row>
+        //       </Col>
+        //     )}
+        //   </Row>
+        // </Card>
+
         <Card 
           key={option.documentId} 
-          style={{ marginBottom: "16px" }}
+          style={{ 
+            marginBottom: "16px", 
+            position: 'relative', 
+            opacity: option.archive ? 0.6 : 1 
+          }}
           size="small"
         >
           <Row align="middle">
@@ -433,8 +475,8 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
               <Checkbox
                 checked={!!selectedOptions[option.documentId]}
                 onChange={(e) => handleOptionChange(e.target.checked, option)}
+                disabled={option.archive}
               >
-                {/* <Text strong>{option.title}</Text> */}
                 <Text strong>{translations[option.title]}</Text>
               </Checkbox>
             </Col>
@@ -450,13 +492,16 @@ const OptionSelection = ({ selectedDoor, suborderId, onAfterSubmit }) => {
                       value={optionAmounts[option.documentId] || 1}
                       onChange={(value) => handleAmountChange(value, option.documentId)}
                       style={{ width: "80px" }}
+                      disabled={option.archive}
                     />
                   </Col>
                 </Row>
               </Col>
             )}
           </Row>
+          {option.archive && <ArchiveOverlay text={translations.notAvailable} />}
         </Card>
+
       ))}
     </div>
   );

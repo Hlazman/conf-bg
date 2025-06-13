@@ -3,6 +3,7 @@ import { Tabs, Card, Row, Col, Spin, Empty, Button, Radio, message, Divider } fr
 import { useQuery, useMutation, gql } from "@apollo/client";
 import ColorPicker from '../components/ColorPicker';
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 // GraphQL запрос для получения декоров
 const GET_DECOR_TYPES = gql`
@@ -495,6 +496,43 @@ const handleSaveDecor = async () => {
                   >
                     <Card.Meta title={decor.title} />
                   </Card>
+
+                  {/* <Card
+                    hoverable={!decor.archive}
+                    cover={
+                      <div style={{ position: 'relative' }}>
+                        {decor.image?.url ? (
+                          <img
+                            alt={decor.title}
+                            src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                            style={{ height: 200, objectFit: 'cover', width: '100%' }}
+                          />
+                        ) : (
+                          <div style={{
+                            height: 200,
+                            background: '#f0f0f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            {translations.noImages}
+                          </div>
+                        )}
+                        {decor.archive && <ArchiveOverlay text={translations.notAvailable} />}
+                      </div>
+                    }
+                    onClick={() => {
+                      if (!decor.archive) handleDecorSelect(decor);
+                    }}
+                    style={{
+                      border: selectedDecor?.documentId === decor.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0',
+                      cursor: decor.archive ? 'not-allowed' : 'pointer',
+                      position: 'relative'
+                    }}
+                  >
+                    <Card.Meta title={decor.title} />
+                  </Card> */}
+
                 </Col>
               ))}
             </Row>
@@ -590,6 +628,43 @@ const handleSaveDecor = async () => {
                         >
                           <Card.Meta title={decor.title} />
                         </Card>
+
+                        {/* <Card
+                          hoverable={!decor.archive}
+                          cover={
+                            <div style={{ position: 'relative' }}>
+                              {decor.image?.url ? (
+                                <img
+                                  alt={decor.title}
+                                  src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                                  style={{ height: 200, objectFit: 'cover', width: '100%' }}
+                                />
+                              ) : (
+                                <div style={{
+                                  height: 200,
+                                  background: '#f0f0f0',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}>
+                                  {translations.noImages}
+                                </div>
+                              )}
+                              {decor.archive && <ArchiveOverlay text={translations.notAvailable} />}
+                            </div>
+                          }
+                          onClick={() => {
+                            if (!decor.archive) handleDecorSelect(decor);
+                          }}
+                          style={{
+                            border: selectedDecor?.documentId === decor.documentId ? '2px solid #1890ff' : '1px solid #f0f0f0',
+                            cursor: decor.archive ? 'not-allowed' : 'pointer',
+                            position: 'relative'
+                          }}
+                        >
+                          <Card.Meta title={decor.title} />
+                        </Card> */}
+
                       </Col>
                     ))}
                   </Row>

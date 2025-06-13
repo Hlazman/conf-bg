@@ -3,6 +3,7 @@ import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, 
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 const { Title } = Typography;
 
@@ -11,6 +12,7 @@ const GET_PRODUCT_ELEMENTS = gql`
 query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
   products(pagination: $pagination, filters: $filters) {
     title
+    archive
     type
     decorCombinations
     decor_types {
@@ -431,7 +433,8 @@ const ElementSelection = ({
             {/* {productElements.map(product => ( */}
             {compatibleProducts.map(product => (
               <Col span={6} key={product.documentId}>
-                <Card
+                
+                {/* <Card
                   hoverable
                   onClick={() => handleProductSelect(product)}
                   style={{
@@ -440,9 +443,26 @@ const ElementSelection = ({
                       : '1px solid #d9d9d9'
                   }}
                 >
-                  {/* <Title level={5}>{product.title}</Title> */}
                   <Title level={5}>{translations[product.title]}</Title>
+                </Card> */}
+
+                <Card
+                  hoverable={!product.archive}
+                  onClick={() => {
+                    if (!product.archive) handleProductSelect(product);
+                  }}
+                  style={{
+                    border: selectedProduct?.documentId === product.documentId
+                      ? '2px solid #1890ff'
+                      : '1px solid #d9d9d9',
+                    position: 'relative',
+                    cursor: product.archive ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <Title level={5}>{translations[product.title]}</Title>
+                  {product.archive && <ArchiveOverlay text={translations.notAvailable} />}
                 </Card>
+
               </Col>
             ))}
           </Row>

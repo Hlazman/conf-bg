@@ -27,6 +27,9 @@ export const GET_SUBORDER_DETAILS = gql`
         aluminumFrameError
         aluminumCladdingError
         optionError
+        doorParamsError
+        hingeError
+        doorInsertError
       }
       suborder_type {
         documentId

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Card, Row, Col, Typography, Spin, Button, message, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
+import ArchiveOverlay from './ArchiveOverlay';
 
 
 const { Title, Text } = Typography;
@@ -10,6 +11,7 @@ const GET_SLIDING_FRAMES = gql`
   query Products($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
       documentId
+      archive
       title
       description
       type
@@ -323,9 +325,15 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
               hoverable
               style={{ 
                 borderColor: selectedSlidingFrame?.documentId === slidingFrame.documentId ? '#1890ff' : undefined,
-                borderWidth: selectedSlidingFrame?.documentId === slidingFrame.documentId ? '2px' : '1px'
+                borderWidth: selectedSlidingFrame?.documentId === slidingFrame.documentId ? '2px' : '1px',
+                cursor: slidingFrame.archive ? 'not-allowed' : 'pointer',
+                position: 'relative'
+                
               }}
-              onClick={() => handleSlidingFrameSelect(slidingFrame)}
+              // onClick={() => handleSlidingFrameSelect(slidingFrame)}
+                onClick={() => {
+                  if (!slidingFrame.archive) handleSlidingFrameSelect(slidingFrame);
+                }}
             >
               <div style={{ textAlign: "center" }}>
                 <Title level={5}>{slidingFrame.title}</Title>
@@ -334,6 +342,9 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
                   <Text type="secondary">{translations[slidingFrame.description]}</Text>
                 )}
               </div>
+
+              {slidingFrame.archive && <ArchiveOverlay text={translations.notAvailable}/>}
+
             </Card>
           </Col>
         ))}
