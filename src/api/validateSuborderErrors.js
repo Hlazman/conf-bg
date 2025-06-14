@@ -292,46 +292,47 @@ export const validateSuborderProducts = async (client, documentId) => {
     }
 
     // 8. Проверяем совместимость петель с дверью
-      if (products.hinge && doorProduct) {
-        const currentType = localStorage.getItem('currentType');
-        let compatibilityField;
+    if (products.hinge && doorProduct) {
+      const currentType = localStorage.getItem('currentType');
+      let compatibilityField;
 
-        if (currentType === "hiddenDoor") {
-          compatibilityField = "compatibleHiddenHinges";
-        } else if (currentType === "door" || currentType === "slidingDoor") {
-          compatibilityField = "compatibleSimpleHinges";
-        }
-        
-        if (compatibilityField) {
-          const { data: hingeData } = await client.query({
-            query: gql`
-              query Products($documentId: ID!, $pagination: PaginationArg) {
-                product(documentId: $documentId) {
-                  ${compatibilityField}(pagination: $pagination) {
-                    documentId
-                  }
+      if (currentType === "hiddenDoor") {
+        compatibilityField = "compatibleHiddenHinges";
+      } else if (currentType === "door" || currentType === "slidingDoor") {
+        compatibilityField = "compatibleSimpleHinges";
+      }
+      
+      if (compatibilityField) {
+        const { data: hingeData } = await client.query({
+          query: gql`
+            query Products($documentId: ID!, $pagination: PaginationArg) {
+              product(documentId: $documentId) {
+                ${compatibilityField}(pagination: $pagination) {
+                  documentId
                 }
               }
-            `,
-            variables: {
-              documentId: products.hinge.documentId,
-              pagination: { limit: 200 }
             }
-          });
+          `,
+          variables: {
+            documentId: products.hinge.documentId,
+            pagination: { limit: 200 }
+          }
+        });
 
-          const compatibleHinges = hingeData.product[compatibilityField] || [];
-          
-          // Проверяем, есть ли дверь в списке совместимых рам
-          const isDoorCompatible = compatibleHinges.some(
-            hinge => hinge.documentId === doorProduct.documentId
-          );
-          
-          errors.hingeError = !isDoorCompatible ? true : null;
-        } else {
-          // Если тип двери не определен, считаем что ошибки нет
-          errors.hingeError = null;
-        }
+        const compatibleHinges = hingeData.product[compatibilityField] || [];
+        
+        // Проверяем, есть ли дверь в списке совместимых рам
+        const isDoorCompatible = compatibleHinges.some(
+          hinge => hinge.documentId === doorProduct.documentId
+        );
+        
+        errors.hingeError = !isDoorCompatible ? true : null;
+      } else {
+        // Если тип двери не определен, считаем что ошибки нет
+        errors.hingeError = null;
       }
+    }
+
 
     // 9. Проверяем совместимость декоров
     if (doorProduct) {

@@ -31,6 +31,7 @@ const GET_DECORS = gql`
   query GetDecors($filters: DecorFiltersInput, $pagination: PaginationArg) {
     decors(filters: $filters, pagination: $pagination) {
       documentId
+      archive
       title
       image {
         url
@@ -476,7 +477,8 @@ const handleSaveDecor = async () => {
             <Row gutter={[16, 16]}>
               {getDecorsByCategory(decors, category).map(decor => (
                 <Col span={4} key={decor.documentId}>
-                  <Card
+
+                  {/* <Card
                     hoverable
                     cover={
                       decor.image?.url ? 
@@ -495,9 +497,9 @@ const handleSaveDecor = async () => {
                     }}
                   >
                     <Card.Meta title={decor.title} />
-                  </Card>
+                  </Card> */}
 
-                  {/* <Card
+                  <Card
                     hoverable={!decor.archive}
                     cover={
                       <div style={{ position: 'relative' }}>
@@ -531,7 +533,7 @@ const handleSaveDecor = async () => {
                     }}
                   >
                     <Card.Meta title={decor.title} />
-                  </Card> */}
+                  </Card>
 
                 </Col>
               ))}
@@ -608,7 +610,7 @@ const handleSaveDecor = async () => {
                   <Row gutter={[16, 16]}>
                     {decors.map(decor => (
                       <Col span={4} key={decor.documentId}>
-                        <Card
+                        {/* <Card
                           hoverable
                           cover={
                             decor.image?.url ? 
@@ -627,9 +629,9 @@ const handleSaveDecor = async () => {
                           }}
                         >
                           <Card.Meta title={decor.title} />
-                        </Card>
+                        </Card> */}
 
-                        {/* <Card
+                        <Card
                           hoverable={!decor.archive}
                           cover={
                             <div style={{ position: 'relative' }}>
@@ -663,7 +665,7 @@ const handleSaveDecor = async () => {
                           }}
                         >
                           <Card.Meta title={decor.title} />
-                        </Card> */}
+                        </Card>
 
                       </Col>
                     ))}

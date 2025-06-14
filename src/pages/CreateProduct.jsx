@@ -317,23 +317,24 @@ const items = [
       />
     )
   },
-  {
-    key: '13',
-    // label: formatItemLabel(translations.aluminumMolding, formattedTitles.aluminumMoldingSelection, 'aluminumMoldingError'),
-    label: formatItemLabel(translations.aluminumMolding, translations[formattedTitles.aluminumMoldingSelection], 'aluminumMoldingError'),
-    collapsible: !selectedDoor ? "disabled" : undefined,
-    children: (
-      <ElementSelection
-        selectedDoor={selectedDoor}
-        suborderId={suborderId}
-        productType="aluminumMolding"
-        availableSizes={{ width: false, height: false, length: true, thickness: false }}
-        defaultSizes={{ width: null, height: null, length: null, thickness: null }}
-        onAfterSubmit={updateFormattedTitles} 
-        isBackDecorDisabled={true}
-      />
-    )
-  },
+  // Aluminum Molding
+  // {
+  //   key: '13',
+  //   // label: formatItemLabel(translations.aluminumMolding, formattedTitles.aluminumMoldingSelection, 'aluminumMoldingError'),
+  //   label: formatItemLabel(translations.aluminumMolding, translations[formattedTitles.aluminumMoldingSelection], 'aluminumMoldingError'),
+  //   collapsible: !selectedDoor ? "disabled" : undefined,
+  //   children: (
+  //     <ElementSelection
+  //       selectedDoor={selectedDoor}
+  //       suborderId={suborderId}
+  //       productType="aluminumMolding"
+  //       availableSizes={{ width: false, height: false, length: true, thickness: false }}
+  //       defaultSizes={{ width: null, height: null, length: null, thickness: null }}
+  //       onAfterSubmit={updateFormattedTitles} 
+  //       isBackDecorDisabled={true}
+  //     />
+  //   )
+  // },
   {
     key: '14',
     // label: formatItemLabel(translations.aluminumFrame, formattedTitles.aluminumFrameSelection, 'aluminumFrameError'),
