@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== "production") {
   loadErrorMessages();
 }
 
-const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     console.log("GraphQL Errors:", graphQLErrors);
   }
@@ -21,14 +21,14 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
 });
 
 const httpLink = createHttpLink({
-  uri: "https://dev.api.boki-groupe.com/graphql", 
+  uri: "https://dev.api.boki-groupe.com/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
   const token = user?.jwt;
-  
+
   return {
     headers: {
       ...headers,
@@ -41,26 +41,43 @@ export const client = new ApolloClient({
   link: errorLink.concat(authLink.concat(httpLink)),
   cache: new InMemoryCache({
     typePolicies: {
-      Suborder: {
-        keyFields: ["documentId"],
+      Query: {
+        keyFields: false,
         fields: {
-          suborder_products: {
+          suborder: {
             merge(existing = {}, incoming) {
               return { ...existing, ...incoming };
             }
           }
-        },
-        merge(existing, incoming) {
-          return { ...existing, ...incoming };
         }
       },
-      SuborderProduct: {
-        keyFields: ["documentId"],
-        merge(existing, incoming) {
-          return { ...existing, ...incoming };
-        }
-      },
+      Product: { keyFields: false },
+      Order: { keyFields: false },
+      Suborder: { keyFields: false },
+      SuborderProduct: { keyFields: false },
+      Agent: { keyFields: false },
+      Client: { keyFields: false },
+      Company: { keyFields: false },
+      SuborderType: { keyFields: false },
+      CustomImage: { keyFields: false },
+      Decor: { keyFields: false },
+      DecorType: { keyFields: false },
+      SecondSideDecor: { keyFields: false },
+      SecondSideDecorType: { keyFields: false },
+      ComponentPropertiesSizes: { keyFields: false },
     }
   }),
-})
-
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "no-cache",
+      errorPolicy: "ignore",
+    },
+    query: {
+      fetchPolicy: "no-cache",
+      errorPolicy: "all",
+    },
+    mutate: {
+      errorPolicy: "all"
+    }
+  }
+});

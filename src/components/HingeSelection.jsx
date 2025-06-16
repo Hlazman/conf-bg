@@ -241,57 +241,107 @@ const HingeSelection = ({
     return data.products;
   }, [data]);
 
-  const doorDecorType = doorDecorData?.suborderProducts?.[0]?.decor_type?.typeName;
-  const doorProductTitle = doorDecorData?.suborderProducts?.[0]?.product?.title;
-  const doorHeight = doorDecorData?.suborderProducts?.[0]?.sizes?.height;
+  // const doorDecorType = doorDecorData?.suborderProducts?.[0]?.decor_type?.typeName;
+  // const doorProductTitle = doorDecorData?.suborderProducts?.[0]?.product?.title;
+  // const doorHeight = doorDecorData?.suborderProducts?.[0]?.sizes?.height;
 
-  const filteredHinges = useMemo(() => {
-    if (!hinges) return [];
+  // const filteredHinges = useMemo(() => {
+  //   if (!hinges) return [];
 
-    const filtered = hinges.filter(hinge => {
-      // Проверка decor_types — обычное совпадение
-      const decorTypes = hinge.decor_types || [];
-      const decorMatch = !doorDecorType || decorTypes.some(dt => dt.typeName === doorDecorType);
+  //   const filtered = hinges.filter(hinge => {
+  //     // Проверка decor_types — обычное совпадение
+  //     const decorTypes = hinge.decor_types || [];
+  //     const decorMatch = !doorDecorType || decorTypes.some(dt => dt.typeName === doorDecorType);
 
-      // Исключительный кейс с decorCombinations
-      let exceptionMatch = false;
-      if (!decorMatch && hinge.decorCombinations && doorProductTitle && doorDecorType) {
-        // decorCombinations может быть строкой с JSON — обработаем оба варианта
-        let combos = hinge.decorCombinations;
-        if (typeof combos === 'string') {
-          try {
-            combos = JSON.parse(combos);
-          } catch {
-            combos = {};
-          }
-        }
-        if (
-          combos &&
-          combos[doorProductTitle] &&
-          combos[doorProductTitle].includes(doorDecorType)
-        ) {
-          exceptionMatch = true;
+  //     // Исключительный кейс с decorCombinations
+  //     let exceptionMatch = false;
+  //     if (!decorMatch && hinge.decorCombinations && doorProductTitle && doorDecorType) {
+  //       // decorCombinations может быть строкой с JSON — обработаем оба варианта
+  //       let combos = hinge.decorCombinations;
+  //       if (typeof combos === 'string') {
+  //         try {
+  //           combos = JSON.parse(combos);
+  //         } catch {
+  //           combos = {};
+  //         }
+  //       }
+  //       if (
+  //         combos &&
+  //         combos[doorProductTitle] &&
+  //         combos[doorProductTitle].includes(doorDecorType)
+  //       ) {
+  //         exceptionMatch = true;
+  //       }
+  //     }
+
+  //     // Проверка maxSizes и высоты
+  //     const hasMaxSizes = Array.isArray(hinge.maxSizes) && hinge.maxSizes.length > 0;
+  //     const maxHeight = hasMaxSizes
+  //       ? Math.max(...hinge.maxSizes.map(s => s.height || 0))
+  //       : undefined;
+  //     const heightMatch = !doorHeight || !hasMaxSizes || doorHeight <= maxHeight;
+
+  //     // Показываем если совпало по decor_types или это исключение + подходит по высоте
+  //     return (decorMatch || exceptionMatch) && heightMatch;
+  //   });
+
+  //   // Оставляем только петли с maxSizes, если есть хотя бы одна такая, иначе все
+  //   const hasHingeWithSizes = filtered.some(hinge => Array.isArray(hinge.maxSizes) && hinge.maxSizes.length > 0);
+  //   if (hasHingeWithSizes) {
+  //     return filtered.filter(hinge => Array.isArray(hinge.maxSizes) && hinge.maxSizes.length > 0);
+  //   }
+  //   return filtered;
+  // }, [hinges, doorDecorType, doorProductTitle, doorHeight]);
+
+
+
+const doorProductTitle = doorDecorData?.suborderProducts?.[0]?.product?.title;
+const doorDecorType = doorDecorData?.suborderProducts?.[0]?.decor_type?.typeName;
+const doorHeight = doorDecorData?.suborderProducts?.[0]?.sizes?.height;
+
+const filteredHinges = useMemo(() => {
+  if (!hinges) return [];
+
+  return hinges.filter(hinge => {
+    // decorCombinations парсим, если это строка
+    let combos = hinge.decorCombinations;
+    if (combos && typeof combos === 'string') {
+      try {
+        combos = JSON.parse(combos);
+      } catch {
+        combos = {};
+      }
+    }
+
+    // Если для этой петли есть decorCombinations с ключом = названию двери
+    if (combos && doorProductTitle && combos[doorProductTitle]) {
+      const { Decors, maxHeight, minHeight } = combos[doorProductTitle];
+
+      // Проверяем декоры
+      if (Array.isArray(Decors) && Decors.length > 0 && doorDecorType) {
+        if (!Decors.includes(doorDecorType)) {
+          return false; // декор двери не разрешён
         }
       }
 
-      // Проверка maxSizes и высоты
-      const hasMaxSizes = Array.isArray(hinge.maxSizes) && hinge.maxSizes.length > 0;
-      const maxHeight = hasMaxSizes
-        ? Math.max(...hinge.maxSizes.map(s => s.height || 0))
-        : undefined;
-      const heightMatch = !doorHeight || !hasMaxSizes || doorHeight <= maxHeight;
+      // Проверяем максимальную высоту
+      if (maxHeight !== null && doorHeight && +doorHeight > +maxHeight) {
+        return false;
+      }
+      // Проверяем минимальную высоту
+      if (minHeight !== null && doorHeight && +doorHeight < +minHeight) {
+        return false;
+      }
 
-      // Показываем если совпало по decor_types или это исключение + подходит по высоте
-      return (decorMatch || exceptionMatch) && heightMatch;
-    });
-
-    // Оставляем только петли с maxSizes, если есть хотя бы одна такая, иначе все
-    const hasHingeWithSizes = filtered.some(hinge => Array.isArray(hinge.maxSizes) && hinge.maxSizes.length > 0);
-    if (hasHingeWithSizes) {
-      return filtered.filter(hinge => Array.isArray(hinge.maxSizes) && hinge.maxSizes.length > 0);
+      return true; // все ограничения выполнены
     }
-    return filtered;
-  }, [hinges, doorDecorType, doorProductTitle, doorHeight]);
+
+    // Если нет decorCombinations для этой двери, просто по совместимости
+    return true;
+  });
+}, [hinges, doorProductTitle, doorDecorType, doorHeight]);
+
+
 
   useEffect(() => {
     if (!loadingHingeProduct && hingeProductData && hinges.length > 0) {
