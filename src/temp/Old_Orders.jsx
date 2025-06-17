@@ -17,7 +17,6 @@ import { useApolloClient } from "@apollo/client";
 import { deleteSuborderWithProducts, deleteOrderWithSuborders } from "../api/deleteProducts";
 import { cloneSuborderWithProducts } from "../api/cloneSuborder";
 import { CurrencyContext } from "../context/CurrencyContext";
-import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
 
 export const GET_ORDERS = gql`
   query GetOrders($filters: OrderFiltersInput, $pagination: PaginationArg, $suborderFilters: SuborderProductFiltersInput) {
@@ -64,26 +63,14 @@ const CREATE_SUBORDER = gql`
   }
 `;
 
-const UPDATE_SUBORDER_AMOUNT = gql`
-  mutation UpdateSuborder($documentId: ID!, $amount: Int!) {
-    updateSuborder(documentId: $documentId, data: { amount: $amount }) {
-      documentId
-      amount
-    }
-  }
-`;
-
 const Orders = () => {
   const [commentModal, setCommentModal] = useState({ open: false, text: "" });
-  const [editAmountModal, setEditAmountModal] = useState({ open: false, suborderId: null, orderId: null, amount: "1" });
   const selectedCompany = JSON.parse(localStorage.getItem("selectedCompany"));
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
   const client = useApolloClient();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [updateSuborder, { loading: updatingAmount }] = useMutation(UPDATE_SUBORDER_AMOUNT);
   
   const { data, loading, refetch } = useQuery(GET_ORDERS, {
     variables: { 
@@ -363,67 +350,6 @@ const handleSampleClick = async (record) => {
     }
   };
 
-  const handleEditAmountClick = (suborder, orderId) => {
-    setEditAmountModal({
-      open: true,
-      suborderId: suborder.documentId,
-      orderId,
-      amount: suborder.amount,
-    });
-  };
-
-  // const handleAmountChange = (e) => {
-  //   setEditAmountModal((prev) => ({ ...prev, amount: Number(e.target.value) }));
-  // };
-
-  const handleAmountChange = (e) => {
-    // Просто берем строку, не парсим в число!
-    setEditAmountModal((prev) => ({
-      ...prev,
-      amount: e.target.value.replace(/^0+/, "") // опционально убираем лидирующие нули
-    }));
-  };
-
-  // const handleSaveAmount = async () => {
-  //   if (!editAmountModal.amount || editAmountModal.amount < 1) {
-  //     message.error(translations.errMinAmount || "Минимальное количество — 1");
-  //     return;
-  //   }
-  //   try {
-  //     await updateSuborder({
-  //       variables: { documentId: editAmountModal.suborderId, amount: editAmountModal.amount }
-  //     });
-
-  //     await calculateOrderPriceBySuborder(client, editAmountModal.suborderId);
-  //     setEditAmountModal({ open: false, suborderId: null, orderId: null, amount: 0 });
-  //     await refetch();
-  //     message.success(translations.save);
-  //   } catch (err) {
-  //     message.error(translations.err);
-  //   }
-  // };
-
-  const handleSaveAmount = async () => {
-    const amountNum = Number(editAmountModal.amount);
-    if (!amountNum || amountNum < 1) {
-      message.error(translations.errMinAmount);
-      return;
-    }
-    try {
-      await updateSuborder({
-        variables: { documentId: editAmountModal.suborderId, amount: amountNum }
-      });
-
-      await calculateOrderPriceBySuborder(client, editAmountModal.suborderId);
-
-      setEditAmountModal({ open: false, suborderId: null, orderId: null, amount: "1" });
-      await refetch();
-      message.success(translations.save);
-    } catch (err) {
-      message.error(translations.err);
-    }
-  };
-
   const menu = (record) => ({
     items: [
       { key: "view", label: translations.view, icon: <EyeOutlined />, onClick: () => handleViewPresentation(record) },
@@ -526,20 +452,11 @@ const handleSampleClick = async (record) => {
           return suborder_products.map(item => item.product?.title).join(', ');
         }
       },
-      {
-        title: translations.amount,
-        dataIndex: 'amount',
+      { 
+        title: translations.amount, 
+        dataIndex: 'amount', 
         key: 'amount',
-        render: (amount, suborder) => (
-          <Space>
-            {amount}
-            <Button
-              icon={<EditOutlined />}
-              size="small"
-              onClick={() => handleEditAmountClick(suborder, record.documentId)}
-            />
-          </Space>
-        )
+        render: (amount) => amount
       },
       {
         title: translations.action,
@@ -690,25 +607,6 @@ const handleSampleClick = async (record) => {
       />
       <Modal open={commentModal.open} footer={null} onCancel={() => setCommentModal({ open: false, text: "" })}>
         <p>{commentModal.text}</p>
-      </Modal>
-
-      <Modal
-        open={editAmountModal.open}
-        title={translations.edit}
-        onCancel={() => setEditAmountModal({ open: false, suborderId: null, orderId: null, amount: 1 })}
-        onOk={handleSaveAmount}
-        confirmLoading={updatingAmount}
-        okText={translations.save}
-        cancelText={translations.cancel}
-      >
-        <input
-          type="number"
-          min={1}
-          value={editAmountModal.amount}
-          onChange={handleAmountChange}
-          style={{ width: '100%', fontSize: 16, padding: 6 }}
-          inputMode="numeric"
-        />
       </Modal>
     </>
   );

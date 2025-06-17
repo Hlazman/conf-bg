@@ -268,6 +268,7 @@ const en = {
   errAlertOptions: "Error in option selection. Please check your option selection.",
   errAlertParameters: "The sizes do not match the selected door.",
   errAlertHinge: "The hinges do not fit the selected door.",
+  errMinAmount: "Minimum amount: 1",
   "2 errors occurred": 'First choose a frame',
   doorClickAgain: 'Or click Update again in the Door canvas section Door canvas',
   moveBackProduct: 'If you changed the frame to a monoblock and did not remove the extender. You need to return the previous frame and remove the extender.',

@@ -7,7 +7,6 @@ const FrameFactory = ({ suborder }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
-  console.log(suborder)
   // Находим продукты с типами frame и slidingFrame
   const frameProduct = suborder.suborder_products.find(product => product.type === "frame");
   const slidingFrameProduct = suborder.suborder_products.find(product => product.type === "slidingFrame");

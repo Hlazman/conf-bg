@@ -268,6 +268,7 @@ const pl = {
   errAlertParameters: "Rozmiary nie pasują do wybranych drzwi.",
   errAlertHinge: "Zawiasy nie pasują do wybranych drzwi.",
   "2 errors occurred": 'Najpierw wybierz ramkę',
+  errMinAmount: "Minimalna ilość: 1",
   doorClickAgain: 'Lub kliknij Odśwież ponownie w sekcji Skrzydło drzwiowe drzwi',
   moveBackProduct: 'Jeśli zmieniłeś ramkę na monoblok i nie usunąłeś zaznaczenia. Musisz wrócić do poprzedniej ramki i usunąć zaznaczenie.',
 

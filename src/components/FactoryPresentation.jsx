@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "antd";
 import html2pdf from 'html2pdf.js/dist/html2pdf.min.js';
 import { LanguageContext } from "../context/LanguageContext";
@@ -16,6 +16,8 @@ import TotalPriceFactory from "../Factory/TotalPriceFactory";
 
 const FactoryPresentation = ({ orderData }) => {
   const { translations } = useContext(LanguageContext);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
   // Функция для сохранения в PDF
   const saveToPDF = () => {
     const element = document.getElementById('factory-presentation-content');
@@ -26,8 +28,15 @@ const FactoryPresentation = ({ orderData }) => {
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
+
+    // Устанавливаем флаг генерации PDF
+    setGeneratingPdf(true);
+
+    // html2pdf().set(options).from(element).save();
     
-    html2pdf().set(options).from(element).save();
+    setTimeout(() => {
+      html2pdf().set(options).from(element).save();
+    }, 1000);
   };
 
   const sortSuborders = (suborders) => {
@@ -55,7 +64,7 @@ const FactoryPresentation = ({ orderData }) => {
             
             {/* Рендерим соответствующий компонент в зависимости от типа suborder */}
             {['door', 'hiddenDoor', 'slidingDoor'].includes(suborder.suborder_type?.typeName) && (
-              <DoorFactory suborder={suborder} />
+              <DoorFactory suborder={suborder} isPdf={generatingPdf}/>
             )}
             
             {suborder.suborder_type?.typeName === 'wallPanel' && (
