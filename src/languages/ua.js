@@ -169,6 +169,11 @@ const ua = {
   customProductCostNetto: 'Індивідуальна вартість',
   mountingSystem: 'Система кріплення',
   framePainting: 'Фарбування рами як у дверей',
+  sandblasting: "Піскострумин", 
+  satinGlass: "Сатиноване Скло",
+  milling: "Фрезерування",
+  doorInsert: "Дверна вставка оздоблення",
+  alMolding: "Алюмінієвий молдинг",
 
   // MESSAGES
   doorSealRequired: 'Оберіть ущільнювач дверей ',

@@ -169,6 +169,11 @@ const en = {
   customProductCostNetto: 'Individual cost',
   mountingSystem: 'Mounting System',
   framePainting: 'Painting the frame like the doors',
+  sandblasting:"Sandblasting",
+  satinGlass: "Satin Glass",
+  milling: "Milling",
+  doorInsert: "Door trim insert",
+  alMolding: "Aluminum molding",
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',
@@ -238,7 +243,6 @@ const en = {
   standardPlatbandSize: 'Standard size: 80mm',
   extenderRecomendedWidth: 'Recommended width',
   notAvailable: 'Not available',
-
 
   //ERRORS
   err: 'Error',

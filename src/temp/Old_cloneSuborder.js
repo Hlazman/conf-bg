@@ -87,26 +87,12 @@ export const GET_SUBORDER_DETAILS = gql`
           width
           id
           units
-          holeWidth
-          holeHeight
-          deltaWidth
-          deltaHeight
-          blockWidth
-          blockHeight
-          doubleDoorWidth
-          minWidth
-          recomendedWidth
         }
         spindleInsertion
         thresholdInsertion
         type
         veneerDirection
         documentId
-        frameTreshold 
-        framePainting
-        customProductCostNetto
-        comment
-        knobOpen
       }
     }
   }
@@ -235,23 +221,7 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
           if (product.sizes.type !== undefined) productInput.sizes.type = product.sizes.type;
           if (product.sizes.id !== undefined) productInput.sizes.id = product.sizes.id;
           if (product.sizes.units !== undefined) productInput.sizes.units = product.sizes.units;
-
-          if (product.sizes.holeWidth !== undefined) productInput.sizes.holeWidth = product.sizes.holeWidth;
-          if (product.sizes.holeHeight !== undefined) productInput.sizes.holeHeight = product.sizes.holeHeight;
-          if (product.sizes.deltaWidth !== undefined) productInput.sizes.deltaWidth = product.sizes.deltaWidth;
-          if (product.sizes.deltaHeight !== undefined) productInput.sizes.deltaHeight = product.sizes.deltaHeight;
-          if (product.sizes.blockWidth !== undefined) productInput.sizes.blockWidth = product.sizes.blockWidth;
-          if (product.sizes.blockHeight !== undefined) productInput.sizes.blockHeight = product.sizes.blockHeight;
-          if (product.sizes.doubleDoorWidth !== undefined) productInput.sizes.doubleDoorWidth = product.sizes.doubleDoorWidth;
-          if (product.sizes.minWidth !== undefined) productInput.sizes.minWidth = product.sizes.minWidth;
-          if (product.sizes.recomendedWidth !== undefined) productInput.sizes.recomendedWidth = product.sizes.recomendedWidth;
         }
-
-        if (product.frameTreshold !== undefined) productInput.frameTreshold = product.frameTreshold;
-        if (product.framePainting !== undefined) productInput.framePainting = product.framePainting;
-        if (product.customProductCostNetto !== undefined) productInput.customProductCostNetto = product.customProductCostNetto;
-        if (product.comment !== undefined) productInput.comment = product.comment;
-        if (product.knobOpen !== undefined) productInput.knobOpen = product.knobOpen;
 
         // Создаем новый продукт подзаказа
         try {

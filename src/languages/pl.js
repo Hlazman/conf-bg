@@ -169,6 +169,11 @@ const pl = {
   customProductCostNetto: 'Koszt indywidualny',
   mountingSystem: 'System montażowy',
   framePainting: 'Malowanie ramy jak drzwi',
+  sandblasting:"Piaskowanie",
+  satinGlass: "Szkło satynowe",
+  milling: "Frezowanie",
+  doorInsert: "Wkładka do drzwi",
+  alMolding: "Molding aluminiowy",
 
   // MESSAGES
   doorSealRequired: 'Wybierać uszczelka drzwiowa ',
