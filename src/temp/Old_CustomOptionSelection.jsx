@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Typography, Spin, Button, message, Input, Form, Space, Modal, Card } from "antd";
-import { PlusOutlined, DeleteOutlined, SaveOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
@@ -15,7 +15,6 @@ const CREATE_SUBORDER_PRODUCT = gql`
       customTitle
       productCostNetto
       amount
-      comment
     }
   }
 `;
@@ -27,7 +26,6 @@ const UPDATE_SUBORDER_PRODUCT = gql`
       customTitle
       productCostNetto
       amount
-      comment
     }
   }
 `;
@@ -58,7 +56,6 @@ const GET_SUBORDER_PRODUCTS = gql`
       customTitle
       productCostNetto
       amount
-      comment
     }
   }
 `;
@@ -69,7 +66,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [optionToDelete, setOptionToDelete] = useState(null);
   const { translations } = useContext(LanguageContext);
-  const [variantModalOpen, setVariantModalOpen] = useState(false);
+
   const { convertToEUR, convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
   // Получаем данные о существующих кастомных опциях для подзаказа
@@ -106,7 +103,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
 
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(translations.dataSaved);
+      message.success(translations.editError);
       refetchOptions();
     },
     onError: (error) => {
@@ -134,7 +131,6 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
           // productCostNetto: option.productCostNetto || "",
           productCostNetto: convertFromEUR(option.productCostNetto) || "",
           amount: option.amount || 1,
-          comment: option.comment || "",
           isNew: false
         }));
         setCustomOptions(options);
@@ -154,7 +150,6 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
       customTitle: "",
       productCostNetto: "",
       amount: 1,
-      comment: "",
       isNew: true
     }]);
   };
@@ -189,8 +184,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         customTitle: option.customTitle,
         // productCostNetto: parseFloat(option.productCostNetto),
         productCostNetto: convertToEUR(parseFloat(option.productCostNetto)),
-        amount: parseInt(option.amount, 10) || 1,
-        comment: option.comment || ""
+        amount: parseInt(option.amount, 10) || 1
       };
 
       if (option.id) {
@@ -359,44 +353,6 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
               </Form.Item>
             </Col>
           </Row>
-
-          <Row gutter={20}>
-            <Col span={24}>
-              <Form.Item label={translations.comment}>
-                <Input.TextArea
-                  placeholder={translations.comment}
-                  value={option.comment}
-                  onChange={(e) => handleOptionChange(index, "comment", e.target.value)}
-                  autoSize
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={[8, 8]} style={{ marginBottom: 8 }}>
-            <Col style={{marginBottom: '5px'}}>
-              <Button
-                type="text"
-                icon={<InfoCircleOutlined style={{ color: "#1890ff" }} />}
-                size="small"
-                onClick={() => setVariantModalOpen(true)}
-                style={{ fontWeight: 500, paddingLeft: 0, paddingRight: 8, display: "inline-flex", alignItems: "center" }}
-              >
-                {translations.information}
-              </Button>
-            </Col>
-
-            <Col span={24}>
-              <Space wrap>
-                {["sandblasting", "satinGlass", "milling", "doorInsert", "alMolding"].map(key => (
-                  <Button key={key} size="small" onClick={() => handleOptionChange(index, "customTitle", translations[key])}>
-                    {translations[key]}
-                  </Button>
-                ))}
-              </Space>
-            </Col>
-          </Row>
-
         </Card>
       ))}
 
@@ -416,18 +372,6 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
       >
         <p>{translations.sureToDel}</p>
       </Modal>
-
-      <Modal
-        open={variantModalOpen}
-        onCancel={() => setVariantModalOpen(false)}
-        footer={null}
-        title={`${translations.customOption} ${translations.information}`}
-      >
-        <div>
-          test text
-        </div>
-      </Modal>
-
     </div>
   );
 };
