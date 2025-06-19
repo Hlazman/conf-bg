@@ -28,7 +28,7 @@ const CustomOptionsPresentation = ({ suborder }) => {
         {customOptions.map((product, index) => (
           <React.Fragment key={index}>
             <Descriptions.Item label={translations.title}>
-              {product?.customTitle || '-'}
+              {product?.customTitle || '-'} ({product?.comment || ''})
               {product.amount > 1 ? ` (${product.amount} ${translations.pcs})` : ''}
             </Descriptions.Item>
             <Descriptions.Item label={translations.priceNetto}>

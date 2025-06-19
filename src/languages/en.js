@@ -375,9 +375,10 @@ const en = {
   "surfaceCuttingUniqueLine": "Finishing selection",
   "surfaceCuttingPremium": "Finishing selection",
 
-  // ORDER Warning: 
+  // Warning and Informayion: 
   colorWarning: 'Please be aware that the colors displayed on screen may slightly differ from those in print or in real life. This variation could be attributed to differences in monitor color reproduction settings and potential variations in the printing process. It is advisable to take this into consideration when evaluating the color scheme of the presentation.',
-  };
+  customOptionInfo: 'You can add any custom option that does not contradict the technical specifications of the door set by specifying the name, price, quantity, and description in the comment field. Standard options and services from the manufacturer are also available—their price is calculated individually, so please provide a description for the client and set the price to 0; after receiving the calculation from the manufacturer, update the price.', 
+};
   
   export default en;
   

@@ -423,9 +423,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         footer={null}
         title={`${translations.customOption} ${translations.information}`}
       >
-        <div>
-          test text
-        </div>
+        <div> {translations.customOptionInfo} </div>
       </Modal>
 
     </div>
