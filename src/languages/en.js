@@ -174,6 +174,7 @@ const en = {
   milling: "Milling",
   doorInsert: "Door trim insert",
   alMolding: "Aluminum molding",
+  archive: "Archive",
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',

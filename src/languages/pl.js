@@ -174,6 +174,7 @@ const pl = {
   milling: "Frezowanie",
   doorInsert: "Wkładka do drzwi",
   alMolding: "Molding aluminiowy",
+  archive: "Archiwum",
 
   // MESSAGES
   doorSealRequired: 'Wybierać uszczelka drzwiowa ',

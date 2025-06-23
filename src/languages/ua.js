@@ -174,6 +174,7 @@ const ua = {
   milling: "Фрезерування",
   doorInsert: "Дверна вставка оздоблення",
   alMolding: "Алюмінієвий молдинг",
+  archive: "Архів",
 
   // MESSAGES
   doorSealRequired: 'Оберіть ущільнювач дверей ',

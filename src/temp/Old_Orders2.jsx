@@ -23,7 +23,6 @@ export const GET_ORDERS = gql`
   query GetOrders($filters: OrderFiltersInput, $pagination: PaginationArg, $suborderFilters: SuborderProductFiltersInput) {
     orders(filters: $filters, pagination: $pagination) {
       documentId
-      archive
       orderNumber
       totalCostNetto
       totalCostBrutto
@@ -74,15 +73,6 @@ const UPDATE_SUBORDER_AMOUNT = gql`
   }
 `;
 
-const UPDATE_ORDER_ARCHIVE = gql`
-  mutation UpdateOrderArchive($documentId: ID!, $archive: Boolean!) {
-    updateOrder(documentId: $documentId, data: { archive: $archive }) {
-      documentId
-      archive
-    }
-  }
-`;
-
 const Orders = () => {
   const [commentModal, setCommentModal] = useState({ open: false, text: "" });
   const [editAmountModal, setEditAmountModal] = useState({ open: false, suborderId: null, orderId: null, amount: "1" });
@@ -92,7 +82,6 @@ const Orders = () => {
   const client = useApolloClient();
   const location = useLocation();
   const navigate = useNavigate();
-  const [showArchive, setShowArchive] = useState(false);
 
   const [updateSuborder, { loading: updatingAmount }] = useMutation(UPDATE_SUBORDER_AMOUNT);
   
@@ -151,23 +140,11 @@ const Orders = () => {
       }
     ]
   });
-
-  // Обновляем archive заказа
-  const [updateOrderArchive] = useMutation(UPDATE_ORDER_ARCHIVE, {
-    onCompleted: () => refetch(),
-    onError: (e) => message.error(e.message),
-  });
-
-  // All Orders
+  
   const orders = React.useMemo(() => {
     if (!data?.orders) return [];
     return [...data.orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [data]);
-
-  // All filtered Orders
-  const filteredOrders = React.useMemo(() => {
-  return orders.filter(order => !!order.archive === showArchive);
-}, [orders, showArchive]);
 
   const handleViewPresentation = (record) => {
     navigate(`/presentation/${record.documentId}/client`);
@@ -666,23 +643,6 @@ const handleSampleClick = async (record) => {
       render: (client) => client?.name || "-"
     },
     {
-      title: translations.archive,
-      dataIndex: "archive",
-      key: "archive",
-      width: '100px',
-      render: (archive, record) => (
-        <input
-          type="checkbox"
-          checked={!!archive}
-          onChange={e =>
-            updateOrderArchive({
-              variables: { documentId: record.documentId, archive: e.target.checked }
-            })
-          }
-        />
-      ),
-    },
-    {
       title: translations.comment,
       dataIndex: "comment",
       key: "comment",
@@ -717,28 +677,8 @@ const handleSampleClick = async (record) => {
       <Button onClick={() => refetch()} style={{ marginBottom: 16 }}>
         {translations.update}
       </Button>
-
-      {/* <Button onClick={() => setShowArchive(val => !val)} style={{ marginBottom: 16, marginLeft: 8 }}>
-        {translations.archive}
-      </Button> */}
-
-      <Button
-        type={showArchive ? "primary" : "default"}
-        danger={showArchive}
-        onClick={() => setShowArchive(val => !val)}
-        style={{
-          marginBottom: 16,
-          marginLeft: 8,
-          backgroundColor: showArchive ? '#ffcccc' : undefined,
-          color: showArchive ? '#a00' : undefined
-        }}
-      >
-        {translations.archive}
-      </Button>
-
       <Table 
-        // dataSource={orders}
-        dataSource={filteredOrders}
+        dataSource={orders} 
         columns={columns} 
         loading={loading} 
         rowKey="documentId" 
