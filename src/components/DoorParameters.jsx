@@ -365,7 +365,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       return;
     }
 
-    if (!wallThickness && dimensionType === "wall") {
+    // if (!wallThickness && dimensionType === "wall") {
+    if (!wallThickness && frameProduct?.product?.title?.toLowerCase().includes('new')) {
       message.error(translations.enterThickness);
       return;
     }
@@ -455,7 +456,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
             </Form.Item>
           </Col>
 
-          <Col span={dimensionType === "door" ? 12 : 8}>
+          {/* <Col span={dimensionType === "door" ? 12 : 8}> */}
+          <Col span={8}>
             <Form.Item label={translations.height} required>
               {dimensionType === "wall" ? (
                 <>
@@ -529,7 +531,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
             </Form.Item>
           </Col>
 
-          <Col span={dimensionType === "door" ? 12 : 8}>
+          {/* <Col span={dimensionType === "door" ? 12 : 8}> */}
+          <Col span={8}>
             <Form.Item label={translations.width} required>
               {dimensionType === "wall" ? (
                 <>
@@ -601,7 +604,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
             </Form.Item>
           </Col>
 
-          {dimensionType === "wall" && (
+          {/* {dimensionType === "wall" && ( */}
             <Col span={8}>
               <Form.Item label={translations.thickness} required>
                 <InputNumber
@@ -612,7 +615,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                 />
               </Form.Item>
             </Col>
-          )}
+          {/* )} */}
         </Row>
 
         {/* Добавляем чекбокс для frameTreshold */}

@@ -108,6 +108,16 @@ mutation DeleteSuborderProduct($documentId: ID!) {
   }
 }`;
 
+// GraphQL запрос для получения данных субордера
+export const SUBORDER_QUERY = gql`
+  query Suborder($documentId: ID!) {
+    suborder(documentId: $documentId) {
+      documentId
+      extenderCalculatedWidth
+    }
+  }
+`;
+
 const ElementSelection = ({
   selectedDoor,
   suborderId,
@@ -134,6 +144,9 @@ const ElementSelection = ({
   const [selectedBackDecorType, setSelectedBackDecorType] = useState(null);
   const [selectedBackDecor, setSelectedBackDecor] = useState(null);
   const [backColorCode, setBackColorCode] = useState("");
+
+  // Состояние реккомендованой ширины добора
+  const [extenderCalculatedWidth, setExtenderCalculatedWidth] = useState(null);
 
   // Запрос для получения элементов продукта
   const { loading, error, data } = useQuery(GET_PRODUCT_ELEMENTS, {
@@ -223,6 +236,11 @@ const ElementSelection = ({
     }
   });
 
+  const { data: suborderData } = useQuery(SUBORDER_QUERY, {
+    variables: { documentId: suborderId },
+    skip: !suborderId,
+  });
+
   const handleDelete = async () => {
     const idToDelete = productId || productData?.suborderProducts[0]?.documentId;
     
@@ -304,6 +322,14 @@ const ElementSelection = ({
       }
     }
   }, [productElements, productData, loadingProduct, defaultSizes]);
+
+  // useEffect, для extenderCalculatedWidth
+  useEffect(() => {
+    if (suborderData?.suborder?.extenderCalculatedWidth) {
+      setExtenderCalculatedWidth(suborderData.suborder.extenderCalculatedWidth);
+    }
+  }, [suborderData]);
+
 
   // Функция для выбора продукта
   const handleProductSelect = (product) => {
@@ -490,7 +516,8 @@ const ElementSelection = ({
 
           {productType === "extender" && (
             <Typography.Paragraph style={{ color: '#888' }}>
-              {translations.extenderRecomendedWidth }: {selectedProduct?.maxSizes[0]?.recomendedWidth}
+              {/* {translations.extenderRecomendedWidth }: {selectedProduct?.maxSizes[0]?.recomendedWidth} */}
+              {translations.extenderRecomendedWidth }: {extenderCalculatedWidth ?? '-'}
             </Typography.Paragraph>
           )}
 

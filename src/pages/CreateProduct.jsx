@@ -41,9 +41,8 @@ const CreateProduct = () => {
   const [selectedHinge, setSelectedHinge] = useState(null);
   const [selectedLock, setSelectedLock] = useState(null);
   const [selectedKnob, setSelectedKnob] = useState(null);
-  const [activeKeys, setActiveKeys] = useState(['1', '2']);
   const [formattedTitles, setFormattedTitles] = useState({});
-  
+  const [activeKeys, setActiveKeys] = useState(['1', '2', '3']);
   
   const handleDoorSelect = (door) => {
     setSelectedDoor(door);
@@ -75,22 +74,21 @@ const CreateProduct = () => {
     setBackColorCode("");
   };
 
-useEffect(() => {
-  if (suborderId) {
-    fetchSuborderData(client, suborderId)
-      .then(titles => {
-        if (titles) {
-          setFormattedTitles(titles);
-        }
-      });
-  }
-}, [suborderId, client]);
+  useEffect(() => {
+    if (suborderId) {
+      fetchSuborderData(client, suborderId)
+        .then(titles => {
+          if (titles) {
+            setFormattedTitles(titles);
+          }
+        });
+    }
+  }, [suborderId, client]);
 
-
-const [suborderErrors, setSuborderErrors] = useState({});
-const handleErrorsUpdate = (errors) => {
-  setSuborderErrors(errors);
-};
+  const [suborderErrors, setSuborderErrors] = useState({});
+  const handleErrorsUpdate = (errors) => {
+    setSuborderErrors(errors);
+  };
 
 const formatItemLabel = (baseLabel, additionalInfo, errorKey) => {
   if (!additionalInfo) return baseLabel;
