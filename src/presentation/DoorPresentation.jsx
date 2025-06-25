@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Descriptions, Row, Col, Card, Tooltip } from "antd";
 import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const DoorPresentation = ({ suborder, renderImage }) => {
   const { translations } = useContext(LanguageContext);
@@ -12,7 +13,7 @@ const DoorPresentation = ({ suborder, renderImage }) => {
   );
   
   if (!doorProduct) return null;
-  
+  console.log(suborder)
   const productImage = doorProduct.product?.image?.url || doorProduct.customImage?.url;
   const sizes = doorProduct.sizes || {};
   
@@ -26,6 +27,13 @@ const DoorPresentation = ({ suborder, renderImage }) => {
   
   return (
     <div className="door-presentation">
+      {suborder?.amount >= 1 && (
+        <p> 
+          <InfoCircleOutlined style={{ color: "#1890ff" }} /> 
+          &nbsp; {translations.amountPrice} {suborder.amount}  
+          </p>
+      )}
+
       <Row gutter={16}>
         <Col span={10}>
           <Card
@@ -93,10 +101,10 @@ const DoorPresentation = ({ suborder, renderImage }) => {
                doorProduct.type === 'slidingDoor' ? translations.sliDoor : '-'}
             </Descriptions.Item>
 
-            <Descriptions.Item label={translations.amount}>
+            {/* <Descriptions.Item label={translations.amount}>
               {doorProduct?.amount}
               
-            </Descriptions.Item>
+            </Descriptions.Item> */}
 
             <Descriptions.Item label={translations.doubleDoor}>
               {suborder.double_door ? translations.yes : translations.no}

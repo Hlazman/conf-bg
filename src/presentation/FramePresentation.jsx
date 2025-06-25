@@ -83,7 +83,8 @@ const FramePresentation = ({ suborder, getColorFromCode }) => {
       </Descriptions>
 
       {/* Декор продукта */}
-      {(frameProduct.decor_type || frameProduct.colorCode) && (
+      {/* {(frameProduct.decor_type || frameProduct.colorCode) && ( */}
+      {frameProduct && (frameProduct.decor_type || frameProduct.colorCode) && (
         <DecorPresentation
           product={frameProduct}
           isFrontSide={true}

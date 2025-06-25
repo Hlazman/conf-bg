@@ -379,7 +379,9 @@ const pl = {
   // Warning and Informayion: 
   colorWarning: 'Należy pamiętać, że kolory wyświetlane na ekranie mogą nieznacznie różnić się od wydrukowanych lub w rzeczywistości. Różnica ta może wynikać z różnic w ustawieniach reprodukcji kolorów monitora i potencjalnych różnic w procesie drukowania. Zaleca się uwzględnienie ww. informacji przy podjęciu decyzji.',
   customOptionInfo: 'Możesz dodać dowolną opcję indywidualną, która nie jest sprzeczna z parametrami technicznymi zestawu drzwiowego, podając nazwę, cenę, ilość oraz opis w polu komentarza. Dostępne są również standardowe opcje i usługi producenta — ich cena jest kalkulowana indywidualnie, dlatego dodając je wpisz opis dla klienta i ustaw cenę na 0, a po otrzymaniu wyceny od producenta zaktualizuj cenę.',
-  };
+  amountPrice: 'Poniższe ceny dotyczą 1 zestawu. Wszystkie zestawy są wliczone w całkowitą kwotę. Ilość w zamówieniu: ', 
+  
+};
   
   export default pl;
   

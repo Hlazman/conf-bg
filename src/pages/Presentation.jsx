@@ -36,6 +36,7 @@ const GET_ORDER = gql`
       totalTaxAmount
       suborders(pagination: $subordersPagination) {
         documentId
+        amount
         comment
         double_door
         hidden
