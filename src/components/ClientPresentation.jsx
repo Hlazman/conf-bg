@@ -173,6 +173,7 @@ const ClientPresentation = ({ orderData, companyData }) => {
               {/* <FramePresentation suborder={suborder} /> */}
               <FramePresentation 
                 suborder={suborder} 
+                renderImage={renderImage}
                 getColorFromCode={getColorFromCode}
               />
 

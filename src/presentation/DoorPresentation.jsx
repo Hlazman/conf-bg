@@ -13,7 +13,7 @@ const DoorPresentation = ({ suborder, renderImage }) => {
   );
   
   if (!doorProduct) return null;
-  console.log(suborder)
+
   const productImage = doorProduct.product?.image?.url || doorProduct.customImage?.url;
   const sizes = doorProduct.sizes || {};
   

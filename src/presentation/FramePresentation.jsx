@@ -6,7 +6,7 @@ import { CurrencyContext } from "../context/CurrencyContext";
 import DecorPresentation from "./DecorPresentation";
 
 
-const FramePresentation = ({ suborder, getColorFromCode }) => {
+const FramePresentation = ({ suborder, renderImage, getColorFromCode }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
@@ -89,6 +89,7 @@ const FramePresentation = ({ suborder, getColorFromCode }) => {
           product={frameProduct}
           isFrontSide={true}
           getColorFromCode={getColorFromCode}
+          renderImage={renderImage}
         />
       )}
     </div>
