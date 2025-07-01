@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Typography, Collapse } from "antd";
+import { Typography, Collapse, Button } from "antd";
 import { useApolloClient } from "@apollo/client";
 import ErrorAlerts from "../components/ErrorAlerts";
 import { fetchSuborderData } from "../api/getSuborderProductsTitle";
@@ -8,13 +8,26 @@ import CommentSelection from '../components/CommentSelection';
 import SkirtingSelection from '../components/SkirtingSelection';
 import SkirtingInsertSelection from '../components/SkirtingInsertSelection';
 import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
+import { useNavigate } from "react-router-dom";
+import { gql } from "@apollo/client";
 
 const { Title } = Typography;
+
+const GET_ORDER_DOCUMENT_ID = gql`
+  query Query($documentId: ID!) {
+    suborder(documentId: $documentId) {
+      order {
+        documentId
+      }
+    }
+  }
+`;
 
 const CreateSkirting = () => {
   const client = useApolloClient();
   const { translations } = useContext(LanguageContext);
   const suborderId = localStorage.getItem('currentSuborderId');
+  const navigate = useNavigate();
   
   const [activeKeys, setActiveKeys] = useState(['1', '2']);
   const [formattedTitles, setFormattedTitles] = useState({});
@@ -59,6 +72,23 @@ const CreateSkirting = () => {
     }
   };
 
+  const handleGoToPresentation = async () => {
+    if (!suborderId) return;
+    try {
+      const { data } = await client.query({
+        query: GET_ORDER_DOCUMENT_ID,
+        variables: { documentId: suborderId },
+        fetchPolicy: "network-only" // чтобы точно получить актуальный id
+      });
+      const orderDocumentId = data?.suborder?.order?.documentId;
+      if (orderDocumentId) {
+        navigate(`/presentation/${orderDocumentId}/client`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const items = [
     {
       key: '1',
@@ -100,6 +130,15 @@ const CreateSkirting = () => {
         onChange={onCollapseChange}
         items={items}
       />
+
+      <Button
+        type="primary"
+        style={{ marginTop: 24 }}
+        onClick={handleGoToPresentation}
+      >
+        {translations.view} {translations.order.toLowerCase()}
+      </Button>
+
     </div>
   );
 };

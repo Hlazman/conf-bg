@@ -457,7 +457,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
           </Col>
 
           {/* <Col span={dimensionType === "door" ? 12 : 8}> */}
-          <Col span={8}>
+          <Col span={24}>
             <Form.Item label={translations.height} required>
               {dimensionType === "wall" ? (
                 <>
@@ -532,7 +532,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
           </Col>
 
           {/* <Col span={dimensionType === "door" ? 12 : 8}> */}
-          <Col span={8}>
+          <Col span={24}>
             <Form.Item label={translations.width} required>
               {dimensionType === "wall" ? (
                 <>
@@ -605,7 +605,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
           </Col>
 
           {/* {dimensionType === "wall" && ( */}
-            <Col span={8}>
+            <Col span={24}>
               <Form.Item label={translations.thickness} required>
                 <InputNumber
                   value={wallThickness}

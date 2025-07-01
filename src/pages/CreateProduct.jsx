@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Typography, Collapse} from "antd";
+import { Typography, Collapse, Button } from "antd";
 import { useApolloClient } from "@apollo/client";
 import DoorSelection from '../components/DoorSelection';
 import DecorSelection from '../components/DecorSelection';
@@ -19,8 +19,20 @@ import { fetchSuborderData } from "../api/getSuborderProductsTitle";
 import { LanguageContext } from "../context/LanguageContext";
 import { validateSuborderProducts } from "../api/validateSuborderErrors";
 import { calculateOrderPriceBySuborder } from '../api/calculateOrderPriceBySuborder';
+import { useNavigate } from "react-router-dom";
+import { gql } from "@apollo/client";
 
 const { Title } = Typography;
+
+const GET_ORDER_DOCUMENT_ID = gql`
+  query Query($documentId: ID!) {
+    suborder(documentId: $documentId) {
+      order {
+        documentId
+      }
+    }
+  }
+`;
 
 const CreateProduct = () => {
   const client = useApolloClient();
@@ -28,6 +40,7 @@ const CreateProduct = () => {
   const suborderId = localStorage.getItem('currentSuborderId');
   const type = localStorage.getItem('currentType');
   const doorType = localStorage.getItem('currentType');
+  const navigate = useNavigate();
 
   // Состояние для выбранной двери
   const [selectedDoor, setSelectedDoor] = useState(null);  
@@ -111,6 +124,23 @@ const updateFormattedTitles = async () => {
     }
     await validateSuborderProducts(client, suborderId);
     await calculateOrderPriceBySuborder(client, suborderId);
+  }
+};
+
+const handleGoToPresentation = async () => {
+  if (!suborderId) return;
+  try {
+    const { data } = await client.query({
+      query: GET_ORDER_DOCUMENT_ID,
+      variables: { documentId: suborderId },
+      fetchPolicy: "network-only" // чтобы точно получить актуальный id
+    });
+    const orderDocumentId = data?.suborder?.order?.documentId;
+    if (orderDocumentId) {
+      navigate(`/presentation/${orderDocumentId}/client`);
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
  
@@ -452,6 +482,15 @@ const items = [
         onChange={onCollapseChange}
         style={{ marginTop: 20 }}
       />
+
+      <Button
+        type="primary"
+        style={{ marginTop: 24 }}
+        onClick={handleGoToPresentation}
+      >
+        {translations.view} {translations.order.toLowerCase()}
+      </Button>
+
     </div>
   );
 };
