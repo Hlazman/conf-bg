@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useEffect, useState } from "react";
 import { Layout, Menu, Button, Dropdown, Select } from "antd";
-import { UserOutlined, LogoutOutlined, GlobalOutlined, FileAddOutlined, UnorderedListOutlined, DownOutlined, DollarOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, GlobalOutlined, FileAddOutlined, UnorderedListOutlined, DownOutlined, DollarOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { AuthContext } from "../context/AuthContext";
 import { LanguageContext } from "../context/LanguageContext";
 import { Link, useLocation } from "react-router-dom";
@@ -119,6 +119,20 @@ const AppLayout = ({ children }) => {
     { key: "orders", icon: <UnorderedListOutlined />, label: <Link to="/orders">{translations.orders}</Link> },
     { key: "clients", icon: <UnorderedListOutlined />, label: <Link to="/clients">{translations.clients}</Link> },
     { key: "Agents", icon: <UnorderedListOutlined />, label: <Link to="/agents">{translations.agents}</Link> },
+    { 
+      key: "Instruction", 
+      icon: <InfoCircleOutlined />, 
+      // label: <Link to="/agents">{translations.instruction}</Link>
+      label: (
+        <a
+          href="https://personal-184.gitbook.io/configurator/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {translations.instruction}
+        </a>
+      ), 
+    },
   ];
 
   const languageMenu = {

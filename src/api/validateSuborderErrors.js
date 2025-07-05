@@ -153,7 +153,7 @@ export const validateSuborderProducts = async (client, documentId) => {
             pagination: { limit: 200 }
           }
         });
-
+      
         // Проверяем, есть ли дверь в списке совместимых продуктов
         const compatibleProducts = compatibilityData.product.compatibleProductss || [];
         const isDoorCompatible = compatibleProducts.some(p => p.documentId === doorProductId);
@@ -241,7 +241,7 @@ export const validateSuborderProducts = async (client, documentId) => {
       }
     }
 
-    // 7. Проверяем, несовместим ли extender с рамой
+    // 7.1. Проверяем, несовместим ли extender с рамой
     if (products.frame && products.extender) {
       const { data: frameIncompatibilityData } = await client.query({
         query: gql`
@@ -257,10 +257,35 @@ export const validateSuborderProducts = async (client, documentId) => {
           documentId: products.frame.documentId
         }
       });
-
       const incompatibleIds = frameIncompatibilityData?.product?.incompatibleProducts?.map(p => p.documentId) || [];
 
       errors.extenderError = incompatibleIds.includes(products.extender.documentId) ? true : null;
+    }
+
+    // 7.2. Проверяем, несовместим ли extender с дверями
+    const productDoor = products.door || products.hiddenDoor || products.slidingDoor || null;
+
+    if (products.extender) {
+      const { data: doorIncompatibilityData } = await client.query({
+        query: gql`
+          query DoorWithIncompatibilities($documentId: ID!) {
+            product(documentId: $documentId) {
+              compatibleProductss {
+                documentId
+              }
+            }
+          }
+        `,
+        variables: {
+          // documentId: products.frame.documentId
+          documentId: products.extender.documentId
+        }
+      });
+
+      const incompatibleIds = doorIncompatibilityData?.product?.compatibleProductss?.map(p => p.documentId) || [];
+
+      // errors.extenderError = incompatibleIds.includes(productDoor.documentId) ? true : null;
+      errors.extenderError = !incompatibleIds.includes(productDoor.documentId) ? true : null;
     }
 
     // 8. Проверяем совместимость петель с дверью

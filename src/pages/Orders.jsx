@@ -93,6 +93,7 @@ const Orders = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showArchive, setShowArchive] = useState(false);
+  const [archiveModal, setArchiveModal] = useState({ open: false, order: null, value: false });
 
   const [updateSuborder, { loading: updatingAmount }] = useMutation(UPDATE_SUBORDER_AMOUNT);
   
@@ -447,6 +448,22 @@ const handleSampleClick = async (record) => {
     }
   };
 
+  const handleArchiveConfirm = async () => {
+    if (!archiveModal.order) return;
+    try {
+      await updateOrderArchive({
+        variables: { documentId: archiveModal.order.documentId, archive: archiveModal.value }
+      });
+      setArchiveModal({ open: false, order: null, value: false });
+    } catch (e) {
+      message.error(e.message);
+    }
+  };
+
+  const handleArchiveCancel = () => {
+    setArchiveModal({ open: false, order: null, value: false });
+  };
+
   const menu = (record) => ({
     items: [
       { key: "view", label: translations.view, icon: <EyeOutlined />, onClick: () => handleViewPresentation(record) },
@@ -671,14 +688,19 @@ const handleSampleClick = async (record) => {
       key: "archive",
       width: '100px',
       render: (archive, record) => (
+        // <input
+        //   type="checkbox"
+        //   checked={!!archive}
+        //   onChange={e =>
+        //     updateOrderArchive({
+        //       variables: { documentId: record.documentId, archive: e.target.checked }
+        //     })
+        //   }
+        // />
         <input
           type="checkbox"
           checked={!!archive}
-          onChange={e =>
-            updateOrderArchive({
-              variables: { documentId: record.documentId, archive: e.target.checked }
-            })
-          }
+          onChange={e => setArchiveModal({ open: true, order: record, value: e.target.checked })}
         />
       ),
     },
@@ -769,6 +791,20 @@ const handleSampleClick = async (record) => {
           style={{ width: '100%', fontSize: 16, padding: 6 }}
           inputMode="numeric"
         />
+      </Modal>
+
+      <Modal
+        open={archiveModal.open}
+        onOk={handleArchiveConfirm}
+        onCancel={handleArchiveCancel}
+        okText={translations.yes}
+        cancelText={translations.no}
+      >
+        <p>
+          {archiveModal.value
+            ? translations.sureToArchiveOrder || 'Вы действительно хотите перевести заказ в архив?'
+            : translations.sureToUnarchiveOrder || 'Вы действительно хотите вернуть заказ из архива?'}
+        </p>
       </Modal>
     </>
   );

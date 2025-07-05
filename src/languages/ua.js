@@ -175,6 +175,7 @@ const ua = {
   doorInsert: "Дверна вставка оздоблення",
   alMolding: "Алюмінієвий молдинг",
   archive: "Архів",
+  instruction: 'Інструкція',
 
   // MESSAGES
   doorSealRequired: 'Оберіть ущільнювач дверей ',
@@ -244,6 +245,8 @@ const ua = {
   standardPlatbandSize: 'Стандартний розмір: 80 мм',
   extenderRecomendedWidth: 'Рекомендована ширина',
   notAvailable: 'Недоступно',
+  sureToArchiveOrder: 'Ви дійсно бажаєте перевести замовлення до архіву?', 
+  sureToUnarchiveOrder: 'Ви дійсно бажаєте повернути замовлення з архіву?', 
 
   //ERRORS
   err: 'Помилка',
@@ -276,7 +279,7 @@ const ua = {
   "2 errors occurred": 'Спочатку оберіть раму',
   errMinAmount: "Мінімальна кількість: 1",
   doorClickAgain: 'Або ще раз натисніть Оновити у розділі Дверне полотно',
-  moveBackProduct: 'Якщо ви змінили раму на моноблок і не прибрали добір. Вам потрібно повернути минулу рами і видалити добір.',
+  moveBackProduct: 'Якщо ви змінили дверне полотно або раму на моноблок і не прибрали добір. Вам потрібно повернути минулу рами і видалити добір.',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Зразок покриття формату А4 (RAL/NCS/шпон / протягом 14 днів)",

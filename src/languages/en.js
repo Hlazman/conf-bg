@@ -175,6 +175,8 @@ const en = {
   doorInsert: "Door trim insert",
   alMolding: "Aluminum molding",
   archive: "Archive",
+  instruction: "instruction",
+
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',
@@ -244,6 +246,8 @@ const en = {
   standardPlatbandSize: 'Standard size: 80mm',
   extenderRecomendedWidth: 'Recommended width',
   notAvailable: 'Not available',
+  sureToArchiveOrder: 'Are you sure you want to move the order to the archive?', 
+  sureToUnarchiveOrder: 'Are you sure you want to return the order from the archive?', 
 
   //ERRORS
   err: 'Error',
@@ -276,7 +280,7 @@ const en = {
   errMinAmount: "Minimum amount: 1",
   "2 errors occurred": 'First choose a frame',
   doorClickAgain: 'Or click Update again in the Door canvas section Door canvas',
-  moveBackProduct: 'If you changed the frame to a monoblock and did not remove the extender. You need to return the previous frame and remove the extender.',
+  moveBackProduct: 'If you changed door canvas or the frame to a monoblock and did not remove the extender. You need to return the previous frame and remove the extender.',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "A4-format coating sample (RAL/NCS/veneer / within 14 days)",

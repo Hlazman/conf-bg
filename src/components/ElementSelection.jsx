@@ -148,6 +148,18 @@ const ElementSelection = ({
   // Состояние реккомендованой ширины добора
   const [extenderCalculatedWidth, setExtenderCalculatedWidth] = useState(null);
 
+  const currentType = localStorage.getItem('currentType');
+
+  const getCompatibleTitle = () => {
+    if (productType === "extender") {
+      // Если currentType === 'hiddenDoor' — фильтруем по selectedDoor иначе по selectedFrame
+      return currentType === 'hiddenDoor'
+        ? selectedDoor?.title
+        : selectedFrame?.title;
+    }
+    return selectedDoor?.title;
+  };
+
   // Запрос для получения элементов продукта
   const { loading, error, data } = useQuery(GET_PRODUCT_ELEMENTS, {
     variables: {
@@ -155,9 +167,10 @@ const ElementSelection = ({
         compatibleProductss: {
           title: {
             // eqi: selectedDoor?.title
-             eqi: productType === "extender"
-            ? selectedFrame?.title
-            : selectedDoor?.title
+            // eqi: productType === "extender"
+            // ? selectedFrame?.title
+            // : selectedDoor?.title
+            eqi: getCompatibleTitle()
           }
         },
         type: {

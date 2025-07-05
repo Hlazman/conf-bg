@@ -175,6 +175,7 @@ const pl = {
   doorInsert: "Wykończeniowa wkładka do skrzydła",
   alMolding: "Molding aluminiowy",
   archive: "Archiwum",
+  instruction: 'Instrukcja',
 
   // MESSAGES
   doorSealRequired: 'Wybierz uszczelkę drzwiową',
@@ -244,6 +245,8 @@ const pl = {
   standardPlatbandSize: 'Rozmiar standardowy: 80mm',
   extenderRecomendedWidth: 'Zalecana szerokość',
   notAvailable: 'Niedostępne',
+  sureToArchiveOrder: 'Czy na pewno chcesz przenieść zamówienie do archiwum?', 
+  sureToUnarchiveOrder: 'Czy na pewno chcesz zwrócić zamówienie z archiwum?', 
 
   //ERRORS
   err: 'Błąd',
@@ -276,7 +279,7 @@ const pl = {
   "2 errors occurred": 'Najpierw wybierz ościeżnicę',
   errMinAmount: "Minimalna ilość: 1",
   doorClickAgain: 'Lub kliknij Odśwież ponownie w sekcji Skrzydło drzwiowe',
-  moveBackProduct: 'Jeśli zmieniłeś na ościeżnicę regulowaną i nie usunąłeś panel poszerzający. Musisz wrócić się do poprzedniej ościeżnicy i usunąć panel poszerzający.',
+  moveBackProduct: 'Jeśli zmieniłeś na ościeżnicę regulowaną lub skrzydło drzwiowe i nie usunąłeś panel poszerzający. Musisz wrócić się do poprzedniej ościeżnicy i usunąć panel poszerzający.',
 
   // SERVER DATA
   "A4-format coating sample (RAL/NCS/veneer / within 14 days)": "Próbka powłoki w formacie A4 (RAL/NCS/fornir / w ciągu 14 dni)",
