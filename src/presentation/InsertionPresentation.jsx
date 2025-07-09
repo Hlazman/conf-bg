@@ -21,27 +21,27 @@ const InsertionPresentation = ({ suborder }) => {
         
       >
         <Descriptions.Item label={translations.handleInsert}>
-          {suborder.suborder_products[0].knobInsertion ? translations.yes : translations.no}
+          {suborder.suborder_products[0]?.knobInsertion ? translations.yes : translations.no}
         </Descriptions.Item>
         
         <Descriptions.Item label={translations.mortiseLock}>
-          {suborder.suborder_products[0].lockInsertion ? translations.yes : translations.no}
+          {suborder.suborder_products[0]?.lockInsertion ? translations.yes : translations.no}
         </Descriptions.Item>
         
         <Descriptions.Item label={translations.lbInsert}>
-          {suborder.suborder_products[0].spindleInsertion ? translations.yes : translations.no}
+          {suborder.suborder_products[0]?.spindleInsertion ? translations.yes : translations.no}
         </Descriptions.Item>
         
         <Descriptions.Item label={translations.thresholdInsert}>
-          {suborder.suborder_products[0].thresholdInsertion ? translations.yes : translations.no}
+          {suborder.suborder_products[0]?.thresholdInsertion ? translations.yes : translations.no}
         </Descriptions.Item>
         
         <Descriptions.Item span={2} label={translations.doorSeal}>
-          {suborder.suborder_products[0].doorSeal ? translations[suborder.suborder_products[0].doorSeal] : '-'}
+          {suborder.suborder_products[0]?.doorSeal ? translations[suborder.suborder_products[0].doorSeal] : '-'}
         </Descriptions.Item>
         
         <Descriptions.Item label={translations.priceNetto}>
-          <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(suborder.suborder_products[0].productCostNetto)} </div>
+          <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(suborder.suborder_products[0]?.productCostNetto)} </div>
         </Descriptions.Item>
       </Descriptions>
     </div>

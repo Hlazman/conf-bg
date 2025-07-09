@@ -96,7 +96,7 @@ const DELETE_SUBORDER_PRODUCT = gql`
   }
 `;
 
-const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
+const SlidingSelection = ({ suborderId, onAfterSubmit, doorId }) => {
   const [slidingFrameProductId, setSlidingFrameProductId] = useState(null);
   const [selectedSlidingFrame, setSelectedSlidingFrame] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -104,17 +104,37 @@ const SlidingSelection = ({ suborderId, onAfterSubmit }) => {
 
   // Запрос для получения раздвижных систем
   const { loading, error, data } = useQuery(GET_SLIDING_FRAMES, {
-    variables: {
-      filters: {
-        type: {
-          eqi: "slidingFrame"
+      variables: {
+        filters: {
+          type: {
+            eqi: "slidingFrame"
+          },
+          compatibleProductss: {
+            documentId: {
+              eq: doorId
+            }
+          }
+        },
+        pagination: {
+          limit: 30
         }
       },
-      pagination: {
-        limit: 30
-      }
-    }
-  });
+      skip: !doorId
+    });
+
+
+  // const { loading, error, data } = useQuery(GET_SLIDING_FRAMES, {
+  //   variables: {
+  //     filters: {
+  //       type: {
+  //         eqi: "slidingFrame"
+  //       }
+  //     },
+  //     pagination: {
+  //       limit: 30
+  //     }
+  //   }
+  // });
 
   // Запрос для получения существующего SuborderProduct типа slidingFrame
   const { data: slidingFrameProductData, loading: loadingSlidingFrameProduct, refetch: refetchSlidingFrame } = useQuery(GET_SUBORDER_PRODUCT, {

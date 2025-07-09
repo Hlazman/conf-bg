@@ -50,12 +50,25 @@ const FactoryPresentation = ({ orderData }) => {
     });
   };
 
+    const subordersWithError = orderData.suborders
+    .filter(sub => {
+      const errors = sub.suborderErrors || {};
+      console.log(sub?.suborder_type?.typeName)
+      return Object.values(errors).some(val => val === true);
+    });
+
   return (
     <div className="factory-presentation">
       <div className="presentation-header">
         <Button type="primary" onClick={saveToPDF}>
           {translations.saveToPDF || "Save to PDF"}
         </Button>
+
+        {subordersWithError.map(sub => (
+          <div key={sub.documentId} style={{ marginTop: '15px', color: 'red', fontWeight: 'bold' }}>
+            {translations[sub?.suborder_type?.typeName]} : {translations.err}
+          </div>
+        ))}
       </div>
       
       <div id="factory-presentation-content" className="presentation-content">

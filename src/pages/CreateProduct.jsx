@@ -169,13 +169,14 @@ const items = [
     key: '3',
     label: 
       type === 'slidingDoor' 
-          ? formatItemLabel(translations.slidingFrame, formattedTitles.slidingSelection) 
+          ? formatItemLabel(translations.slidingFrame, formattedTitles.slidingSelection, 'slidingError') 
           // : formatItemLabel(translations.frame, formattedTitles.frameSelection, 'frameError'),
           : formatItemLabel(translations.frame, translations[formattedTitles.frameSelection], 'frameError'),
     collapsible: !selectedDoor ? "disabled" : undefined,
     children: type === 'slidingDoor' ? (
       <SlidingSelection 
         suborderId={suborderId}
+        doorId={selectedDoor?.documentId}
         onAfterSubmit={updateFormattedTitles} 
       />
     ) : (

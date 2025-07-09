@@ -29,6 +29,7 @@ export const GET_SUBORDER_DETAILS = gql`
         optionError
         doorParamsError
         hingeError
+        slidingError
       }
       suborder_type {
         documentId

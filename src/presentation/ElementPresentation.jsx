@@ -34,8 +34,19 @@ const ElementPresentation = ({ suborder, renderImage, getColorFromCode }) => {
     <div className="additional-element-presentation">
       {additionalElements.map((product, index) => {
         // Определяем размер продукта (может быть только один вариант: высота, ширина, длина или толщина)
-        const sizeType = Object.keys(product.sizes || {}).find(key => product.sizes[key] !== null);
-        const sizeValue = sizeType ? `${product.sizes[sizeType]} mm` : '-';
+        // const sizeType = Object.keys(product.sizes || {}).find(key => product.sizes[key] !== null);
+        // const sizeValue = sizeType ? `${product.sizes[sizeType]} mm` : '-';
+
+        const sizeKeys = ['length', 'thickness', 'height', 'width'];
+        const displaySizes = sizeKeys
+          .filter(key => product.sizes && product.sizes[key] != null && product.sizes[key] !== 0)
+          .map(key => {
+            // Можно красиво перевести ключи, если нужно (иначе оставить просто key)
+            const label = translations[key] || key;
+            return `${label}: ${product.sizes[key]} mm`;
+          });
+
+        const sizeValue = displaySizes.length > 0 ? displaySizes.join(', ') : '-';
 
         return (
           <div style={{marginTop: 20}} key={index} className="additional-element-item">
@@ -50,7 +61,7 @@ const ElementPresentation = ({ suborder, renderImage, getColorFromCode }) => {
               {/* <Descriptions.Item label={`${translations.element} #${index + 1}`}>
                 <strong>{translations.title}:</strong> {product.product?.title || '-'}
               </Descriptions.Item> */}
-              <Descriptions.Item label={`${translations[sizeType] || sizeType}`}>
+              <Descriptions.Item label={translations.size}>
                 {sizeValue}
               </Descriptions.Item>
               <Descriptions.Item label={translations.priceNetto}>

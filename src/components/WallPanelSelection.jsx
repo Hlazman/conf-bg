@@ -553,7 +553,7 @@ const WallPanelSelection = ({
     // Вставить новую вкладку mounting system после sizes
     items.splice(2, 0, {
       key: "3",
-      label: "Mounting System",
+      label: translations.mountingSystem,
       disabled: !selectedProduct,
       children: (
         <Card>

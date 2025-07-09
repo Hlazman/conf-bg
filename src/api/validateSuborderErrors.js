@@ -120,7 +120,8 @@ export const validateSuborderProducts = async (client, documentId) => {
       platbandError: null,
       platbandFrontError: null,
       platbandThreadError: null,
-      doorParamsError: null
+      doorParamsError: null,
+      slidingError: null
     };
 
     // 4. Проверяем совместимость продуктов
@@ -486,7 +487,32 @@ export const validateSuborderProducts = async (client, documentId) => {
 
     errors.doorParamsError = !allDoorParamsValid ? true : null;
 
-    // 11. Отправляем обновленные ошибки на сервер
+    // 11. Проверяем совместимость slidingFrame с дверью
+    if (products.slidingFrame) {
+      const { data: compatibilityData } = await client.query({
+        query: gql`
+          query Products($documentId: ID!, $pagination: PaginationArg) {
+            product(documentId: $documentId) {
+              compatibleProductss(pagination: $pagination) {
+                documentId
+                title
+              }
+            }
+          }
+        `,
+        variables: {
+          documentId: products.slidingFrame.documentId,
+          pagination: { limit: 200 }
+        }
+      });
+
+      const compatibleProducts = compatibilityData.product.compatibleProductss || [];
+      const isDoorCompatible = compatibleProducts.some(p => p.documentId === doorProductId);
+
+      errors.slidingError = !isDoorCompatible ? true : null;
+    }
+
+    // 12. Отправляем обновленные ошибки на сервер
     await client.mutate({
       mutation: gql`
         mutation Mutation($documentId: ID!, $data: SuborderInput!) {

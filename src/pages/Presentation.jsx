@@ -59,6 +59,9 @@ const GET_ORDER = gql`
           aluminumFrameError
           aluminumCladdingError
           optionError
+          doorParamsError
+          hingeError
+          slidingError
         }
         suborder_type {
           documentId

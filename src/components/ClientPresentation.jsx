@@ -21,7 +21,7 @@ import CompanyInformationPresentation from "../presentation/CompanyInformationPr
 const ClientPresentation = ({ orderData, companyData }) => {
   const { translations } = useContext(LanguageContext);
   const [generatingPdf, setGeneratingPdf] = useState(false);
-
+console.log(orderData)
   // Функция для сохранения в PDF
   const saveToPDF = () => {
     const element = document.getElementById('client-presentation-content');
@@ -110,12 +110,25 @@ const ClientPresentation = ({ orderData, companyData }) => {
     });
   };
 
+  const subordersWithError = orderData.suborders
+  .filter(sub => {
+    const errors = sub.suborderErrors || {};
+    console.log(sub?.suborder_type?.typeName)
+    return Object.values(errors).some(val => val === true);
+  });
+
   return (
     <div className="client-presentation">
       <div className="presentation-header">
         <Button type="primary" onClick={saveToPDF}>
           {translations.saveToPDF || "Save to PDF"}
         </Button>
+
+        {subordersWithError.map(sub => (
+          <div key={sub.documentId} style={{ marginTop: '15px', color: 'red', fontWeight: 'bold' }}>
+            {translations[sub?.suborder_type?.typeName]} : {translations.err}
+          </div>
+        ))}
       </div>
       
       <div id="client-presentation-content" className="presentation-content">

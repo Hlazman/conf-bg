@@ -527,12 +527,13 @@ const ElementSelection = ({
             </Typography.Paragraph>
           )}
 
-          {productType === "extender" && (
+
+          {/* {productType === "extender" && (
+            //TODO
             <Typography.Paragraph style={{ color: '#888' }}>
-              {/* {translations.extenderRecomendedWidth }: {selectedProduct?.maxSizes[0]?.recomendedWidth} */}
               {translations.extenderRecomendedWidth }: {extenderCalculatedWidth ?? '-'}
             </Typography.Paragraph>
-          )}
+          )} */}
 
           <Row gutter={[16, 16]}>
             {availableSizes.height && (
