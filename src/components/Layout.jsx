@@ -103,11 +103,21 @@ const AppLayout = ({ children }) => {
     if (pathParts[0] === "create-skirting") return `${translations.skirting}`;
     if (pathParts[0] === "create-samples") return `${translations.samples}`;
 
+    // if (pathParts[0] === "presentation") {
+    //   if (pathParts[2] === "client") {
+    //     return `${translations.presentation} #${pathParts[1]}`;
+    //   } else if (pathParts[2] === "factory") {
+    //     return `${translations.factory} #${pathParts[1]}`;
+    //   }
+    // }
+
     if (pathParts[0] === "presentation") {
       if (pathParts[2] === "client") {
         return `${translations.presentation} #${pathParts[1]}`;
       } else if (pathParts[2] === "factory") {
         return `${translations.factory} #${pathParts[1]}`;
+      } else if (pathParts[2] === "short") {
+        return `${translations.shortPresentation} #${pathParts[1]}`;
       }
     }
     

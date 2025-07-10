@@ -2,6 +2,7 @@ import React, {useContext } from "react";
 import { useParams } from "react-router-dom"; 
 import { gql, useQuery } from "@apollo/client";
 import ClientPresentation from "../components/ClientPresentation";
+import ShortPresentation from "../components/ShortPresentation";
 import FactoryPresentation from "../components/FactoryPresentation";
 import { Spin, Alert } from "antd";
 import { LanguageContext } from "../context/LanguageContext";
@@ -166,6 +167,7 @@ const GET_COMPANY = gql`
       phone
       site
       address
+      metaData
     }
   }
 `;
@@ -219,6 +221,10 @@ const Presentation = () => {
     <div className="presentation-container">
       {presentationType === 'client' && (
         <ClientPresentation orderData={orderData.order} companyData={companyData?.company} />
+      )}
+
+      {presentationType === 'short' && (
+        <ShortPresentation orderData={orderData.order} companyData={companyData?.company} />
       )}
       
       {presentationType === 'factory' && (

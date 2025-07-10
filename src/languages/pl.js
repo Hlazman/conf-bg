@@ -78,6 +78,7 @@ const pl = {
   customOption: "Dodatkowe opcji",
   skirtingInsert: "Wkładka do listwy przypodłogowej",
   presentation: "Prezentacja",
+  shortPresentation: "Krótka prezentacja",
   startData: "Dane początkowe",
   doubleDoor: "Drzwi dwuskrzydłowe",
   doorSide: "Strona drzwi",
@@ -176,9 +177,11 @@ const pl = {
   alMolding: "Molding aluminiowy",
   archive: "Archiwum",
   instruction: 'Instrukcja',
+  manager: "Menedżer",
 
   // MESSAGES
   doorSealRequired: 'Wybierz uszczelkę drzwiową',
+  chooseManager: 'Nie zapomnij wybrać menedżera na dole prezentacji',
   success: "Sukces",
   loading: "Ładowanie danych...",
   firstDoor: 'Najpierw wybierz drzwi',

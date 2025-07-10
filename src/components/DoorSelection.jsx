@@ -66,6 +66,8 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, onAfterSubmit }) => {
   const [suborderProductId, setSuborderProductId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -262,7 +264,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
                 door.image?.url ? 
                 <img 
                   alt={door.title} 
-                  src={`https://dev.api.boki-groupe.com${door.image.url}`} 
+                  // src={`https://dev.api.boki-groupe.com${door.image.url}`}
+                  src={`${baseUrl}${door.image.url}`}
                   style={{ height: 200, objectFit: 'cover' }}
                 /> : 
                 <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -288,7 +291,8 @@ const DoorSelection = ({ selectedDoor, onDoorSelect, suborderId, checkErrors, on
                   {door.image?.url ? (
                     <img
                       alt={door.title}
-                      src={`https://dev.api.boki-groupe.com${door.image.url}`}
+                      // src={`https://dev.api.boki-groupe.com${door.image.url}`}
+                      src={`${baseUrl}${door.image.url}`}
                       style={{ height: 200, objectFit: 'cover', width: '100%' }}
                     />
                   ) : (

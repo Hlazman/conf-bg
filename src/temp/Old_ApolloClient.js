@@ -9,6 +9,8 @@ if (process.env.NODE_ENV !== "production") {
   loadErrorMessages();
 }
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors) {
     console.log("GraphQL Errors:", graphQLErrors);
@@ -21,7 +23,8 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
 });
 
 const httpLink = createHttpLink({
-  uri: "https://dev.api.boki-groupe.com/graphql", 
+  // uri: "https://dev.api.boki-groupe.com/graphql",
+  uri: `${baseUrl}/graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {

@@ -173,6 +173,10 @@ const Orders = () => {
   const handleViewPresentation = (record) => {
     navigate(`/presentation/${record.documentId}/client`);
   };
+
+  const handleViewShortPresentation = (record) => {
+    navigate(`/presentation/${record.documentId}/short`);
+  };
   
   const handleViewFactoryPresentation = (record) => {
     navigate(`/presentation/${record.documentId}/factory`);
@@ -467,6 +471,7 @@ const handleSampleClick = async (record) => {
   const menu = (record) => ({
     items: [
       { key: "view", label: translations.view, icon: <EyeOutlined />, onClick: () => handleViewPresentation(record) },
+      // { key: "viewShort", label: translations.shortPresentation, icon: <EyeOutlined />, onClick: () => handleViewShortPresentation(record) },
       ...(selectedCompany?.documentId === 'ssl7a2m8avygknizy1ms496y' || 
         selectedCompany?.documentId === 'hcpjgh4exp1pxv3ozozzeqpt' 
       ? [{ 

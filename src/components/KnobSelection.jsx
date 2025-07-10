@@ -158,7 +158,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
            // Проверяем формат URL и добавляем базовый URL, если путь относительный
           const imageUrl = knobProduct.customImage.url;
           if (imageUrl && imageUrl.startsWith('/')) {
-            const baseUrl = 'https://dev.api.boki-groupe.com';
+            // const baseUrl = 'https://dev.api.boki-groupe.com';
+            const baseUrl = process.env.REACT_APP_BASE_URL;
             setCustomImageUrl(baseUrl + imageUrl);
           } else {
             setCustomImageUrl(imageUrl);
@@ -349,7 +350,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
 
           <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item
-              label={translations.knobOpen || "Тип открывания"}
+              label={translations.knobOpen}
               name="knobOpen"
               rules={[{ required: true, message: translations.required }]}
             >
@@ -358,12 +359,14 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
                 <Select.Option value="key">{translations.key}</Select.Option>
                 <Select.Option value="latch">{translations.latch}</Select.Option>
                 <Select.Option value="lock">{translations.lock}</Select.Option>
+                <Select.Option value="WC">{"WC"}</Select.Option>
               </Select>
             </Form.Item>
           </Col>
         </Row>
         
-        <Form.Item label={translations.image}>
+        {/* <Form.Item label={translations.image}> */}
+        <Form.Item label={`${translations.image} (PNG, JPG, JPEG)`}>
           <div style={{ marginBottom: "10px" }}>
             {customImageUrl && (
               <div style={{ marginBottom: "10px" }}>

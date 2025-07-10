@@ -4,6 +4,8 @@ import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const HardwarePresentation = ({ suborder, renderImage, isPdf }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
@@ -14,7 +16,8 @@ const HardwarePresentation = ({ suborder, renderImage, isPdf }) => {
   // Функция для открытия изображения в новой вкладке
   const openImageInNewTab = (imageUrl) => {
     if (imageUrl) {
-      const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      // const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      const fullUrl = `${baseUrl}${imageUrl}`;
       window.open(fullUrl, '_blank');
     }
   };
@@ -60,7 +63,8 @@ const HardwarePresentation = ({ suborder, renderImage, isPdf }) => {
                         {renderImage(product.product?.image?.url || product.customImage?.url, product.product?.title || product.customTitle, 'hardware')}
                         <Tooltip title={translations.openInNewTab}>
                           <a 
-                            href={`https://dev.api.boki-groupe.com${product.product?.image?.url || product.customImage?.url}`}
+                            // href={`https://dev.api.boki-groupe.com${product.product?.image?.url || product.customImage?.url}`}
+                            href={`${baseUrl}${product.product?.image?.url || product.customImage?.url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             onClick={(e) => {

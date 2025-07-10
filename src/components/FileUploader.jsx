@@ -4,6 +4,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { LanguageContext } from "../context/LanguageContext";
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const FileUploader = ({ onFileUploaded }) => {
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -24,7 +26,8 @@ const FileUploader = ({ onFileUploaded }) => {
         throw new Error('Token not found');
       }
       
-      const response = await axios.post('https://dev.api.boki-groupe.com/api/upload', formData, {
+      // https://dev.api.boki-groupe.com/api/upload
+      const response = await axios.post(`${baseUrl}/api/upload`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -78,6 +78,7 @@ const ua = {
   customOption: "Додаткові опція",
   skirtingInsert: "Вставка для плінтусу",
   presentation: "Презентація",
+  shortPresentation: "Коротка презентація",
   startData: "Стартові дані",
   doubleDoor: "Подвійні двері",
   doorSide: "Сторона дверей",
@@ -176,9 +177,11 @@ const ua = {
   alMolding: "Алюмінієвий молдинг",
   archive: "Архів",
   instruction: 'Інструкція',
+  manager: "Менеджер",
 
   // MESSAGES
   doorSealRequired: 'Оберіть ущільнювач дверей ',
+  chooseManager: 'Не забудьте обрати менеджера внизу презентації',
   success: "Успіх",
   loading: "Завантаження даних...",
   firstDoor: 'Спочатку виберіть двері',

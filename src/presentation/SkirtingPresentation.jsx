@@ -4,6 +4,8 @@ import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const SkirtingPresentation = ({ suborder, renderImage }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
@@ -35,7 +37,8 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
   // Функция для открытия изображения в новой вкладке
   const openImageInNewTab = (imageUrl) => {
     if (imageUrl) {
-      const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      // const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      const fullUrl = `${baseUrl}${imageUrl}`;
       window.open(fullUrl, '_blank');
     }
   };
@@ -61,7 +64,8 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
                   {renderImage(productImage, skirtingProduct.product?.title || skirtingProduct.customTitle, 'skirting')}
                   <Tooltip title={translations.openInNewTab}>
                     <a 
-                      href={`https://dev.api.boki-groupe.com${productImage}`}
+                      // href={`https://dev.api.boki-groupe.com${productImage}`}
+                      href={`${baseUrl}${productImage}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       onClick={(e) => {

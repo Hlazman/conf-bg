@@ -3,6 +3,8 @@ import { Descriptions, Row, Col, Divider, Card, Tooltip } from "antd";
 import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, renderImage, getColorFromCode }) => {
   const { translations } = useContext(LanguageContext);
 
@@ -22,7 +24,8 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
   // Функция для открытия изображения в новой вкладке
   const openImageInNewTab = (imageUrl) => {
     if (imageUrl) {
-      const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      // const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      const fullUrl = `${baseUrl}${imageUrl}`;
       window.open(fullUrl, '_blank');
     }
   };
@@ -59,7 +62,8 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
                     {renderImage(decor.image.url, decor?.title || '', 'decor')}
                     <Tooltip title={translations.openInNewTab}>
                       <a 
-                        href={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                        // href={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                        href={`${baseUrl}${decor.image.url}`}
                         target="_blank" 
                         rel="noopener noreferrer"
                         onClick={(e) => {

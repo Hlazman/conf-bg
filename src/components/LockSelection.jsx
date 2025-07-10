@@ -4,6 +4,7 @@ import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import ArchiveOverlay from './ArchiveOverlay';
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
 
 const GET_LOCKS = gql`
 query GetLocks($filters: ProductFiltersInput, $pagination: PaginationArg) {
@@ -223,7 +224,8 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
               lock.image?.url ? 
               <img 
                 alt={lock.title} 
-                src={`https://dev.api.boki-groupe.com${lock.image.url}`} 
+                // src={`https://dev.api.boki-groupe.com${lock.image.url}`}
+                src={`${baseUrl}${lock.image.url}`}  
                 style={{ height: 200, objectFit: 'cover' }}
               /> : 
               <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -245,7 +247,8 @@ const LockSelection = ({ suborderId, selectedLock, onLockSelect, onAfterSubmit }
                 {lock.image?.url ? (
                   <img
                     alt={lock.title}
-                    src={`https://dev.api.boki-groupe.com${lock.image.url}`}
+                    // src={`https://dev.api.boki-groupe.com${lock.image.url}`}
+                    src={`${baseUrl}${lock.image.url}`}
                     style={{ height: 200, objectFit: 'cover', width: '100%' }}
                   />
                 ) : (

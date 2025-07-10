@@ -4,6 +4,8 @@ import { ExpandOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
 import { InfoCircleOutlined } from "@ant-design/icons";
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const DoorPresentation = ({ suborder, renderImage }) => {
   const { translations } = useContext(LanguageContext);
 
@@ -20,7 +22,8 @@ const DoorPresentation = ({ suborder, renderImage }) => {
   // Функция для открытия изображения в новой вкладке
   const openImageInNewTab = (imageUrl) => {
     if (imageUrl) {
-      const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      // const fullUrl = `https://dev.api.boki-groupe.com${imageUrl}`;
+      const fullUrl = `${baseUrl}${imageUrl}`;
       window.open(fullUrl, '_blank');
     }
   };
@@ -53,7 +56,8 @@ const DoorPresentation = ({ suborder, renderImage }) => {
                   {renderImage(productImage, doorProduct.product?.title || doorProduct.customTitle, 'door')}
                   <Tooltip title={translations.openInNewTab}>
                     <a 
-                      href={`https://dev.api.boki-groupe.com${productImage}`}
+                      // href={`https://dev.api.boki-groupe.com${productImage}`}
+                      href={`${baseUrl}${productImage}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       onClick={(e) => {

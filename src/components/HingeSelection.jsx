@@ -4,6 +4,8 @@ import { useQuery, useMutation, gql } from "@apollo/client";
 import { LanguageContext } from "../context/LanguageContext";
 import ArchiveOverlay from './ArchiveOverlay';
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const GET_HINGES = gql`
   query GetHinges($filters: ProductFiltersInput, $pagination: PaginationArg) {
     products(filters: $filters, pagination: $pagination) {
@@ -476,7 +478,8 @@ const filteredHinges = useMemo(() => {
                 hinge.image?.url ? 
                 <img 
                   alt={hinge.title} 
-                  src={`https://dev.api.boki-groupe.com${hinge.image.url}`} 
+                  // src={`https://dev.api.boki-groupe.com${hinge.image.url}`} 
+                  src={`${baseUrl}${hinge.image.url}`} 
                   style={{ height: 200, objectFit: 'cover' }}
                 /> : 
                 <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -498,7 +501,8 @@ const filteredHinges = useMemo(() => {
                   {hinge.image?.url ? (
                     <img
                       alt={hinge.title}
-                      src={`https://dev.api.boki-groupe.com${hinge.image.url}`}
+                      // src={`https://dev.api.boki-groupe.com${hinge.image.url}`}
+                      src={`${baseUrl}${hinge.image.url}`} 
                       style={{ height: 200, objectFit: 'cover', width: '100%' }}
                     />
                   ) : (

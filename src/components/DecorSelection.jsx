@@ -84,6 +84,8 @@ const GET_SUBORDER_PRODUCT = gql`
   }
 `;
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const DecorSelection = ({ 
   doorId, // ID выбранной двери
   selectedDecorType, 
@@ -484,7 +486,8 @@ const handleSaveDecor = async () => {
                       decor.image?.url ? 
                       <img 
                         alt={decor.title} 
-                        src={`https://dev.api.boki-groupe.com${decor.image.url}`} 
+                        // src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                        src={`${baseUrl}${decor.image.url}`}
                         style={{ height: 200, objectFit: 'cover' }}
                       /> : 
                       <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -506,7 +509,8 @@ const handleSaveDecor = async () => {
                         {decor.image?.url ? (
                           <img
                             alt={decor.title}
-                            src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                            // src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                            src={`${baseUrl}${decor.image.url}`}
                             style={{ height: 200, objectFit: 'cover', width: '100%' }}
                           />
                         ) : (
@@ -610,13 +614,15 @@ const handleSaveDecor = async () => {
                   <Row gutter={[16, 16]}>
                     {decors.map(decor => (
                       <Col span={4} key={decor.documentId}>
+                        
                         {/* <Card
                           hoverable
                           cover={
                             decor.image?.url ? 
                             <img 
                               alt={decor.title} 
-                              src={`https://dev.api.boki-groupe.com${decor.image.url}`} 
+                              //src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                              src={`${baseUrl}${decor.image.url}`} 
                               style={{ height: 200, objectFit: 'cover' }}
                             /> : 
                             <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -638,7 +644,8 @@ const handleSaveDecor = async () => {
                               {decor.image?.url ? (
                                 <img
                                   alt={decor.title}
-                                  src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                                  // src={`https://dev.api.boki-groupe.com${decor.image.url}`}
+                                  src={`${baseUrl}${decor.image.url}`}
                                   style={{ height: 200, objectFit: 'cover', width: '100%' }}
                                 />
                               ) : (

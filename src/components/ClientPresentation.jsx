@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Button, Divider } from "antd";
+import { WarningOutlined } from "@ant-design/icons";
 import html2pdf from 'html2pdf.js/dist/html2pdf.min.js';
 import ralToHex from 'ral-to-hex';
 import ncsColor from 'ncs-color';
@@ -18,10 +19,12 @@ import CustomOptionsPresentation from "../presentation/CustomOptionsPresentation
 import InformationPresentation from "../presentation/InformationPresentation";
 import CompanyInformationPresentation from "../presentation/CompanyInformationPresentation";
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 const ClientPresentation = ({ orderData, companyData }) => {
   const { translations } = useContext(LanguageContext);
   const [generatingPdf, setGeneratingPdf] = useState(false);
-console.log(orderData)
+
   // Функция для сохранения в PDF
   const saveToPDF = () => {
     const element = document.getElementById('client-presentation-content');
@@ -81,7 +84,8 @@ console.log(orderData)
     return imageUrl ? (
       <img 
         alt={alt} 
-        src={`https://dev.api.boki-groupe.com${imageUrl}`} 
+        // src={`https://dev.api.boki-groupe.com${imageUrl}`} 
+        src={`${baseUrl}${imageUrl}`} 
         style={imageStyles[type]}
       />
     ) : (
@@ -113,7 +117,6 @@ console.log(orderData)
   const subordersWithError = orderData.suborders
   .filter(sub => {
     const errors = sub.suborderErrors || {};
-    console.log(sub?.suborder_type?.typeName)
     return Object.values(errors).some(val => val === true);
   });
 
@@ -123,6 +126,8 @@ console.log(orderData)
         <Button type="primary" onClick={saveToPDF}>
           {translations.saveToPDF || "Save to PDF"}
         </Button>
+
+        <p style={{marginTop: 15}}> <WarningOutlined style={{ color: "#fecf6d" }} /> {translations.chooseManager}</p>
 
         {subordersWithError.map(sub => (
           <div key={sub.documentId} style={{ marginTop: '15px', color: 'red', fontWeight: 'bold' }}>
@@ -202,7 +207,7 @@ console.log(orderData)
         ))}
         {/* Рендерим информацию о заказе один раз после всех субордеров */}
         <InformationPresentation order={orderData} isPdf={generatingPdf} />
-        <CompanyInformationPresentation companyData={companyData} translations={translations} />
+        <CompanyInformationPresentation companyData={companyData} translations={translations} isPdf={generatingPdf} />
       </div>
     </div>
   );

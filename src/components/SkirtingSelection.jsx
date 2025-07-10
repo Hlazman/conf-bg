@@ -7,6 +7,8 @@ import ArchiveOverlay from './ArchiveOverlay';
 
 const { Title } = Typography;
 
+const baseUrl = process.env.REACT_APP_BASE_URL;
+
 // Запрос для получения элементов продукта
 const GET_PRODUCT_ELEMENTS = gql`
 query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
@@ -392,7 +394,8 @@ const SkirtingSelection = ({
                       product.image?.url ? 
                       <img 
                         alt={product.title} 
-                        src={`https://dev.api.boki-groupe.com${product.image.url}`} 
+                        // src={`https://dev.api.boki-groupe.com${product.image.url}`} 
+                        src={`${baseUrl}${product.image.url}`} 
                         style={{ height: 200, objectFit: 'cover' }}
                       /> : 
                       <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -416,7 +419,8 @@ const SkirtingSelection = ({
                         {product.image?.url ? (
                           <img
                             alt={product.title}
-                            src={`https://dev.api.boki-groupe.com${product.image.url}`}
+                            // src={`https://dev.api.boki-groupe.com${product.image.url}`}
+                            src={`${baseUrl}${product.image.url}`} 
                             style={{ height: 200, objectFit: 'cover', width: '100%' }}
                           />
                         ) : (

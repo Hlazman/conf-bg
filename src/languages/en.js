@@ -78,6 +78,7 @@ const en = {
   customOption: "Custom option",
   skirtingInsert: "Insert for skirting", 
   presentation: "Presentation",
+  shortPresentation: "Short presentation",
   startData: "Start Data",
   doubleDoor: "Double Door",
   doorSide: "Door Side",
@@ -176,10 +177,11 @@ const en = {
   alMolding: "Aluminum molding",
   archive: "Archive",
   instruction: "instruction",
-
+  manager: "Manager",
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',
+  chooseManager: 'Do not forget to select a manager at the bottom of the presentation',
   success: "Success", 
   loading: "Loading data...",
   firstDoor: 'First, choose a door',
