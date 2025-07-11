@@ -6,7 +6,7 @@ import { CurrencyContext } from "../context/CurrencyContext";
 const InformationPresentation = ({ order, isPdf }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
-  
+  console.log(order)
   // Состояние для отображения или скрытия скидки
   const [showDiscount, setShowDiscount] = useState(true);
 
@@ -28,7 +28,8 @@ const InformationPresentation = ({ order, isPdf }) => {
       const total = suborder_products.reduce((sum, product) => {
         const cost = Number(product.productCostNetto) || 0;
         const amount = Number(product.amount) || 1;
-        return sum + cost * amount;
+        // return sum + cost * amount;
+        return sum + cost;
       }, 0);
       // const totalCeil = Math.ceil(total * 100) / 100;
       const totalCeil = total * amount;

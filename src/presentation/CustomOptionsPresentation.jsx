@@ -1,4 +1,3 @@
-// CustomOptionsPresentation.jsx
 import React, { useContext } from "react";
 import { Descriptions, Divider } from "antd";
 import { LanguageContext } from "../context/LanguageContext";
@@ -32,8 +31,10 @@ const CustomOptionsPresentation = ({ suborder }) => {
               {product.amount > 1 ? ` (${product.amount} ${translations.pcs})` : ''}
             </Descriptions.Item>
             <Descriptions.Item label={translations.priceNetto}>
-            <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(product.productCostNetto)} </div>
-              {/* {formatPrice(product.productCostNetto)} */}
+            <div style={{textAlign: 'right', fontWeight: 'bold'}}> 
+              {/* {formatPrice(product.productCostNetto * product.amount || 1)}  */}
+              {formatPrice(product.productCostNetto)}
+            </div>
             </Descriptions.Item>
           </React.Fragment>
         ))}

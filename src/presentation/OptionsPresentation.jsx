@@ -32,8 +32,10 @@ const OptionsPresentation = ({ suborder }) => {
               {product.amount !== null ? ` (${product.amount} ${translations.pcs})` : ''}
             </Descriptions.Item>
             <Descriptions.Item label={translations.priceNetto}>
-            <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(product.productCostNetto)} </div>
-              {/* {formatPrice(product.productCostNetto)} */}
+              <div style={{textAlign: 'right', fontWeight: 'bold'}}> 
+                {/* {formatPrice(product.productCostNetto * product?.amount || 1)}  */}
+              {formatPrice(product.productCostNetto)}
+              </div>
             </Descriptions.Item>
           </React.Fragment>
         ))}

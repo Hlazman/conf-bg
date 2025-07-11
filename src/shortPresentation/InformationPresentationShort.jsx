@@ -32,7 +32,8 @@ const InformationPresentationShort = ({ order, isPdf }) => {
       const total = suborder_products.reduce((sum, product) => {
       const cost = Number(product.productCostNetto) || 0;
       const amount = Number(product.amount) || 1;
-      return sum + cost * amount;
+      // return sum + cost * amount;
+      return sum + cost;
     }, 0);
         
       const totalCeil = total * amount;

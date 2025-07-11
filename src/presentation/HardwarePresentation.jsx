@@ -100,7 +100,12 @@ const HardwarePresentation = ({ suborder, renderImage, isPdf }) => {
                       <br />
                     </>
                   )}
-                  <strong>{`${translations.priceNetto} ${translations[product.type]}`}:</strong> {formatPrice(product.productCostNetto)}
+                  <strong>{`${translations.priceNetto} ${translations[product.type]}`}: </strong> 
+                  {/* {product.type === 'knob' 
+                    ? formatPrice(product.productCostNetto * product.amount || 1) 
+                    : formatPrice(product.productCostNetto)
+                  }  */}
+                  {formatPrice(product.productCostNetto)}
                 </div>
               </div>
             </Descriptions.Item>
