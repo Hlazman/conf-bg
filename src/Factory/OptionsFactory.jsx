@@ -31,7 +31,6 @@ const OptionsPresentation = ({ suborder }) => {
             <Descriptions.Item 
               label={`${translations[product.product?.title]}${product.amount !== null ? ` (${product.amount} ${translations.pcs})` : ''}`}>
                 <div style={{textAlign: 'right', fontWeight: 'bold'}}> 
-                  {/* {formatPrice(product.productCostBasic * product.amount || 1)}  */}
                   {formatPrice(product.productCostBasic)} 
                 </div>
             </Descriptions.Item>

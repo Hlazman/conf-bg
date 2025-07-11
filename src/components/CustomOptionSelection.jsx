@@ -13,7 +13,7 @@ const CREATE_SUBORDER_PRODUCT = gql`
     createSuborderProduct(data: $data) {
       documentId
       customTitle
-      productCostNetto
+      productCostBasic
       amount
       comment
     }
@@ -25,7 +25,7 @@ const UPDATE_SUBORDER_PRODUCT = gql`
     updateSuborderProduct(documentId: $documentId, data: $data) {
       documentId
       customTitle
-      productCostNetto
+      productCostBasic
       amount
       comment
     }
@@ -45,7 +45,7 @@ const DELETE_SUBORDER_PRODUCT = gql`
 //     suborderProducts(filters: $filters) {
 //       documentId
 //       customTitle
-//       productCostNetto
+//       productCostBasic
 //       amount
 //     }
 //   }
@@ -56,7 +56,7 @@ const GET_SUBORDER_PRODUCTS = gql`
     suborderProducts(filters: $filters, pagination: $pagination) {
       documentId
       customTitle
-      productCostNetto
+      productCostBasic
       amount
       comment
     }
@@ -131,8 +131,8 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         const options = customOptionsData.suborderProducts.map(option => ({
           id: option.documentId,
           customTitle: option.customTitle || "",
-          // productCostNetto: option.productCostNetto || "",
-          productCostNetto: convertFromEUR(option.productCostNetto) || "",
+          // productCostBasic: option.productCostBasic || "",
+          productCostBasic: convertFromEUR(option.productCostBasic) || "",
           amount: option.amount || 1,
           comment: option.comment || "",
           isNew: false
@@ -152,7 +152,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
     setCustomOptions([...customOptions, {
       id: null,
       customTitle: "",
-      productCostNetto: "",
+      productCostBasic: "",
       amount: 1,
       comment: "",
       isNew: true
@@ -175,7 +175,7 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
       return;
     }
     
-    if (!option.productCostNetto) {
+    if (!option.productCostBasic) {
       message.error(translations.enterPrice);
       return;
     }
@@ -187,8 +187,8 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
         suborder: suborderId,
         type: "customOption",
         customTitle: option.customTitle,
-        // productCostNetto: parseFloat(option.productCostNetto),
-        productCostNetto: convertToEUR(parseFloat(option.productCostNetto)),
+        // productCostBasic: parseFloat(option.productCostBasic),
+        productCostBasic: convertToEUR(parseFloat(option.productCostBasic)),
         amount: parseInt(option.amount, 10) || 1,
         comment: option.comment || ""
       };
@@ -339,8 +339,8 @@ const CustomOptionSelection = ({ suborderId, onAfterSubmit }) => {
                 <Input
                   type="number"
                   placeholder={translations.enterPrice}
-                  value={option.productCostNetto}
-                  onChange={(e) => handleOptionChange(index, "productCostNetto", e.target.value)}
+                  value={option.productCostBasic}
+                  onChange={(e) => handleOptionChange(index, "productCostBasic", e.target.value)}
                   addonAfter={getCurrencySymbol()}
                 />
               </Form.Item>

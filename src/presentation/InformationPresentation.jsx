@@ -27,7 +27,7 @@ const InformationPresentation = ({ order, isPdf }) => {
       // Считаем сумму productCostNetto * amount, округляем ВВЕРХ до 2 знаков
       const total = suborder_products.reduce((sum, product) => {
         const cost = Number(product.productCostNetto) || 0;
-        const amount = Number(product.amount) || 1;
+        // const amount = Number(product.amount) || 1;
         // return sum + cost * amount;
         return sum + cost;
       }, 0);
