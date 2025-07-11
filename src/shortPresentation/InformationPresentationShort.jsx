@@ -9,8 +9,6 @@ const baseUrl = process.env.REACT_APP_BASE_URL;
 const InformationPresentationShort = ({ order, isPdf }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
-
-  // Состояние для отображения или скрытия скидки
   const [showDiscount, setShowDiscount] = useState(true);
 
   // Вычисления suborders
@@ -23,7 +21,6 @@ const InformationPresentationShort = ({ order, isPdf }) => {
       const matchedProduct = suborder_products.find((p) => p.type === typeName);
       const title = matchedProduct?.product?.title || "";
       const url = matchedProduct?.product?.image?.url || "";
-        
       const height = matchedProduct?.sizes?.height || "";
       const width = matchedProduct?.sizes?.width || "";
       const thickness = matchedProduct?.sizes?.thickness || "";

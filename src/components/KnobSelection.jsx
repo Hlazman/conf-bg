@@ -15,7 +15,7 @@ const CREATE_SUBORDER_PRODUCT = gql`
         url
         documentId
       }
-      productCostNetto
+      productCostBasic
       amount
       knobOpen
     }
@@ -31,7 +31,7 @@ const UPDATE_SUBORDER_PRODUCT = gql`
         url
         documentId
       }
-      productCostNetto
+      productCostBasic
       amount
       knobOpen
     }
@@ -55,7 +55,7 @@ const GET_SUBORDER_PRODUCT = gql`
         url
         documentId
       }
-      productCostNetto
+      productCostBasic
       amount
       knobOpen
     }
@@ -70,7 +70,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
   const [customImageId, setCustomImageId] = useState(null);
   const [customImageUrl, setCustomImageUrl] = useState("");
   const [customTitle, setCustomTitle] = useState(""); // eslint-disable-line no-unused-vars
-  const [productCostNetto, setProductCostNetto] = useState(""); // eslint-disable-line no-unused-vars
+  const [productCostBasic, setProductCostBasic] = useState(""); // eslint-disable-line no-unused-vars
   const [amount, setAmount] = useState(1); // eslint-disable-line no-unused-vars
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { translations } = useContext(LanguageContext);
@@ -131,7 +131,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
       setCustomTitle("");
       setCustomImageId(null);
       setCustomImageUrl("");
-      setProductCostNetto("");
+      setProductCostBasic("");
       form.resetFields();
       refetchKnob();
     },
@@ -148,8 +148,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         const knobProduct = knobProductData.suborderProducts[0];
         setKnobProductId(knobProduct.documentId);
         setCustomTitle(knobProduct.customTitle || "");
-        // setProductCostNetto(knobProduct.productCostNetto || "");
-        setProductCostNetto(convertFromEUR(knobProduct.productCostNetto) || "");
+        // setProductCostBasic(knobProduct.productCostBasic || "");
+        setProductCostBasic(convertFromEUR(knobProduct.productCostBasic) || "");
         setAmount(knobProduct.amount || 1);
         setKnobOpen(knobProduct.knobOpen || "none");
         
@@ -168,8 +168,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
 
         form.setFieldsValue({
           customTitle: knobProduct.customTitle || "",
-          // productCostNetto: knobProduct.productCostNetto || "",
-          productCostNetto: convertFromEUR(knobProduct.productCostNetto) || "",
+          // productCostBasic: knobProduct.productCostBasic || "",
+          productCostBasic: convertFromEUR(knobProduct.productCostBasic) || "",
           amount: knobProduct.amount || 1,
           knobOpen: knobProduct.knobOpen || "none",
         });
@@ -205,8 +205,8 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         suborder: suborderId,
         type: "knob",
         customTitle: formValues.customTitle,
-        // productCostNetto: parseFloat(formValues.productCostNetto),
-        productCostNetto: convertToEUR(parseFloat(formValues.productCostNetto)),
+        // productCostBasic: parseFloat(formValues.productCostBasic),
+        productCostBasic: convertToEUR(parseFloat(formValues.productCostBasic)),
         amount: parseInt(formValues.amount, 10) || 1,
         knobOpen: formValues.knobOpen || "none"
       };
@@ -305,7 +305,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         </Space>
       </div>
       
-      <Form form={form} layout="vertical" initialValues={{ customTitle: "", productCostNetto: "" }}>
+      <Form form={form} layout="vertical" initialValues={{ customTitle: "", productCostBasic: "" }}>
         <Row gutter={20}>
           <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item
@@ -321,14 +321,14 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
           </Col>
           <Col xs={24} sm={12} md={8} lg={6}>
             <Form.Item
-              name="productCostNetto"
+              name="productCostBasic"
               label={`${translations.price} (Netto)`}
               rules={[{ required: true, message: translations.enterPrice }]}
             >
               <Input 
                 type="number" 
                 placeholder={translations.enterPrice} 
-                onChange={(e) => setProductCostNetto(e.target.value)}
+                onChange={(e) => setProductCostBasic(e.target.value)}
                 addonAfter={getCurrencySymbol()} 
               />
             </Form.Item>
@@ -358,7 +358,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
                 <Select.Option value="none">{translations.no}</Select.Option>
                 <Select.Option value="key">{translations.key}</Select.Option>
                 <Select.Option value="latch">{translations.latch}</Select.Option>
-                <Select.Option value="lock">{translations.lock}</Select.Option>
+                <Select.Option value="lock">{translations.lock}</Select.Option> 
                 <Select.Option value="WC">{"WC"}</Select.Option>
               </Select>
             </Form.Item>

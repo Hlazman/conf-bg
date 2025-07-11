@@ -6,8 +6,6 @@ import { CurrencyContext } from "../context/CurrencyContext";
 const InformationPresentation = ({ order, isPdf }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
-  console.log(order)
-  // Состояние для отображения или скрытия скидки
   const [showDiscount, setShowDiscount] = useState(true);
 
   // Вычисления suborders
@@ -17,21 +15,17 @@ const InformationPresentation = ({ order, isPdf }) => {
     return order.suborders.map((suborder) => {
       const { suborder_type, suborder_products = [], amount } = suborder;
       const typeName = suborder_type?.typeName || "";
-
-      // Ищем первый продукт с совпадающим type
       const matchedProduct = suborder_products.find((p) => p.type === typeName);
-
-      // Берем title из product если найдено совпадение
       const title = matchedProduct?.product?.title || "";
 
-      // Считаем сумму productCostNetto * amount, округляем ВВЕРХ до 2 знаков
+      // Считаем сумму productCostNetto
       const total = suborder_products.reduce((sum, product) => {
         const cost = Number(product.productCostNetto) || 0;
         // const amount = Number(product.amount) || 1;
         // return sum + cost * amount;
         return sum + cost;
       }, 0);
-      // const totalCeil = Math.ceil(total * 100) / 100;
+      
       const totalCeil = total * amount;
 
       return { typeName, title, totalCeil, amount };
