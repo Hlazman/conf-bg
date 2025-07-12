@@ -7,14 +7,27 @@ const TotalPriceFactory = ({ suborders }) => {
   const { translations } = useContext(LanguageContext);
   const { convertFromEUR, getCurrencySymbol } = useContext(CurrencyContext);
 
-// Считаем сумму без CharmWood
+  // Считаем сумму без CharmWood, customOption, knob
   const totalBasicCostEUR = suborders.reduce((sum, suborder) => {
     const suborderSum = suborder.suborder_products.reduce((subSum, product) => {
-      const isCharmWood = product.product?.brand === "CharmWood";
-      return isCharmWood ? subSum : subSum + (product.productCostBasic || 0);
+      // const type = product.product?.type;
+      const type = product?.type;
+      const brand = product.product?.brand;
+
+      // Условия для пропуска
+      const skip =
+      // type === undefined ||
+        type === "customOption" ||
+        type === "knob" ||
+        (type === "wallPanel" && brand === "CharmWood");
+
+      if (skip) return subSum;
+
+      return subSum + (product.productCostBasic || 0);
     }, 0);
     return sum + suborderSum;
   }, 0);
+
 
   // Конвертируем в нужную валюту
   const converted = convertFromEUR(totalBasicCostEUR).toFixed(2);

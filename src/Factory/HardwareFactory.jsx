@@ -12,7 +12,8 @@ const HardwareFactory = ({ suborder }) => {
 
   // Фильтруем продукты с типами lock, knob, hinge
   const hardwareProducts = suborder.suborder_products.filter(product =>
-    ["lock", "knob", "hinge"].includes(product.type)
+    // ["lock", "knob", "hinge"].includes(product.type)
+    ["lock", "hinge"].includes(product.type)
   );
 
   if (hardwareProducts.length === 0) return null;

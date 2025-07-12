@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Descriptions } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
 
@@ -18,6 +19,15 @@ const SamplesPresentation = ({ suborder }) => {
   
   return (
     <div className="samples-presentation">
+
+      {suborder?.amount > 1 && (
+        <p> 
+          <InfoCircleOutlined style={{ color: "#1890ff" }} /> 
+          &nbsp; {translations.amountPrice} {suborder.amount}  
+        </p>
+      )}
+
+
       <Descriptions 
         bordered 
         column={1} 

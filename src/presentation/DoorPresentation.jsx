@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
 import { Descriptions, Row, Col, Card, Tooltip } from "antd";
-import { ExpandOutlined } from "@ant-design/icons";
+import { ExpandOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
-import { InfoCircleOutlined } from "@ant-design/icons";
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
@@ -30,7 +29,7 @@ const DoorPresentation = ({ suborder, renderImage }) => {
   
   return (
     <div className="door-presentation">
-      {suborder?.amount >= 1 && (
+      {suborder?.amount > 1 && (
         <p> 
           <InfoCircleOutlined style={{ color: "#1890ff" }} /> 
           &nbsp; {translations.amountPrice} {suborder.amount}  

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Descriptions, Row, Col, Card, Tooltip } from "antd";
-import { ExpandOutlined } from "@ant-design/icons";
+import { ExpandOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { LanguageContext } from "../context/LanguageContext";
 import { CurrencyContext } from "../context/CurrencyContext";
 
@@ -45,6 +45,14 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
   
   return (
     <div className="skirting-presentation">
+
+      {suborder?.amount > 1 && (
+        <p> 
+          <InfoCircleOutlined style={{ color: "#1890ff" }} /> 
+          &nbsp; {translations.amountPrice} {suborder.amount}  
+        </p>
+      )}
+
       <Row gutter={16}>
         <Col span={10}>
           <Card
