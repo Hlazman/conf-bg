@@ -246,91 +246,48 @@ export const validateSuborderProducts = async (client, documentId) => {
     if (products.frame && products.extender) {
       const { data: frameIncompatibilityData } = await client.query({
         query: gql`
-          query FrameWithIncompatibilities($documentId: ID!) {
+          query FrameWithIncompatibilities($documentId: ID!, $pagination: PaginationArg) {
             product(documentId: $documentId) {
-              incompatibleProducts {
+              incompatibleProducts(pagination: $pagination) {
                 documentId
               }
             }
           }
         `,
         variables: {
-          documentId: products.frame.documentId
+          documentId: products.frame.documentId,
+          pagination: { limit: 200 }
         }
       });
-      const incompatibleIds = frameIncompatibilityData?.product?.incompatibleProducts?.map(p => p.documentId) || [];
 
+      const incompatibleIds = frameIncompatibilityData?.product?.incompatibleProducts?.map(p => p.documentId) || [];
       errors.extenderError = incompatibleIds.includes(products.extender.documentId) ? true : null;
     }
 
     // 7.2. Проверяем, несовместим ли extender с дверями
     const productDoor = products.door || products.hiddenDoor || products.slidingDoor || null;
-
     if (products.extender) {
       const { data: doorIncompatibilityData } = await client.query({
         query: gql`
-          query DoorWithIncompatibilities($documentId: ID!) {
+          query DoorWithIncompatibilities($documentId: ID!, $pagination: PaginationArg) {
             product(documentId: $documentId) {
-              compatibleProductss {
+              compatibleProductss(pagination: $pagination) {
                 documentId
               }
             }
           }
         `,
         variables: {
-          // documentId: products.frame.documentId
-          documentId: products.extender.documentId
+          documentId: products.extender.documentId,
+          pagination: { limit: 200 }
         }
       });
 
       const incompatibleIds = doorIncompatibilityData?.product?.compatibleProductss?.map(p => p.documentId) || [];
-
-      // errors.extenderError = incompatibleIds.includes(productDoor.documentId) ? true : null;
       errors.extenderError = !incompatibleIds.includes(productDoor.documentId) ? true : null;
     }
 
     // 8. Проверяем совместимость петель с дверью
-    // if (products.hinge && doorProduct) {
-    //   const currentType = localStorage.getItem('currentType');
-    //   let compatibilityField;
-
-    //   if (currentType === "hiddenDoor") {
-    //     compatibilityField = "compatibleHiddenHinges";
-    //   } else if (currentType === "door" || currentType === "slidingDoor") {
-    //     compatibilityField = "compatibleSimpleHinges";
-    //   }
-      
-    //   if (compatibilityField) {
-    //     const { data: hingeData } = await client.query({
-    //       query: gql`
-    //         query Products($documentId: ID!, $pagination: PaginationArg) {
-    //           product(documentId: $documentId) {
-    //             ${compatibilityField}(pagination: $pagination) {
-    //               documentId
-    //             }
-    //           }
-    //         }
-    //       `,
-    //       variables: {
-    //         documentId: products.hinge.documentId,
-    //         pagination: { limit: 200 }
-    //       }
-    //     });
-
-    //     const compatibleHinges = hingeData.product[compatibilityField] || [];
-        
-    //     // Проверяем, есть ли дверь в списке совместимых рам
-    //     const isDoorCompatible = compatibleHinges.some(
-    //       hinge => hinge.documentId === doorProduct.documentId
-    //     );
-        
-    //     errors.hingeError = !isDoorCompatible ? true : null;
-    //   } else {
-    //     // Если тип двери не определен, считаем что ошибки нет
-    //     errors.hingeError = null;
-    //   }
-    // }
-
     if (products.hinge && doorProduct) {
       const currentType = localStorage.getItem('currentType');
       let compatibilityField;
