@@ -207,7 +207,12 @@ const ClientPresentation = ({ orderData, companyData }) => {
         ))}
         {/* Рендерим информацию о заказе один раз после всех субордеров */}
         <InformationPresentation order={orderData} isPdf={generatingPdf} />
-        <CompanyInformationPresentation companyData={companyData} translations={translations} isPdf={generatingPdf} />
+        <CompanyInformationPresentation 
+          companyData={companyData} 
+          translations={translations} 
+          isPdf={generatingPdf}
+          orderData={orderData} 
+        />
       </div>
     </div>
   );

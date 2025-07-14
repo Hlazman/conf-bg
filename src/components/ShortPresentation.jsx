@@ -59,7 +59,12 @@ const ShortPresentation = ({ orderData, companyData }) => {
       
       <div id="client-presentation-content" className="presentation-content">
         <InformationPresentationShort order={orderData} isPdf={generatingPdf} />
-        <CompanyInformationPresentation companyData={companyData} translations={translations} isPdf={generatingPdf} />
+        <CompanyInformationPresentation 
+          companyData={companyData} 
+          translations={translations} 
+          isPdf={generatingPdf}
+          orderData={orderData}
+        />
       </div>
     </div>
   );

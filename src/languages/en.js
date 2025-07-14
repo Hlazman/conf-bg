@@ -177,11 +177,12 @@ const en = {
   alMolding: "Aluminum molding",
   archive: "Archive",
   instruction: "instruction",
-  manager: "Manager",
+  manager: "Client Advisor",
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',
   chooseManager: 'Do not forget to select a manager at the bottom of the presentation',
+  selectManager: 'Select client advisor',
   success: "Success", 
   loading: "Loading data...",
   firstDoor: 'First, choose a door',

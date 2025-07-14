@@ -177,11 +177,12 @@ const pl = {
   alMolding: "Molding aluminiowy",
   archive: "Archiwum",
   instruction: 'Instrukcja',
-  manager: "Menedżer",
+  manager: "Doradca Klienta",
 
   // MESSAGES
   doorSealRequired: 'Wybierz uszczelkę drzwiową',
   chooseManager: 'Nie zapomnij wybrać menedżera na dole prezentacji',
+  selectManager: 'Wybierz doradcę klienta',
   success: "Sukces",
   loading: "Ładowanie danych...",
   firstDoor: 'Najpierw wybierz drzwi',

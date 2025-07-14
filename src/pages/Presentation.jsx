@@ -12,6 +12,7 @@ const GET_ORDER = gql`
   query GetOrder($documentId: ID!, $subordersPagination: PaginationArg, $productsPagination: PaginationArg) {
     order(documentId: $documentId) {
       documentId
+      metaData
       orderNumber
       deliveryCost
       clientDiscount

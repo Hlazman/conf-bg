@@ -182,6 +182,7 @@ const ua = {
   // MESSAGES
   doorSealRequired: 'Оберіть ущільнювач дверей ',
   chooseManager: 'Не забудьте обрати менеджера внизу презентації',
+  selectManager: 'Оберіть менеджера',
   success: "Успіх",
   loading: "Завантаження даних...",
   firstDoor: 'Спочатку виберіть двері',

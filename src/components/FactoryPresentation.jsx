@@ -53,7 +53,6 @@ const FactoryPresentation = ({ orderData }) => {
     const subordersWithError = orderData.suborders
     .filter(sub => {
       const errors = sub.suborderErrors || {};
-      console.log(sub?.suborder_type?.typeName)
       return Object.values(errors).some(val => val === true);
     });
 

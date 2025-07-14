@@ -23,6 +23,7 @@ export const GET_ORDERS = gql`
   query GetOrders($filters: OrderFiltersInput, $pagination: PaginationArg, $suborderFilters: SuborderProductFiltersInput) {
     orders(filters: $filters, pagination: $pagination) {
       documentId
+      metaData
       archive
       orderNumber
       totalCostNetto
@@ -400,10 +401,6 @@ const handleSampleClick = async (record) => {
     });
   };
 
-  // const handleAmountChange = (e) => {
-  //   setEditAmountModal((prev) => ({ ...prev, amount: Number(e.target.value) }));
-  // };
-
   const handleAmountChange = (e) => {
     // Просто берем строку, не парсим в число!
     setEditAmountModal((prev) => ({
@@ -411,25 +408,6 @@ const handleSampleClick = async (record) => {
       amount: e.target.value.replace(/^0+/, "") // опционально убираем лидирующие нули
     }));
   };
-
-  // const handleSaveAmount = async () => {
-  //   if (!editAmountModal.amount || editAmountModal.amount < 1) {
-  //     message.error(translations.errMinAmount || "Минимальное количество — 1");
-  //     return;
-  //   }
-  //   try {
-  //     await updateSuborder({
-  //       variables: { documentId: editAmountModal.suborderId, amount: editAmountModal.amount }
-  //     });
-
-  //     await calculateOrderPriceBySuborder(client, editAmountModal.suborderId);
-  //     setEditAmountModal({ open: false, suborderId: null, orderId: null, amount: 0 });
-  //     await refetch();
-  //     message.success(translations.save);
-  //   } catch (err) {
-  //     message.error(translations.err);
-  //   }
-  // };
 
   const handleSaveAmount = async () => {
     const amountNum = Number(editAmountModal.amount);
@@ -559,7 +537,6 @@ const handleSampleClick = async (record) => {
         title: translations.suborderType, 
         dataIndex: 'suborder_type', 
         key: 'typeName',
-        // render: (suborder_type) => suborder_type?.typeName || '-'
         render: (suborder_type) => translations[suborder_type?.typeName] || '-'
       },
       { 
@@ -640,9 +617,6 @@ const handleSampleClick = async (record) => {
     { title: "№", key: "index", width: 60, render: (_, __, index) => index + 1, fixed: "left"},
     { title: translations.orderNumber, dataIndex: "orderNumber", key: "orderNumber", fixed: "left", width: '150px', },
     { title: translations.tax, dataIndex: "taxRate", key: "taxRate", width: '100px', },
-    // { title: translations.priceNetto, dataIndex: "totalCostNetto", key: "totalCostNetto" },
-    // { title: translations.priceBrutto, dataIndex: "totalCostBrutto", key: "totalCostBrutto" },
-    // { title: translations.deliveryCost, dataIndex: "deliveryCost", key: "deliveryCost" },
     {
       title: translations.priceNetto,
       dataIndex: 'totalCostNetto',
@@ -673,6 +647,13 @@ const handleSampleClick = async (record) => {
     },
     { title: translations.discount, dataIndex: "clientDiscount", key: "clientDiscount", width: '150px', },
     { title: translations.extraCharge, dataIndex: "clientExtraPay", key: "clientExtraPay", width: '150px', },
+    {
+      title: translations.manager,
+      dataIndex: "metaData",
+      key: "manager",
+      width: '150px',
+      render: (metaData) => metaData?.selectedManagerName || "-",
+    },
     { 
       title: translations.agent, 
       dataIndex: "agent", 
@@ -693,15 +674,6 @@ const handleSampleClick = async (record) => {
       key: "archive",
       width: '100px',
       render: (archive, record) => (
-        // <input
-        //   type="checkbox"
-        //   checked={!!archive}
-        //   onChange={e =>
-        //     updateOrderArchive({
-        //       variables: { documentId: record.documentId, archive: e.target.checked }
-        //     })
-        //   }
-        // />
         <input
           type="checkbox"
           checked={!!archive}
@@ -744,10 +716,6 @@ const handleSampleClick = async (record) => {
       <Button onClick={() => refetch()} style={{ marginBottom: 16 }}>
         {translations.update}
       </Button>
-
-      {/* <Button onClick={() => setShowArchive(val => !val)} style={{ marginBottom: 16, marginLeft: 8 }}>
-        {translations.archive}
-      </Button> */}
 
       <Button
         type={showArchive ? "primary" : "default"}
@@ -807,8 +775,8 @@ const handleSampleClick = async (record) => {
       >
         <p>
           {archiveModal.value
-            ? translations.sureToArchiveOrder || 'Вы действительно хотите перевести заказ в архив?'
-            : translations.sureToUnarchiveOrder || 'Вы действительно хотите вернуть заказ из архива?'}
+            ? translations.sureToArchiveOrder
+            : translations.sureToUnarchiveOrder}
         </p>
       </Modal>
     </>
