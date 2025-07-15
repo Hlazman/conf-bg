@@ -178,6 +178,8 @@ const en = {
   archive: "Archive",
   instruction: "instruction",
   manager: "Client Advisor",
+  fixed: "Fixed",
+  remind: "Remind",
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',
@@ -388,6 +390,10 @@ const en = {
   colorWarning: 'Please be aware that the colors displayed on screen may slightly differ from those in print or in real life. This variation could be attributed to differences in monitor color reproduction settings and potential variations in the printing process. It is advisable to take this into consideration when evaluating the color scheme of the presentation.',
   customOptionInfo: 'You can add any custom option that does not contradict the technical specifications of the door set by specifying the name, price, quantity, and description in the comment field. Standard options and services from the manufacturer are also available—their price is calculated individually, so please provide a description for the client and set the price to 0; after receiving the calculation from the manufacturer, update the price.', 
   amountPrice: 'Below Prices are for 1 set. All sets are included in the total amount. Quantity in order: ', 
+  btnUpdate: 'Updates all orders to current product prices, except those marked as fixed.',
+  btnArchive: 'Shows only orders that have been moved to the archive.',
+  btnFixed: 'Displays orders marked as fixed.',
+  btnRemind: 'Displays orders, leaving only those that need to be reminded about.',
 };
   
   export default en;

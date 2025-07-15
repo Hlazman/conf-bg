@@ -8,8 +8,7 @@ import {
   DeleteOutlined, 
   FileTextOutlined,
   CopyOutlined,
-  TruckOutlined,
-  InfoCircleOutlined
+  TruckOutlined
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -26,8 +25,6 @@ export const GET_ORDERS = gql`
       documentId
       metaData
       archive
-      fixed
-      remind
       orderNumber
       totalCostNetto
       totalCostBrutto
@@ -78,32 +75,11 @@ const UPDATE_SUBORDER_AMOUNT = gql`
   }
 `;
 
-// Мутация для archive
 const UPDATE_ORDER_ARCHIVE = gql`
   mutation UpdateOrderArchive($documentId: ID!, $archive: Boolean!) {
     updateOrder(documentId: $documentId, data: { archive: $archive }) {
       documentId
       archive
-    }
-  }
-`;
-
-// Мутация для fixed
-const UPDATE_ORDER_FIXED = gql`
-  mutation UpdateOrderFixed($documentId: ID!, $fixed: Boolean!) {
-    updateOrder(documentId: $documentId, data: { fixed: $fixed }) {
-      documentId
-      fixed
-    }
-  }
-`;
-
-// Мутация для remind
-const UPDATE_ORDER_REMIND = gql`
-  mutation UpdateOrderRemind($documentId: ID!, $remind: Boolean!) {
-    updateOrder(documentId: $documentId, data: { remind: $remind }) {
-      documentId
-      remind
     }
   }
 `;
@@ -119,9 +95,6 @@ const Orders = () => {
   const navigate = useNavigate();
   const [showArchive, setShowArchive] = useState(false);
   const [archiveModal, setArchiveModal] = useState({ open: false, order: null, value: false });
-  const [showFixedOnly, setShowFixedOnly] = useState(false);
-  const [showRemindOnly, setShowRemindOnly] = useState(false);
-  const [informationModalOpen, setinformationModalOpen] = useState(false);
 
   const [updateSuborder, { loading: updatingAmount }] = useMutation(UPDATE_SUBORDER_AMOUNT);
   
@@ -187,16 +160,6 @@ const Orders = () => {
     onError: (e) => message.error(e.message),
   });
 
-  const [updateOrderFixed] = useMutation(UPDATE_ORDER_FIXED, { 
-    onCompleted: refetch,
-    onError: (e) => message.error(e.message),
-  });
-
-  const [updateOrderRemind] = useMutation(UPDATE_ORDER_REMIND, { 
-    onCompleted: refetch,
-    onError: (e) => message.error(e.message),
-  });
-
   // All Orders
   const orders = React.useMemo(() => {
     if (!data?.orders) return [];
@@ -204,16 +167,9 @@ const Orders = () => {
   }, [data]);
 
   // All filtered Orders
-  // const filteredOrders = React.useMemo(() => {
-  //   return orders.filter(order => !!order.archive === showArchive);
-  // }, [orders, showArchive]);
-
   const filteredOrders = React.useMemo(() => {
-    let result = orders.filter(order => !!order.archive === showArchive);
-    if (showFixedOnly) result = result.filter(order => !!order.fixed);
-    if (showRemindOnly) result = result.filter(order => !!order.remind);
-    return result;
-  }, [orders, showArchive, showFixedOnly, showRemindOnly]);
+  return orders.filter(order => !!order.archive === showArchive);
+}, [orders, showArchive]);
 
   const handleViewPresentation = (record) => {
     navigate(`/presentation/${record.documentId}/client`);
@@ -490,13 +446,6 @@ const handleSampleClick = async (record) => {
     setArchiveModal({ open: false, order: null, value: false });
   };
 
-  const handleFixedChange = (record, value) => {
-    updateOrderFixed({ variables: { documentId: record.documentId, fixed: value } });
-  };
-  const handleRemindChange = (record, value) => {
-    updateOrderRemind({ variables: { documentId: record.documentId, remind: value } });
-  };
-
   const menu = (record) => ({
     items: [
       { key: "view", label: translations.view, icon: <EyeOutlined />, onClick: () => handleViewPresentation(record) },
@@ -733,36 +682,10 @@ const handleSampleClick = async (record) => {
       ),
     },
     {
-      title: translations.fixed,
-      dataIndex: "fixed",
-      key: "fixed",
-      width: '120px',
-      render: (fixed, record) => (
-        <input
-          type="checkbox"
-          checked={!!fixed}
-          onChange={e => handleFixedChange(record, e.target.checked)}
-        />
-      ),
-    },
-    {
-      title: translations.remind,
-      dataIndex: "remind",
-      key: "remind",
-      width: '120px',
-      render: (remind, record) => (
-        <input
-          type="checkbox"
-          checked={!!remind}
-          onChange={e => handleRemindChange(record, e.target.checked)}
-        />
-      ),
-    },
-    {
       title: translations.comment,
       dataIndex: "comment",
       key: "comment",
-      width: '120px',
+      width: '100px',
       render: (text) =>
         text ? (
           <Button type="link" icon={<FileTextOutlined style={{ fontSize: "20px" }} />} onClick={() => setCommentModal({ open: true, text })} />
@@ -790,15 +713,7 @@ const handleSampleClick = async (record) => {
 
   return (
     <>
-      <Button
-        icon={<InfoCircleOutlined style={{ color: "#1890ff" }} />}
-        onClick={() => setinformationModalOpen(true)}
-        style={{ marginBottom: 16, marginRight: 8 }}
-      >
-        {translations.information}
-      </Button>
-
-      <Button onClick={() => refetch()} style={{ marginBottom: 16 }} disabled>
+      <Button onClick={() => refetch()} style={{ marginBottom: 16 }}>
         {translations.update}
       </Button>
 
@@ -814,22 +729,6 @@ const handleSampleClick = async (record) => {
         }}
       >
         {translations.archive}
-      </Button>
-
-      <Button
-        type={showFixedOnly ? "primary" : "default"}
-        onClick={() => setShowFixedOnly(val => !val)}
-        style={{ marginBottom: 16, marginLeft: 8 }}
-      >
-        {translations.fixed }
-      </Button>
-
-      <Button
-        type={showRemindOnly ? "primary" : "default"}
-        onClick={() => setShowRemindOnly(val => !val)}
-        style={{ marginBottom: 16, marginLeft: 8 }}
-      >
-        {translations.remind}
       </Button>
 
       <Table 
@@ -879,18 +778,6 @@ const handleSampleClick = async (record) => {
             ? translations.sureToArchiveOrder
             : translations.sureToUnarchiveOrder}
         </p>
-      </Modal>
-
-      <Modal
-        open={informationModalOpen}
-        onCancel={() => setinformationModalOpen(false)}
-        footer={null}
-        title={translations.information}
-      >
-        <div style={{marginBottom: '10px 0'}} > <span style={{fontWeight: 'bold'}}> {translations.update} </span>: {translations.btnUpdate} </div>
-        <div style={{marginBottom: '10px 0'}} > <span style={{fontWeight: 'bold'}}> {translations.archive} </span>: {translations.btnArchive} </div>
-        <div style={{marginBottom: '10px 0'}} > <span style={{fontWeight: 'bold'}}> {translations.fixed} </span>: {translations.btnFixed} </div>
-        <div style={{marginBottom: '10px 0'}} > <span style={{fontWeight: 'bold'}}> {translations.remind} </span>: {translations.btnRemind} </div>
       </Modal>
     </>
   );
