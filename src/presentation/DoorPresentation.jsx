@@ -8,6 +8,11 @@ const baseUrl = process.env.REACT_APP_BASE_URL;
 const DoorPresentation = ({ suborder, renderImage }) => {
   const { translations } = useContext(LanguageContext);
 
+  // HARDCODE for Option Fire-resistant doors
+  const hasFireResistantDoor = suborder.suborder_products.some(
+    p => p.product?.title === "Fire-resistant doors"
+  );
+
   // Находим продукт с типом door, hiddenDoor или slidingDoor
   const doorProduct = suborder.suborder_products.find(product => 
     ['door', 'hiddenDoor', 'slidingDoor'].includes(product.type)
@@ -143,9 +148,15 @@ const DoorPresentation = ({ suborder, renderImage }) => {
               {doorProduct.product?.guarantee ? `${doorProduct.product.guarantee} ${translations.years}` : `2 ${translations.years}`}
             </Descriptions.Item>
             
-            <Descriptions.Item label={translations.doorFilling}>
-              {translations.doorFilling || '-'}
-            </Descriptions.Item>
+            {/* <Descriptions.Item label={translations.doorFilling}>
+              {translations.minWool || '-'}
+            </Descriptions.Item> */}
+
+            {!hasFireResistantDoor && (
+              <Descriptions.Item label={translations.doorFilling}>
+                {translations.minWool || '-'}
+              </Descriptions.Item>
+            )}
           </Descriptions>
         </Col>
       </Row>

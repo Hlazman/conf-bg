@@ -385,6 +385,8 @@ const pl = {
   "surfaceCuttingWood": "Wycinanie skrzydła pod wkładkę wykończeniową",
   "surfaceCuttingUniqueLine": "Wycinanie skrzydła pod wkładkę wykończeniową",
   "surfaceCuttingPremium": "Wycinanie skrzydła pod wkładkę wykończeniową",
+  "Floor mounted stopper RDA 55096": "Stoper montowany na podłodze RDA 55096",
+  "Fire-resistant doors": "Drzwi przeciwpożarowe",
 
   // Warning and Informayion: 
   colorWarning: 'Należy pamiętać, że kolory wyświetlane na ekranie mogą nieznacznie różnić się od wydrukowanych lub w rzeczywistości. Różnica ta może wynikać z różnic w ustawieniach reprodukcji kolorów monitora i potencjalnych różnic w procesie drukowania. Zaleca się uwzględnienie ww. informacji przy podjęciu decyzji.',

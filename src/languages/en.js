@@ -385,6 +385,8 @@ const en = {
   "surfaceCuttingWood": "Finishing selection",
   "surfaceCuttingUniqueLine": "Finishing selection",
   "surfaceCuttingPremium": "Finishing selection",
+  "Floor mounted stopper RDA 55096": "Floor mounted stopper RDA 55096",
+  "Fire-resistant doors": "Fire-resistant doors",
 
   // Warning and Informayion: 
   colorWarning: 'Please be aware that the colors displayed on screen may slightly differ from those in print or in real life. This variation could be attributed to differences in monitor color reproduction settings and potential variations in the printing process. It is advisable to take this into consideration when evaluating the color scheme of the presentation.',
