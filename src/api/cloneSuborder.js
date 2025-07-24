@@ -57,6 +57,7 @@ export const GET_SUBORDER_DETAILS = gql`
           typeName
         }
         doorSeal
+        doorFilling
         knobInsertion
         lockInsertion
         product {
@@ -213,6 +214,7 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
         if (product.secondSideColorCode !== undefined) productInput.secondSideColorCode = product.secondSideColorCode;
         if (product.secondSideVeneerDirection !== undefined) productInput.secondSideVeneerDirection = product.secondSideVeneerDirection;
         if (product.doorSeal !== undefined) productInput.doorSeal = product.doorSeal;
+        if (product.doorFilling !== undefined) productInput.doorFilling = product.doorFilling;
         if (product.knobInsertion !== undefined) productInput.knobInsertion = product.knobInsertion;
         if (product.lockInsertion !== undefined) productInput.lockInsertion = product.lockInsertion;
         if (product.spindleInsertion !== undefined) productInput.spindleInsertion = product.spindleInsertion;

@@ -34,6 +34,7 @@ const FileUploader = ({ onFileUploaded }) => {
       });
       
       const uploadedFile = response.data[0];
+      console.log('uploadedFile', uploadedFile)
       message.success(`${file.name}: ${translations.dataSaved}`);
       onFileUploaded(uploadedFile);
       setLoading(false);

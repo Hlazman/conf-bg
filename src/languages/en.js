@@ -141,6 +141,8 @@ const en = {
   area: 'Area',
   doorFilling: 'Door filling',
   minWool: 'Filling with mineral wool',
+  mineral_wool: 'Filling with mineral wool',
+  polystyrol: 'Polystyrol',
   collection: 'Collection',
   wall: 'Wall',
   guarantee: 'Guarantee',

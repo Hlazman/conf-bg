@@ -95,6 +95,7 @@ const GET_ORDER = gql`
             typeName
           }
           doorSeal
+          doorFilling
           knobInsertion
           lockInsertion
           product {

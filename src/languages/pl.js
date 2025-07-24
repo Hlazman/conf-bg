@@ -141,6 +141,8 @@ const pl = {
   area: 'Powierzchnia',
   doorFilling: 'Wypełnienie drzwi',
   minWool: 'Wypełnienie wełną mineralną',
+  mineral_wool: 'Wypełnienie wełną mineralną',
+  polystyrol: 'Polistyren',
   collection: 'Kolekcja',
   wall: 'Ściana',
   guarantee: 'Gwarancja',

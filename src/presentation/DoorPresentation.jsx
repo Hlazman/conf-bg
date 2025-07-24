@@ -154,7 +154,7 @@ const DoorPresentation = ({ suborder, renderImage }) => {
 
             {!hasFireResistantDoor && (
               <Descriptions.Item label={translations.doorFilling}>
-                {translations.minWool || '-'}
+                {translations[doorProduct.doorFilling]}
               </Descriptions.Item>
             )}
           </Descriptions>

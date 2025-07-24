@@ -35,7 +35,6 @@ const GET_SUBORDER_PRODUCT = gql`
       frameTreshold
       amount
       doorSeal
-      doorFilling
       knobInsertion
       lockInsertion
       spindleInsertion
@@ -102,8 +101,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
   const [handleCutout, setHandleCutout] = useState(false);
   const [boltCutout, setBoltCutout] = useState(false);
   const [thresholdCutout, setThresholdCutout] = useState(false);
+  // const [doorSeal, setDoorSeal] = useState("none");
   const [doorSeal, setDoorSeal] = useState();
-  const [doorFilling, setDoorFilling] = useState();
   const [lockCutout, setLockCutout] = useState(false);
 
   // Дополнительные размеры для стены
@@ -116,15 +115,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
   const [tresholdAdjustmentApplied, setTresholdAdjustmentApplied] = useState(false);
   // Состояние для отслеживания изменений высоты
   const [heightModified, setHeightModified] = useState(false);
-
-  // HARDCODE для дверного наполнения
-  function canUsePolystyrol(doorType, selectedDoor) {
-    return (
-      doorType === "hiddenDoor" &&
-      selectedDoor?.title !== "Alum Wood 40" &&
-      selectedDoor?.title !== "Alum Wood 45"
-    );
-  }
 
   // Запрос на получение существующего SuborderProduct
   const { data: suborderProductData, loading: loadingSuborderProduct } = useQuery(GET_SUBORDER_PRODUCT, {
@@ -204,8 +194,8 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
       setLockCutout(suborderProduct.lockInsertion || false);
       setBoltCutout(suborderProduct.spindleInsertion || false);
       setThresholdCutout(suborderProduct.thresholdInsertion || false);
+      // setDoorSeal(suborderProduct.doorSeal || "none");
       setDoorSeal(suborderProduct.doorSeal);
-      setDoorFilling(suborderProduct.doorFilling);
       setFrameTreshold(suborderProduct.frameTreshold || false); // frameTreshold
     }
   }, [suborderProductData, loadingSuborderProduct]);
@@ -314,31 +304,17 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
     boltCutout,
     thresholdCutout,
     doorSeal,
-    doorFilling,
     lockCutout,
     frameTreshold // frameTreshold
   }), [
     dimensionType, doorHeight, doorWidth, wallThickness, 
     doorQuantity, handleCutout, boltCutout, thresholdCutout, 
-    doorSeal, doorFilling, lockCutout, frameTreshold // frameTreshold
+    doorSeal, lockCutout, frameTreshold // frameTreshold
   ]);
 
   useEffect(() => {
     onParametersChange?.(parameters);
   }, [parameters, onParametersChange]);
-
-  useEffect(() => {
-    if (doorFilling === "polystyrol" && !canUsePolystyrol(doorType, selectedDoor)) {
-      setDoorFilling("mineral_wool");
-    }
-    // Если нет значения doorFilling, ставим дефолт
-    if (!doorFilling) {
-      setDoorFilling(
-        canUsePolystyrol(doorType, selectedDoor) ? "polystyrol" : "mineral_wool"
-      );
-    }
-    // eslint-disable-next-line
-  }, [doorType, selectedDoor, doorFilling]);
 
   // Мемоизация максимальных значений параметров.
   const maxSizes = useMemo(() => selectedDoor?.maxSizes || [], [selectedDoor]);
@@ -404,7 +380,7 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
 
     const parameterData = {
       amount: doorQuantity,
-      doorFilling: doorFilling,
+      // doorSeal: doorSeal !== "none" ? doorSeal : null,
       doorSeal: doorSeal,
       knobInsertion: handleCutout,
       lockInsertion: lockCutout,
@@ -737,22 +713,6 @@ const DoorParameters = ({ selectedDoor, onParametersChange, suborderId, onAfterS
                   </Select>
                 </Form.Item>
               </Col>
-
-              <Col style={{ marginLeft: '16px' }} span={8}>
-                <Form.Item label={translations.doorFilling}>
-                  <Select
-                    value={doorFilling}
-                    onChange={setDoorFilling}
-                    style={{ width: "100%" }}
-                  >
-                    {canUsePolystyrol(doorType, selectedDoor) && (
-                      <Option value="polystyrol">{translations.polystyrol}</Option>
-                    )}
-                    <Option value="mineral_wool">{translations.minWool}</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-
             </Row>
           </>
         )}
