@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Spin, Button, message, Input, Form, Space, Modal, Divider, Select } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import FileUploader from "./FileUploader";
 import { LanguageContext } from "../context/LanguageContext";
@@ -12,6 +13,10 @@ const CREATE_SUBORDER_PRODUCT = gql`
       documentId
       customTitle
       customImage {
+        url
+        documentId
+      }
+      customImage2 {
         url
         documentId
       }
@@ -28,6 +33,10 @@ const UPDATE_SUBORDER_PRODUCT = gql`
       documentId
       customTitle
       customImage {
+        url
+        documentId
+      }
+      customImage2 {
         url
         documentId
       }
@@ -55,6 +64,10 @@ const GET_SUBORDER_PRODUCT = gql`
         url
         documentId
       }
+      customImage2 {
+        url
+        documentId
+      }
       customProductCostNetto
       amount
       knobOpen
@@ -69,8 +82,12 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
   const [deleting, setDeleting] = useState(false);
   const [customImageId, setCustomImageId] = useState(null);
   const [customImageUrl, setCustomImageUrl] = useState("");
+  const [customImage2Id, setCustomImage2Id] = useState(null);
+  const [customImage2Url, setCustomImage2Url] = useState("");
+  const [customImageDeleted, setCustomImageDeleted] = useState(false);
+  const [customImage2Deleted, setCustomImage2Deleted] = useState(false);
   const [customTitle, setCustomTitle] = useState(""); // eslint-disable-line no-unused-vars
-  const [customProductCostNetto, setСustomProductCostNetto] = useState(""); // eslint-disable-line no-unused-vars
+  const [customProductCostNetto, setCustomProductCostNetto] = useState(""); // eslint-disable-line no-unused-vars
   const [amount, setAmount] = useState(1); // eslint-disable-line no-unused-vars
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { translations } = useContext(LanguageContext);
@@ -131,7 +148,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
       setCustomTitle("");
       setCustomImageId(null);
       setCustomImageUrl("");
-      setСustomProductCostNetto("");
+      setCustomProductCostNetto("");
       form.resetFields();
       refetchKnob();
     },
@@ -148,17 +165,16 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         const knobProduct = knobProductData.suborderProducts[0];
         setKnobProductId(knobProduct.documentId);
         setCustomTitle(knobProduct.customTitle || "");
-        // setСustomProductCostNetto(knobProduct.customProductCostNetto || "");
-        setСustomProductCostNetto(convertFromEUR(knobProduct.customProductCostNetto) || "");
+        setCustomProductCostNetto(convertFromEUR(knobProduct.customProductCostNetto) || "");
         setAmount(knobProduct.amount || 1);
         setKnobOpen(knobProduct.knobOpen || "none");
         
         if (knobProduct.customImage) {
-          setCustomImageId(knobProduct.customImage.documentId);
-           // Проверяем формат URL и добавляем базовый URL, если путь относительный
+          // setCustomImageId(knobProduct.customImage.documentId);
+          setCustomImageId(knobProduct.customImage.id);
+        
           const imageUrl = knobProduct.customImage.url;
           if (imageUrl && imageUrl.startsWith('/')) {
-            // const baseUrl = 'https://dev.api.boki-groupe.com';
             const baseUrl = process.env.REACT_APP_BASE_URL;
             setCustomImageUrl(baseUrl + imageUrl);
           } else {
@@ -166,16 +182,27 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
           }
         }
 
+        if (knobProduct.customImage2) {
+          setCustomImage2Id(knobProduct.customImage2.id);
+
+          const imageUrl = knobProduct.customImage2.url;
+          const baseUrl = process.env.REACT_APP_BASE_URL;
+
+          if (imageUrl && imageUrl.startsWith("/")) {
+            setCustomImage2Url(baseUrl + imageUrl);
+          } else {
+            setCustomImage2Url(imageUrl);
+          }
+        }
+
         form.setFieldsValue({
           customTitle: knobProduct.customTitle || "",
-          // customProductCostNetto: knobProduct.customProductCostNetto || "",
           customProductCostNetto: convertFromEUR(knobProduct.customProductCostNetto) || "",
           amount: knobProduct.amount || 1,
           knobOpen: knobProduct.knobOpen || "none",
         });
       }
     }
-  // }, [knobProductData, loadingKnobProduct, form]);
   }, [knobProductData, loadingKnobProduct, form, convertFromEUR]);
 
   // Обработчик загрузки файла
@@ -205,20 +232,31 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
         suborder: suborderId,
         type: "knob",
         customTitle: formValues.customTitle,
-        // customProductCostNetto: parseFloat(formValues.customProductCostNetto),
         customProductCostNetto: convertToEUR(parseFloat(formValues.customProductCostNetto)),
         amount: parseInt(formValues.amount, 10) || 1,
-        knobOpen: formValues.knobOpen || "none"
+        knobOpen: formValues.knobOpen || "none",
       };
   
-      const isNewImageUploaded = document.querySelector('.ant-upload-list-item') !== null;
-      
-      if (!knobProductId && customImageId) {
-        knobData.customImage = customImageId;
-      } else if (knobProductId && isNewImageUploaded && customImageId) {
+      if (customImageId) {
         knobData.customImage = customImageId;
       }
-  
+
+      if (customImage2Id) {
+        knobData.customImage2 = customImage2Id;
+      }
+
+      if (customImageDeleted) {
+        knobData.customImage = null;
+      } else if (customImageId) {
+        knobData.customImage = customImageId;
+      }
+
+      if (customImage2Deleted) {
+        knobData.customImage2 = null;
+      } else if (customImage2Id) {
+        knobData.customImage2 = customImage2Id;
+      }
+
       if (knobProductId) {
         await updateSuborderProduct({
           variables: {
@@ -328,7 +366,7 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
               <Input 
                 type="number" 
                 placeholder={translations.enterPrice} 
-                onChange={(e) => setСustomProductCostNetto(e.target.value)}
+                onChange={(e) => setCustomProductCostNetto(e.target.value)}
                 addonAfter={getCurrencySymbol()} 
               />
             </Form.Item>
@@ -365,21 +403,69 @@ const KnobSelection = ({ suborderId, onAfterSubmit }) => {
           </Col>
         </Row>
         
-        {/* <Form.Item label={translations.image}> */}
-        <Form.Item label={`${translations.image} (PNG, JPG, JPEG)`}>
-          <div style={{ marginBottom: "10px" }}>
-            {customImageUrl && (
+        <Row>
+          <Col>
+            <Form.Item label={`${translations.image} (PNG, JPG, JPEG)`}>
               <div style={{ marginBottom: "10px" }}>
-                <img 
-                  src={customImageUrl} 
-                  alt="knob" 
-                  style={{ maxWidth: "100%", maxHeight: "200px" }} 
-                />
+                {customImageUrl && (
+                  <div style={{ marginBottom: "10px" }}>
+                    <img 
+                      src={customImageUrl} 
+                      alt="knob" 
+                      style={{ maxWidth: "100%", maxHeight: "200px" }} 
+                    />
+                    <Button
+                      danger
+                      onClick={() => {
+                        setCustomImageId(null);
+                        setCustomImageUrl("");
+                        setCustomImageDeleted(true);
+                      }}
+                      icon={<DeleteOutlined />}
+                      style={{display: 'block'}}
+                    >
+                      <span style={{paddingLeft: '10px'}}> {translations.delete} {translations.image} </span>
+                    </Button>
+                  </div>
+                )}
+                <FileUploader onFileUploaded={handleFileUploaded} />
               </div>
-            )}
-            <FileUploader onFileUploaded={handleFileUploaded} />
-          </div>
-        </Form.Item>
+            </Form.Item>
+          </Col>
+
+          <Col>
+            <Form.Item label={`${translations.image} 2 (PNG, JPG, JPEG)`}>
+              <div style={{ marginBottom: "10px" }}>
+                {customImage2Url && (
+                  <div style={{ marginBottom: "10px" }}>
+                    <img 
+                      src={customImage2Url} 
+                      alt="knob2" 
+                      style={{ maxWidth: "100%", maxHeight: "200px" }} 
+                    />
+
+                     <Button
+                      danger
+                      onClick={() => {
+                        setCustomImage2Id(null);
+                        setCustomImage2Url("");
+                        setCustomImage2Deleted(true);
+                      }}
+                      icon={<DeleteOutlined />}
+                      style={{display: 'block'}}
+                    >
+                      <span style={{paddingLeft: '10px'}}> {translations.delete} {translations.image} 2 </span>
+                    </Button>
+                  </div>
+                )}
+                <FileUploader onFileUploaded={(file) => {
+                  setCustomImage2Id(file.id);
+                  setCustomImage2Url(file.url);
+                }} />
+              </div>
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
       
       <Modal

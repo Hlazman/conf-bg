@@ -254,7 +254,8 @@ const pl = {
   extenderRecomendedWidth: 'Zalecana szerokość',
   notAvailable: 'Niedostępne',
   sureToArchiveOrder: 'Czy na pewno chcesz przenieść zamówienie do archiwum?', 
-  sureToUnarchiveOrder: 'Czy na pewno chcesz zwrócić zamówienie z archiwum?', 
+  sureToUnarchiveOrder: 'Czy na pewno chcesz zwrócić zamówienie z archiwum?',
+  tooBigImage: 'Zbyt duży obraz, maks. 1 mb',
 
   //ERRORS
   err: 'Błąd',

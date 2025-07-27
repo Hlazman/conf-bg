@@ -254,7 +254,8 @@ const ua = {
   extenderRecomendedWidth: 'Рекомендована ширина',
   notAvailable: 'Недоступно',
   sureToArchiveOrder: 'Ви дійсно бажаєте перевести замовлення до архіву?', 
-  sureToUnarchiveOrder: 'Ви дійсно бажаєте повернути замовлення з архіву?', 
+  sureToUnarchiveOrder: 'Ви дійсно бажаєте повернути замовлення з архіву?',
+  tooBigImage: 'Завелике зображення, максимум 1 МБ',
 
   //ERRORS
   err: 'Помилка',

@@ -34,7 +34,6 @@ const FileUploader = ({ onFileUploaded }) => {
       });
       
       const uploadedFile = response.data[0];
-      console.log('uploadedFile', uploadedFile)
       message.success(`${file.name}: ${translations.dataSaved}`);
       onFileUploaded(uploadedFile);
       setLoading(false);
@@ -51,6 +50,12 @@ const FileUploader = ({ onFileUploaded }) => {
       setFileList([]);
     },
     beforeUpload: (file) => {
+      const isLt1M = file.size / 1024 / 1024 < 1; // меньше 1 MB
+        if (!isLt1M) {
+          message.error(`${file.name} ${translations.tooBigImage || 'слишком большой (макс. 1 МБ)'}`);
+          return Upload.LIST_IGNORE; // 🚫 не добавлять в fileList
+        }
+
       setFileList([file]);
       return false;
     },

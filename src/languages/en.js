@@ -254,7 +254,8 @@ const en = {
   extenderRecomendedWidth: 'Recommended width',
   notAvailable: 'Not available',
   sureToArchiveOrder: 'Are you sure you want to move the order to the archive?', 
-  sureToUnarchiveOrder: 'Are you sure you want to return the order from the archive?', 
+  sureToUnarchiveOrder: 'Are you sure you want to return the order from the archive?',
+  tooBigImage: 'Too big image, max 1 mb',
 
   //ERRORS
   err: 'Error',

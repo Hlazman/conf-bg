@@ -28,7 +28,7 @@ const HardwarePresentation = ({ suborder, renderImage, isPdf }) => {
   );
 
   if (hardwareProducts.length === 0) return null;
-
+  
   return (
     <div className="hardware-presentation">
       <style>
@@ -91,47 +91,48 @@ const HardwarePresentation = ({ suborder, renderImage, isPdf }) => {
                     renderImage(null, product.product?.title || product.customTitle, 'hardware')
                   )}
 
-                {/* вторая картинка для ручки */}
-                {/* {product.customImage?.url && (
-                  <div style={{ marginRight: '10px', position: 'relative' }}>
-                    <Card
-                      hoverable
-                      size="small"
-                      styles={{ 
-                        body: { padding: 0 }
-                      }}
-                    >
-                      <div style={{ position: 'relative' }}>
-                        {renderImage(product.product?.image?.url || product.customImage?.url, product.product?.title || product.customTitle, 'hardware')}
-                        <Tooltip title={translations.openInNewTab}>
-                          <a 
-                            href={`${baseUrl}${product.product?.image?.url || product.customImage?.url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              openImageInNewTab(product.product?.image?.url || product.customImage?.url);
-                            }}
-                            style={{
-                              position: 'absolute',
-                              top: '5px',
-                              right: '5px',
-                              background: 'rgba(255, 255, 255, 0.7)',
-                              borderRadius: '50%',
-                              padding: '3px',
-                              cursor: 'pointer',
-                              zIndex: 5
-                            }}
-                          >
-                            <ExpandOutlined style={{ fontSize: '14px', color: '#1890ff' }} />
-                          </a>
-                        </Tooltip>
-                      </div>
-                    </Card>
-                  </div>
-                )} */}
+                  {/* вторая картинка для ручки */}
+                  {product.customImage2?.url && (
+                    // <div style={{ marginRight: '10px', position: 'relative' }}>
+                    <div style={{ position: 'relative' }}>
+                      <Card
+                        hoverable
+                        size="small"
+                        styles={{ 
+                          body: { padding: 0 }
+                        }}
+                      >
+                        <div style={{ position: 'relative' }}>
+                          {/* {renderImage(product.product?.image?.url || product.customImage2?.url, product.product?.title || product.customTitle, 'hardware')} */}
+                          {renderImage(product.customImage2?.url, product.customTitle, 'hardware')}
+                          <Tooltip title={translations.openInNewTab}>
+                            <a 
+                              href={`${baseUrl}${product.customImage2?.url}`}
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                openImageInNewTab(product.customImage2?.url);
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '5px',
+                                right: '5px',
+                                background: 'rgba(255, 255, 255, 0.7)',
+                                borderRadius: '50%',
+                                padding: '3px',
+                                cursor: 'pointer',
+                                zIndex: 5
+                              }}
+                            >
+                              <ExpandOutlined style={{ fontSize: '14px', color: '#1890ff' }} />
+                            </a>
+                          </Tooltip>
+                        </div>
+                      </Card>
+                    </div>
+                  )}
 
-                  
                 </div>
                 <div>
                   <strong>{translations.title}:</strong> {product.type === "knob" ? product.customTitle || '-' : product.product?.title || '-'}

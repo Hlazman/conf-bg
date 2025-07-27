@@ -80,6 +80,10 @@ const GET_ORDER = gql`
             documentId
             url
           }
+          customImage2 {
+            documentId
+            url
+          }
           customTitle
           decor {
             category

@@ -42,6 +42,10 @@ export const GET_SUBORDER_DETAILS = gql`
           documentId
           url
         }
+        customImage2 {
+          documentId
+          url
+        }
         customTitle
         decor {
           category
@@ -227,6 +231,7 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
         if (product.secondSideDecor && product.secondSideDecor.documentId) productInput.secondSideDecor = product.secondSideDecor.documentId;
         if (product.secondSideDecorType && product.secondSideDecorType.documentId) productInput.secondSideDecorType = product.secondSideDecorType.documentId;
         if (product.customImage && product.customImage.documentId) productInput.customImage = product.customImage.documentId;
+        if (product.customImage2 && product.customImage2.documentId) productInput.customImage2 = product.customImage2.documentId;
 
         // Обрабатываем размеры отдельно
         if (product.sizes) {
