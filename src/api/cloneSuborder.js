@@ -60,6 +60,7 @@ export const GET_SUBORDER_DETAILS = gql`
           documentId
           typeName
         }
+        calculatedAmount
         doorSeal
         doorFilling
         knobInsertion
@@ -210,6 +211,7 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
 
         // Добавляем только существующие поля с проверкой на undefined
         if (product.amount !== undefined) productInput.amount = product.amount;
+        if (product.calculatedAmount !== undefined) productInput.calculatedAmount = product.calculatedAmount;
         if (product.customTitle !== undefined) productInput.customTitle = product.customTitle;
         if (product.veneerDirection !== undefined) productInput.veneerDirection = product.veneerDirection;
         if (product.productCostBasic !== undefined) productInput.productCostBasic = product.productCostBasic;

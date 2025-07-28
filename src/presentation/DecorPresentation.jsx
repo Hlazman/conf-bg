@@ -9,7 +9,7 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
   const { translations } = useContext(LanguageContext);
 
   if (!product) return null;
-  
+console.log(product)
   const decorType = isFrontSide ? product.decor_type : product.secondSideDecorType;
   const decor = isFrontSide ? product.decor : product.secondSideDecor;
   const colorCode = isFrontSide ? product.colorCode : product.secondSideColorCode;
@@ -88,10 +88,7 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
                 )
               )
             }
-          >
-            {/* <div style={{ textAlign: 'center' }}>
-              {isFrontSide ? translations.decorImage : `${translations.decorImage} (${translations.side} 2)`}
-            </div> */}
+          >  
           </Card>
         </Col>
         <Col span={14}>
@@ -102,6 +99,13 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
             title={title}
             styles={{ label: { backgroundColor: '#fdf5e6', fontWeight: 'bold' } }}
           >
+
+            {product.type === 'skirtingInsert' && product?.calculatedAmount !== null && (
+              <Descriptions.Item label={translations.amount}>
+                {`${product?.calculatedAmount} ${translations.pcs}`}
+              </Descriptions.Item>
+            )}
+
             <Descriptions.Item label={translations.type}>
               {translations[decorType.typeName] || decorType.typeName}
             </Descriptions.Item>

@@ -90,7 +90,7 @@ const InformationPresentationShort = ({ order, isPdf }) => {
                       </a>
                     )}
                     <span style={{ fontWeight: 'bold' }}>
-                      {translations[sub.typeName]}
+                      {`${translations[sub.typeName]} :`}
                       {sub.title && <> {sub.title}</>}
                     </span>
                     {[

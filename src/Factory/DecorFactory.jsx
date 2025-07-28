@@ -30,9 +30,14 @@ const DecorFactory = ({ product, isFrontSide = true, customTitle = null, }) => {
             }}
           > 
             <Descriptions.Item label={`${product?.type === 'skirtingInsert' ? translations.insert : ''} ${title}`}>
-              <span>{translations[decorType.typeName]}, </span>
+              {product.type === 'skirtingInsert' && product?.calculatedAmount !== null && (
+                <span>{`${product?.calculatedAmount} ${translations.pcs}, `}</span>
+              )}
+
+              <span>{translations[decorType.typeName]} </span>
               {decorType.typeName === 'Veneer' && veneerDirection && (<span> {translations[veneerDirection]}, </span>)}
               <span> {decor?.title || ''} {isPaintType && colorCode ? ` (${colorCode})` : ''} </span> 
+
             </Descriptions.Item>
           </Descriptions>
     </div>

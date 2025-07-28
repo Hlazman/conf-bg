@@ -53,6 +53,12 @@ const SkirtingFactory = ({ suborder }) => {
             <Descriptions.Item label={translations.height}>
               {sizes.length ? `${sizes.height} mm` : '-'}
             </Descriptions.Item>
+
+            {skirtingProduct?.calculatedAmount !== null && (
+              <Descriptions.Item label={translations.amount}>
+                {`${skirtingProduct?.calculatedAmount} ${translations.pcs}`}
+              </Descriptions.Item>
+            )}
             
             <Descriptions.Item label={translations["Milling insert"]}>
               {hasSkirtingMilling ? translations.yes : translations.no}

@@ -99,6 +99,7 @@ const GET_ORDER = gql`
             typeName
           }
           doorSeal
+          calculatedAmount
           doorFilling
           knobInsertion
           lockInsertion

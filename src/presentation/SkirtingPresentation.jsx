@@ -15,7 +15,7 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
   );
   
   if (!skirtingProduct) return null;
-  
+
   const productImage = skirtingProduct.product?.image?.url || skirtingProduct.customImage?.url;
   const sizes = skirtingProduct.sizes || {};
   const hasSkirtingMilling = suborder.suborder_products.some(product => product.type === 'skirtingMilling');
@@ -98,9 +98,6 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
               )
             }
           >
-            {/* <div style={{ textAlign: 'center' }}>
-              {translations.skirtingImage || 'Skirting Image'}
-            </div> */}
           </Card>
         </Col>
         <Col span={14}>
@@ -110,10 +107,14 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
             size="small"
             styles={{ label: { backgroundColor: '#fdf5e6', fontWeight: 'bold' } }}
           >
-            <Descriptions.Item label={translations.title}>
+            {/* <Descriptions.Item label={translations.title}>
               {skirtingProduct.product?.title || skirtingProduct.customTitle || '-'}
+            </Descriptions.Item> */}
+
+            <Descriptions.Item label={translations.title}>
+              {translations[skirtingProduct.product?.title]}
             </Descriptions.Item>
-            
+         
             <Descriptions.Item label={translations.length}>
               {sizes.length ? `${sizes.length} mm` : '-'}
             </Descriptions.Item>
@@ -121,6 +122,12 @@ const SkirtingPresentation = ({ suborder, renderImage }) => {
             <Descriptions.Item label={translations.height}>
               {sizes.length ? `${sizes.height} mm` : '-'}
             </Descriptions.Item>
+
+            {skirtingProduct?.calculatedAmount !== null && (
+              <Descriptions.Item label={translations.amount}>
+                {`${skirtingProduct?.calculatedAmount} ${translations.pcs}`}
+              </Descriptions.Item>
+            )}
             
             <Descriptions.Item label={translations["Milling insert"]}>
               {hasSkirtingMilling ? translations.yes : translations.no}
