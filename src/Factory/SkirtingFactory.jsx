@@ -49,6 +49,10 @@ const SkirtingFactory = ({ suborder }) => {
             <Descriptions.Item label={translations.length}>
               {sizes.length ? `${sizes.length} mm` : '-'}
             </Descriptions.Item>
+
+            <Descriptions.Item label={translations.height}>
+              {sizes.length ? `${sizes.height} mm` : '-'}
+            </Descriptions.Item>
             
             <Descriptions.Item label={translations["Milling insert"]}>
               {hasSkirtingMilling ? translations.yes : translations.no}

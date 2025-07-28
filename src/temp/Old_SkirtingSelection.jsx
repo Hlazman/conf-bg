@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Card, Row, Col, Spin, Empty, Button, message, Tabs, Divider, Typography } from "antd";
+import { Card, Row, Col, Typography, Spin, Empty, InputNumber, Button, message, Tabs, Checkbox, Divider } from "antd";
 import { useQuery, useMutation, gql } from "@apollo/client";
 import DecorSelection from './DecorSelection';
 import { LanguageContext } from "../context/LanguageContext";
 import ArchiveOverlay from './ArchiveOverlay';
 
-const { Title  } = Typography;
+const { Title } = Typography;
+
+const baseUrl = process.env.REACT_APP_BASE_URL;
 
 // Запрос для получения элементов продукта
 const GET_PRODUCT_ELEMENTS = gql`
@@ -14,16 +16,16 @@ query Products($pagination: PaginationArg, $filters: ProductFiltersInput) {
     title
     archive
     type
-    decor_types {
-      typeName
-      documentId
-    }
-    documentId
     brand
     image {
       documentId
       url
     }
+    decor_types {
+      typeName
+      documentId
+    }
+    documentId
   }
 }`;
 
@@ -58,6 +60,12 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
       }
     }
     type
+    sizes {
+      length
+      height
+      width
+      thickness
+    }
     decor {
       documentId
       title
@@ -66,16 +74,7 @@ query GetSuborderProduct($filters: SuborderProductFiltersInput) {
       documentId
       typeName
     }
-    secondSideDecor {
-      documentId
-      title
-    }
-    secondSideDecorType {
-      documentId
-      typeName
-    }
     colorCode
-    secondSideColorCode
   }
 }`;
 
@@ -87,17 +86,19 @@ mutation DeleteSuborderProduct($documentId: ID!) {
   }
 }`;
 
-const SkirtingInsertSelection = ({
-  selectedSkirting,
+const SkirtingSelection = ({
   suborderId,
-  productType, // тип продукта skirtingInsert
-  onAfterSubmit
+  onAfterSubmit,
+  onSkirtingSelect
 }) => {
   const [productId, setProductId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [sizes, setSizes] = useState({ length: 0 });
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
-  
+  const [hasMilling, setHasMilling] = useState(false);
+  const [millingProductId, setMillingProductId] = useState(null);
+  const [millingChanged, setMillingChanged] = useState(false);
   const { translations } = useContext(LanguageContext);
 
   // Состояние для лицевой стороны декора
@@ -105,26 +106,18 @@ const SkirtingInsertSelection = ({
   const [selectedFrontDecor, setSelectedFrontDecor] = useState(null);
   const [frontColorCode, setFrontColorCode] = useState("");
 
-  // Состояние для тыльной стороны декора
-  // const [selectedBackDecorType, setSelectedBackDecorType] = useState(null);
-  // const [selectedBackDecor, setSelectedBackDecor] = useState(null);
-  // const [backColorCode, setBackColorCode] = useState("");
-
   // Запрос для получения элементов продукта
   const { loading, error, data } = useQuery(GET_PRODUCT_ELEMENTS, {
     variables: {
+      pagination: {
+        limit: 50
+      },
       filters: {
-        compatibleProductss: {
-          title: {
-            eqi: selectedSkirting?.title
-          }
-        },
         type: {
-          eqi: productType
+          eqi: "skirting"
         }
       }
-    },
-    skip: !selectedSkirting
+    }
   });
 
   // Запрос для получения существующего SuborderProduct заданного типа
@@ -137,7 +130,25 @@ const SkirtingInsertSelection = ({
           }
         },
         type: {
-          eq: productType
+          eq: "skirting"
+        }
+      }
+    },
+    skip: !suborderId,
+    fetchPolicy: "network-only"
+  });
+
+  // Запрос для получения существующего SuborderProduct типа skirtingMilling
+  const { data: millingProductData, loading: loadingMillingProduct, refetch: refetchMilling } = useQuery(GET_SUBORDER_PRODUCT, {
+    variables: {
+      filters: {
+        suborder: {
+          documentId: {
+            eq: suborderId
+          }
+        },
+        type: {
+          eq: "skirtingMilling"
         }
       }
     },
@@ -148,9 +159,10 @@ const SkirtingInsertSelection = ({
   // Мутация для создания SuborderProduct
   const [createSuborderProduct] = useMutation(CREATE_SUBORDER_PRODUCT, {
     onCompleted: (data) => {
-      message.success(`${productType}: ${translations.dataSaved}`);
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchProduct();
+      refetchMilling();
     },
     onError: (error) => {
       message.error(`${translations.err}: ${error.message}`);
@@ -161,7 +173,7 @@ const SkirtingInsertSelection = ({
   // Мутация для обновления SuborderProduct
   const [updateSuborderProduct] = useMutation(UPDATE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`${productType}: ${translations.dataSaved}`);
+      message.success(translations.dataSaved);
       setSaving(false);
       refetchProduct();
     },
@@ -174,45 +186,14 @@ const SkirtingInsertSelection = ({
   // Мутация для удаления SuborderProduct
   const [deleteSuborderProduct] = useMutation(DELETE_SUBORDER_PRODUCT, {
     onCompleted: () => {
-      message.success(`${productType} ${translations.removed}`);
+      refetchMilling();
       setSaving(false);
-      refetchProduct();
-      // Сбросить состояние после удаления
-      setProductId(null);
-      setSelectedProduct(null);
-      setSelectedFrontDecorType(null);
-      setSelectedFrontDecor(null);
-      setFrontColorCode("");
-      // setSelectedBackDecorType(null);
-      // setSelectedBackDecor(null);
-      // setBackColorCode("");
     },
     onError: (error) => {
       message.error(`${translations.deleteError}: ${error.message}`);
       setSaving(false);
     }
   });
-
-  // Функция удаления выбранного продукта
-  const handleDelete = async () => {
-    const idToDelete = productId || productData?.suborderProducts[0]?.documentId;
-    if (!idToDelete) {
-      message.error(`${productType}: ${translations.noData}`);
-      return;
-    }
-
-    setSaving(true);
-    try {
-      await deleteSuborderProduct({
-        variables: {
-          documentId: idToDelete
-        }
-      });
-    } catch (error) {
-      message.error(`${translations.err}: ${error.message}`);
-      setSaving(false);
-    }
-  };
 
   // Получаем элементы продукта из результатов запроса
   const productElements = useMemo(() => {
@@ -225,6 +206,13 @@ const SkirtingInsertSelection = ({
       if (productData.suborderProducts && productData.suborderProducts.length > 0) {
         const product = productData.suborderProducts[0];
         setProductId(product.documentId);
+        
+        // Устанавливаем размеры продукта
+        if (product.sizes) {
+          const newSizes = { length: 0 };
+          if (product.sizes.length !== undefined) newSizes.length = product.sizes.length;
+          setSizes(newSizes);
+        }
 
         // Если есть продукт и пользователь еще не выбрал его, устанавливаем его
         if (product.product) {
@@ -233,6 +221,9 @@ const SkirtingInsertSelection = ({
           );
           if (productFromElements) {
             setSelectedProduct(productFromElements);
+            if (onSkirtingSelect) {
+              onSkirtingSelect(productFromElements);
+            }
           }
         }
 
@@ -248,34 +239,42 @@ const SkirtingInsertSelection = ({
         if (product.colorCode) {
           setFrontColorCode(product.colorCode);
         }
-
-        // Устанавливаем декор и тип декора для тыльной стороны
-        // if (product.secondSideDecorType) {
-        //   setSelectedBackDecorType(product.secondSideDecorType);
-        // }
-        
-        // if (product.secondSideDecor) {
-        //   setSelectedBackDecor(product.secondSideDecor);
-        // }
-        
-        // if (product.secondSideColorCode) {
-        //   setBackColorCode(product.secondSideColorCode);
-        // }
       }
     }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productElements, productData, loadingProduct]);
 
-  // Функция для выбора продукта
+  // Эффект для проверки наличия фрезеровки
+  useEffect(() => {
+    if (!loadingMillingProduct && millingProductData) {
+      if (millingProductData.suborderProducts && millingProductData.suborderProducts.length > 0) {
+        const millingProduct = millingProductData.suborderProducts[0];
+        setMillingProductId(millingProduct.documentId);
+        setHasMilling(true);
+      } else {
+        setMillingProductId(null);
+        setHasMilling(false);
+      }
+    }
+  }, [millingProductData, loadingMillingProduct]);
+
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
+    if (onSkirtingSelect) {
+      onSkirtingSelect(product);
+    }
   };
 
-  // Обработчик для очистки выбора тыльной стороны
-//   const clearBackSelection = () => {
-//     setSelectedBackDecorType(null);
-//     setSelectedBackDecor(null);
-//     setBackColorCode("");
-//   };
+  // Функция для изменения размеров
+  const handleSizeChange = (field, value) => {
+    setSizes(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Функция для обработки изменения состояния фрезеровки
+  const handleMillingChange = (e) => {
+    setHasMilling(e.target.checked);
+    setMillingChanged(true);
+  };
 
   // Функция для определения типов декора, для которых нужно показывать ColorPicker
   const isPaintType = (typeName) => {
@@ -294,22 +293,26 @@ const SkirtingInsertSelection = ({
     }
 
     if (!selectedProduct) {
-      message.error(`${translations.choose} ${productType}`);
+      message.error(`${translations.choose} ${translations.skirting}`);
+      return;
+    }
+
+    if (!sizes.length) {
+      message.error(translations.enterLength);
       return;
     }
 
     setSaving(true);
+
     try {
       const productData = {
         suborder: suborderId,
         product: selectedProduct.documentId,
-        type: productType,
+        type: "skirting",
+        sizes: sizes,
         decor: selectedFrontDecor ? selectedFrontDecor.documentId : null,
         decor_type: selectedFrontDecorType ? selectedFrontDecorType.documentId : null,
-        colorCode: isPaintType(selectedFrontDecorType?.typeName) ? frontColorCode : null,
-        // secondSideDecor: selectedBackDecor ? selectedBackDecor.documentId : null,
-        // secondSideDecorType: selectedBackDecorType ? selectedBackDecorType.documentId : null,
-        // secondSideColorCode: isPaintType(selectedBackDecorType?.typeName) ? backColorCode : null
+        colorCode: isPaintType(selectedFrontDecorType?.typeName) ? frontColorCode : null
       };
 
       if (productId) {
@@ -329,6 +332,33 @@ const SkirtingInsertSelection = ({
         });
       }
 
+      // Обрабатываем фрезеровку только если ее состояние изменилось
+      if (millingChanged) {
+        if (hasMilling) {
+          // Если фрезеровка нужна, но ее еще нет - создаем
+          if (!millingProductId) {
+            await createSuborderProduct({
+              variables: {
+                data: {
+                  suborder: suborderId,
+                  type: "skirtingMilling"
+                }
+              }
+            });
+          }
+        } else {
+          // Если фрезеровка не нужна, но она есть - удаляем
+          if (millingProductId) {
+            await deleteSuborderProduct({
+              variables: {
+                documentId: millingProductId
+              }
+            });
+          }
+        }
+        setMillingChanged(false);
+      }
+
       // Update title in collapse
       if (onAfterSubmit) {
         await onAfterSubmit();
@@ -346,7 +376,7 @@ const SkirtingInsertSelection = ({
   const items = [
     {
       key: "1",
-      label: translations.insert,
+      label: `${translations.skirting}`,
       children: (
         <Card>
           <Row gutter={[16, 16]}>
@@ -360,6 +390,18 @@ const SkirtingInsertSelection = ({
 
                   {/* <Card
                     hoverable
+                    cover={
+                      product.image?.url ? 
+                      <img 
+                        alt={product.title} 
+                        // src={`https://dev.api.boki-groupe.com${product.image.url}`} 
+                        src={`${baseUrl}${product.image.url}`} 
+                        style={{ height: 200, objectFit: 'cover' }}
+                      /> : 
+                      <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {translations.noImage}
+                      </div>
+                    }
                     onClick={() => handleProductSelect(product)}
                     style={{
                       border: selectedProduct?.documentId === product.documentId
@@ -372,6 +414,23 @@ const SkirtingInsertSelection = ({
 
                   <Card
                     hoverable={!product.archive}
+                    cover={
+                      <div style={{ position: 'relative' }}>
+                        {product.image?.url ? (
+                          <img
+                            alt={product.title}
+                            // src={`https://dev.api.boki-groupe.com${product.image.url}`}
+                            src={`${baseUrl}${product.image.url}`} 
+                            style={{ height: 200, objectFit: 'cover', width: '100%' }}
+                          />
+                        ) : (
+                          <div style={{ height: 200, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {translations.noImage}
+                          </div>
+                        )}
+                        {product.archive && <ArchiveOverlay text={translations.notAvailable} />}
+                      </div>
+                    }
                     onClick={() => {
                       if (!product.archive) handleProductSelect(product);
                     }}
@@ -380,9 +439,10 @@ const SkirtingInsertSelection = ({
                         ? '2px solid #1890ff'
                         : '1px solid #d9d9d9',
                       cursor: product.archive ? 'not-allowed' : 'pointer',
-                      position: 'relative',
+                      position: 'relative'
                     }}
                   >
+                    {/* <Card.Meta title={translations[product.title]} /> */}
                     <Card.Meta
                       title={
                         <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '5px', margin: 0 }}>
@@ -390,106 +450,104 @@ const SkirtingInsertSelection = ({
                         </Title>
                       }
                     />
-                    {product.archive && <ArchiveOverlay text={translations.notAvailable} />}
                   </Card>
-
+            
                 </Col>
               ))
             )}
           </Row>
         </Card>
       )
+    },
+    {
+      key: "2",
+      label: translations.sizes,
+      disabled: !selectedProduct,
+      children: (
+        <Card>
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
+              <Title level={5}>{translations.length}</Title>
+              <InputNumber
+                min={0}
+                value={sizes.length}
+                onChange={(value) => handleSizeChange('length', value)}
+                style={{ width: '100%' }}
+                addonAfter={'mm'}
+              />
+            </Col>
+          </Row>
+        </Card>
+      )
+    },
+    {
+      key: "3",
+      label: translations["Milling insert"],
+      disabled: !selectedProduct,
+      children: (
+        <Card>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Checkbox 
+                checked={hasMilling}
+                onChange={handleMillingChange}
+              >
+                {translations["Milling insert"]}
+              </Checkbox>
+            </Col>
+          </Row>
+        </Card>
+      )
     }
   ];
-
-  // Добавляем вкладку лицевой стороны декора
-  if (selectedProduct) {
-    items.push({
-      key: "2",
-      label: (
-        <span>
-          {translations.decorFront}
-          <span style={{ color: '#00A651' }}>
-            {selectedFrontDecorType ? ` - ${selectedFrontDecorType.typeName}` : ""}
-            {selectedFrontDecor ? ` - ${selectedFrontDecor.title}` : ""}
-            {selectedFrontDecorType && isPaintType(selectedFrontDecorType.typeName) && frontColorCode ? ` - ${frontColorCode}` : ""}
-          </span>
+  
+  // Добавляем вкладку декора
+  items.push({
+    key: "4",
+    label: (
+      <span>
+        {translations.decorFront}
+        <span style={{ color: '#00A651' }}>
+          {selectedFrontDecorType ? ` - ${selectedFrontDecorType.typeName}` : ""}
+          {selectedFrontDecor ? ` - ${selectedFrontDecor.title}` : ""}
+          {selectedFrontDecorType && isPaintType(selectedFrontDecorType.typeName) && frontColorCode ? ` - ${frontColorCode}` : ""}
         </span>
-      ),
-      children: (
-        <DecorSelection
-          doorId={selectedProduct?.documentId}
-          selectedDecorType={selectedFrontDecorType}
-          selectedDecor={selectedFrontDecor}
-          colorCode={frontColorCode}
-          onDecorTypeSelect={setSelectedFrontDecorType}
-          onDecorSelect={setSelectedFrontDecor}
-          onColorChange={setFrontColorCode}
-          isFrontSide={true}
-          suborderId={suborderId}
-          productType={productType}
-          onAfterSubmit={onAfterSubmit}
-        />
-      )
-    });
-
-    // Добавляем вкладку тыльной стороны декора
-    // items.push({
-    //   key: "3",
-    //   label: (
-    //     <span>
-    //       Тыльная сторона
-    //       <span style={{ color: '#00A651' }}>
-    //         {selectedBackDecorType ? ` - ${selectedBackDecorType.typeName}` : ""}
-    //         {selectedBackDecor ? ` - ${selectedBackDecor.title}` : ""}
-    //         {selectedBackDecorType && isPaintType(selectedBackDecorType.typeName) && backColorCode ? ` - ${backColorCode}` : ""}
-    //       </span>
-    //     </span>
-    //   ),
-    //   children: (
-    //     <DecorSelection
-    //       doorId={selectedProduct?.documentId}
-    //       selectedDecorType={selectedBackDecorType}
-    //       selectedDecor={selectedBackDecor}
-    //       colorCode={backColorCode}
-    //       onDecorTypeSelect={setSelectedBackDecorType}
-    //       onDecorSelect={setSelectedBackDecor}
-    //       onColorChange={setBackColorCode}
-    //       isFrontSide={false}
-    //       onClearSelection={clearBackSelection}
-    //       suborderId={suborderId}
-    //       productType={productType}
-    //       onAfterSubmit={onAfterSubmit}
-    //     />
-    //   )
-    // });
-  }
+      </span>
+    ),
+    disabled: !selectedProduct,
+    children: (
+      <DecorSelection
+        doorId={selectedProduct?.documentId}
+        selectedDecorType={selectedFrontDecorType}
+        selectedDecor={selectedFrontDecor}
+        colorCode={frontColorCode}
+        onDecorTypeSelect={setSelectedFrontDecorType}
+        onDecorSelect={setSelectedFrontDecor}
+        onColorChange={setFrontColorCode}
+        isFrontSide={true}
+        suborderId={suborderId}
+        productType="skirting"
+        onAfterSubmit={onAfterSubmit}
+      />
+    )
+  });
 
   return (
     <div>
-      <Divider orientation="left">{translations.selection} {translations.insert}</Divider> 
-        <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'right', alignItems: 'center', marginTop: -45  }}>
+      <Divider orientation="left">{translations.selection} {translations.skirting}</Divider> 
+        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
           <Button
             type="primary"
             onClick={handleSave}
             loading={saving}
             disabled={!selectedProduct}
             style={{
-              ...{ marginRight: 8 },
+              ...{ marginRight: 8, marginTop: -60 },
               ...(!productId ? {} : { backgroundColor: '#52C41A' })
             }}
           >
-            {productId ? translations.update : translations.save}
+            {productId ? translations.update : translations.save }
           </Button>
-          {productId && (
-            <Button
-              danger
-              onClick={handleDelete}
-              loading={saving}
-            >
-              {translations.delete}
-            </Button>
-          )}
         </div>
 
       <Tabs
@@ -501,4 +559,4 @@ const SkirtingInsertSelection = ({
   );
 };
 
-export default SkirtingInsertSelection;
+export default SkirtingSelection;

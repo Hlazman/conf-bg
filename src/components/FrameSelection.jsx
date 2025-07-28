@@ -395,7 +395,7 @@ const FrameSelection = ({
                 >
                   <Card.Meta 
                     title={
-                      <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '20px', margin: 0 }}>
+                      <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '5px', margin: 0 }}>
                         {translations[frame.title] || frame.title}
                       </Title>
                     }

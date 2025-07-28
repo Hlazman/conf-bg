@@ -53,7 +53,7 @@ const FileUploader = ({ onFileUploaded }) => {
       const isLt1M = file.size / 1024 / 1024 < 1; // меньше 1 MB
         if (!isLt1M) {
           message.error(`${file.name} ${translations.tooBigImage || 'слишком большой (макс. 1 МБ)'}`);
-          return Upload.LIST_IGNORE; // 🚫 не добавлять в fileList
+          return Upload.LIST_IGNORE;
         }
 
       setFileList([file]);

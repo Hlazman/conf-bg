@@ -93,7 +93,8 @@ const SkirtingSelection = ({
 }) => {
   const [productId, setProductId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [sizes, setSizes] = useState({ length: 0 });
+  // const [sizes, setSizes] = useState({ length: 0 });
+  const [sizes, setSizes] = useState({ length: 0, height: 0 });
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
   const [hasMilling, setHasMilling] = useState(false);
@@ -209,8 +210,12 @@ const SkirtingSelection = ({
         
         // Устанавливаем размеры продукта
         if (product.sizes) {
-          const newSizes = { length: 0 };
+          // const newSizes = { length: 0 };
+          // if (product.sizes.length !== undefined) newSizes.length = product.sizes.length;
+          // setSizes(newSizes);
+          const newSizes = { length: 0, height: 0 };
           if (product.sizes.length !== undefined) newSizes.length = product.sizes.length;
+          if (product.sizes.height !== undefined) newSizes.height = product.sizes.height;
           setSizes(newSizes);
         }
 
@@ -299,6 +304,11 @@ const SkirtingSelection = ({
 
     if (!sizes.length) {
       message.error(translations.enterLength);
+      return;
+    }
+
+    if (!sizes.height || sizes.height > 120) {
+      message.error(`${translations.enterHeight} (max 120 mm)`);
       return;
     }
 
@@ -442,7 +452,14 @@ const SkirtingSelection = ({
                       position: 'relative'
                     }}
                   >
-                    <Card.Meta title={translations[product.title]} />
+                    {/* <Card.Meta title={translations[product.title]} /> */}
+                    <Card.Meta
+                      title={
+                        <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '5px', margin: 0 }}>
+                          {translations[product.title]}
+                        </Title>
+                      }
+                    />
                   </Card>
             
                 </Col>
@@ -469,6 +486,19 @@ const SkirtingSelection = ({
                 addonAfter={'mm'}
               />
             </Col>
+
+            <Col span={8}>
+              <Title level={5}>{translations.height}</Title>
+              <InputNumber
+                min={0}
+                max={120}
+                value={sizes.height}
+                onChange={(value) => handleSizeChange('height', value)}
+                style={{ width: '100%' }}
+                addonAfter={'mm'}
+              />
+          </Col>
+
           </Row>
         </Card>
       )
