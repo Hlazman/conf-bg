@@ -96,6 +96,7 @@ const CreateWallPanel = () => {
     {
       key: '2',
       label: formatItemLabel("CharmWood", formattedTitles.wallPanelSelection?.CharmWood),
+      collapsible: 'disabled',
       children: <WallPanelSelection 
                   suborderId={suborderId} 
                   onAfterSubmit={updateFormattedTitles}
