@@ -283,7 +283,16 @@ const ParquetSelection = ({ suborderId, brand, onAfterSubmit }) => {
                       position: 'relative'
                     }}
                   >
-                    <Card.Meta title={translations[product.title] || product.title} />
+                    {/* <Card.Meta title={translations[product.title] || product.title} /> */}
+
+                    <Card.Meta
+                        title={
+                        <Title level={5} style={{ whiteSpace: 'normal', wordBreak: 'break-word', padding: '5px', margin: 0 }}>
+                            {translations[product.title] || product.title}
+                        </Title>
+                        }
+                    />
+
                   </Card>
                 </Col>)
               ))

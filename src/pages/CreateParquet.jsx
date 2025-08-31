@@ -86,12 +86,13 @@ const CreateParquet = () => {
   const items = [
     {
       key: '1',
-      label: formatItemLabel(translations.parquet, formattedTitles.parquetSelection),
-    //   label: formatItemLabel(translations.parquet, translations[formattedTitles.parquetSelection]),
-      children: <ParquetSelection 
-                  suborderId={suborderId}
-                  onAfterSubmit={updateFormattedTitles}
-                />
+      label: formatItemLabel(translations.parquet, translations[formattedTitles.parquetSelection]),
+      // label: formatItemLabel(translations.parquet, formattedTitles.parquetSelection),
+      children: 
+        <ParquetSelection 
+          suborderId={suborderId}
+          onAfterSubmit={updateFormattedTitles}
+        />
     },
     {
       key: '2',

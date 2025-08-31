@@ -96,8 +96,8 @@ const ParquetPresentation = ({ suborder, renderImage }) => {
             styles={{ label: { backgroundColor: '#fdf5e6', fontWeight: 'bold' } }}
           >
             <Descriptions.Item label={translations.title}>
-              {parquetProduct.product?.title}
-              {/* {translations[parquetProduct.product?.title]} */}
+              {/* {parquetProduct.product?.title} */}
+              {translations[parquetProduct.product?.title]}
             </Descriptions.Item>
             
             <Descriptions.Item label={`${translations.height}`}>

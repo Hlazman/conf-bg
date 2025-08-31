@@ -32,8 +32,8 @@ const ParquetFactory = ({ suborder }) => {
               content: { width: '50%' } 
             }}
           >
-            {/* <Descriptions.Item style={{fontWeight: '700'}} label={translations[parquetProduct.product?.title]}> */}
-            <Descriptions.Item style={{fontWeight: '700'}} label={parquetProduct.product?.title}>
+            <Descriptions.Item style={{fontWeight: '700'}} label={translations[parquetProduct.product?.title]}>
+            {/* <Descriptions.Item style={{fontWeight: '700'}} label={parquetProduct.product?.title}> */}
               <div style={{textAlign: 'right', fontWeight: 'bold'}}> {formatPrice(parquetProduct.productCostBasic)} </div>
             </Descriptions.Item>
             
