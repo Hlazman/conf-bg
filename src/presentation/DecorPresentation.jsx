@@ -9,7 +9,7 @@ const DecorPresentation = ({ product, isFrontSide = true, customTitle = null, re
   const { translations } = useContext(LanguageContext);
 
   if (!product) return null;
-console.log(product)
+
   const decorType = isFrontSide ? product.decor_type : product.secondSideDecorType;
   const decor = isFrontSide ? product.decor : product.secondSideDecor;
   const colorCode = isFrontSide ? product.colorCode : product.secondSideColorCode;

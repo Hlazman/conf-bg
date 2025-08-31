@@ -8,6 +8,7 @@ import { LanguageContext } from "../context/LanguageContext";
 import DoorPresentation from "../presentation/DoorPresentation";
 import WallPanelPresentation from "../presentation/WallPanelPresentation";
 import SkirtingPresentation from "../presentation/SkirtingPresentation";
+import ParquetPresentation from "../presentation/ParquetPresentation";
 import SamplesPresentation from "../presentation/SamplesPresentation";
 import DecorPresentation from "../presentation/DecorPresentation";
 import InsertionPresentation from "../presentation/InsertionPresentation";
@@ -77,6 +78,7 @@ const ClientPresentation = ({ orderData, companyData }) => {
       'decor': { width: '150px', height: '150px', objectFit: 'cover' },
       'wallPanel': { width: '100%', height: '400px', objectFit: 'contain' },
       'skirting': { width: '100%', height: '400px', objectFit: 'contain' },
+      'parquet': { width: '100%', height: '400px', objectFit: 'contain' },
       'hardware': { maxWidth: '150px', height: 'auto', objectFit: 'contain' },
       'default': { maxWidth: '150px', height: 'auto', objectFit: 'contain' },
     };
@@ -104,7 +106,7 @@ const ClientPresentation = ({ orderData, companyData }) => {
 
   // Сортировка suborders по типу для правильной последовательности отображения
   const sortSuborders = (suborders) => {
-    const typeOrder = ['door', 'hiddenDoor', 'slidingDoor', 'wallPanel', 'skirting', 'samples'];
+    const typeOrder = ['door', 'hiddenDoor', 'slidingDoor', 'wallPanel', 'skirting', 'samples', 'parquet'];
     
     return [...suborders].sort((a, b) => {
       const aType = a.suborder_type?.typeName || '';
@@ -152,6 +154,10 @@ const ClientPresentation = ({ orderData, companyData }) => {
             
             {suborder.suborder_type?.typeName === 'skirting' && (
               <SkirtingPresentation suborder={suborder} renderImage={renderImage} />
+            )}
+
+            {suborder.suborder_type?.typeName === 'parquet' && (
+              <ParquetPresentation suborder={suborder} renderImage={renderImage} />
             )}
             
             {suborder.suborder_type?.typeName === 'samples' && (

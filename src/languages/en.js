@@ -182,6 +182,7 @@ const en = {
   manager: "Client Advisor",
   fixed: "Fixed",
   remind: "Remind",
+  parquet: "Parquet",
 
   // MESSAGES
   doorSealRequired: 'Сhoose door seal',
@@ -403,6 +404,40 @@ const en = {
   btnArchive: 'Shows only orders that have been moved to the archive.',
   btnFixed: 'Displays orders marked as fixed.',
   btnRemind: 'Displays orders, leaving only those that need to be reminded about.',
+
+  // Parquet
+  parquet_grade: 'Variety',
+  chooseParquetGrade: 'Choose variety',
+  parquetSize: 'Parquet sizes',
+  chooseParquetSize: 'Choose parquet sizes',
+  parquetLacquering: 'Varnishing',
+  parquetOiling: 'Coat with oil',
+  parquetBrushing: 'Brushing',
+  parquetSmoking: 'Smoking',
+  parquetFixedLength: 'Fixed Length (Paluba)',
+  parquetColoringVariants: 'Color variant',
+  chooseColoringVariants: 'Choose color variant',
+  parquetColorLink: 'Link to additional images',
+  parquetColorTitle: 'Parquet color name',
+  writeColorTitle: 'Write сolor title',
+  Country: 'Country',
+  Mix: 'Mix',
+  Natur: 'Natur',
+  Rustic: 'Rustic',
+  Select: 'Select',
+  Normal: 'Ordinary parquet',
+  Module: 'Modular parquet',
+  Mocha: 'Mocha',
+  Wenge: 'Wenge',
+  NorthPole: 'North Pole',
+  Cappuccino: 'Cappuccino',
+  PlayaJardin: 'Playa Jardin', 
+  DarkWalnut: 'Dark Walnut', 
+  GoldenOak: 'Golden Oak', 
+  Savanna: 'Savanna', 
+  standard: 'Choose color...',
+  goTo: 'Follow the link',
+  AdditionalSurface: 'Additional surface treatment',
 };
   
   export default en;

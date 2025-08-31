@@ -140,7 +140,7 @@ const Orders = () => {
       suborderFilters: {
         product: {
           type: {
-            in: ["door", "hiddenDoor", "samples", "slidingDoor", "wallPanel", "skirting"]
+            in: ["door", "hiddenDoor", "samples", "slidingDoor", "wallPanel", "skirting", "parquet"]
           }
         }
       }
@@ -172,7 +172,7 @@ const Orders = () => {
           suborderFilters: {
             product: {
               type: {
-                in: ["door", "hiddenDoor", "samples", "slidingDoor", "wallPanel", "skirting"]
+                in: ["door", "hiddenDoor", "samples", "slidingDoor", "wallPanel", "skirting", "parquet"]
               }
             }
           }
@@ -360,6 +360,27 @@ const handleSampleClick = async (record) => {
   }
 };
 
+const handleParquetClick = async (record) => {
+  try {
+    const { data: suborderData } = await createSuborder({
+      variables: {
+        data: {
+          hidden: false,
+          order: record.documentId,
+          suborder_type: 14 // ID для типа parquet
+        }
+      }
+    });
+
+    // Сохраняем ID субордера в localStorage
+    localStorage.setItem('currentSuborderId', suborderData.createSuborder.documentId);
+    navigate(`/create-parquet`);
+  } catch (error) {
+    message.error(translations.errCreateSubOrder);
+    console.error("Error creating suborder:", error);
+  }
+};
+
   const handleEditSuborder = (suborderId, orderId) => {
     localStorage.setItem('currentSuborderId', suborderId);
     const order = orders.find(order => order.documentId === orderId);
@@ -381,6 +402,9 @@ const handleSampleClick = async (record) => {
       } else if (typeName.includes("samples")) {
         currentType = "samples";
         navigationPath = "/create-samples";
+      } else if (typeName.includes("parquet")) {
+        currentType = "parquet";
+        navigationPath = "/create-parquet";
       } else if (typeName.includes("skirting")) {
         currentType = "skirting";
         navigationPath = "/create-skirting";
@@ -548,6 +572,11 @@ const handleSampleClick = async (record) => {
             key: "samples", 
             label: translations.samples,
             onClick: () => handleSampleClick(record) 
+          },
+          { 
+            key: "parquet", 
+            label: translations.parquet,
+            onClick: () => handleParquetClick(record) 
           },
         ],
       },

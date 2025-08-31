@@ -114,6 +114,17 @@ export const GET_SUBORDER_DETAILS = gql`
         customProductCostNetto
         comment
         knobOpen
+        parquet_grade { documentId title }
+        parquetCuttingPercent
+        parquetLacquering
+        parquetBrushing
+        parquetSmoking
+        parquetFixedLength
+        parquetOiling
+        parquetColoringVariants
+        parquetColorTitle
+        parquetColorLink
+        parquetSize
       }
     }
   }
@@ -262,6 +273,19 @@ export const cloneSuborderWithProducts = async (suborderId, client, messageApi, 
         if (product.customProductCostNetto !== undefined) productInput.customProductCostNetto = product.customProductCostNetto;
         if (product.comment !== undefined) productInput.comment = product.comment;
         if (product.knobOpen !== undefined) productInput.knobOpen = product.knobOpen;
+
+        // Паркет (за исключением height и width)
+        if (product.parquet_grade && product.parquet_grade.documentId) productInput.parquet_grade = product.parquet_grade.documentId;
+        if (product.parquetColoringVariants !== undefined) productInput.parquetColoringVariants = product.parquetColoringVariants;
+        if (product.parquetCuttingPercent !== undefined) productInput.parquetCuttingPercent = product.parquetCuttingPercent;
+        if (product.parquetColorTitle !== undefined) productInput.parquetColorTitle = product.parquetColorTitle;
+        if (product.parquetColorLink !== undefined) productInput.parquetColorLink = product.parquetColorLink;
+        if (product.parquetSize !== undefined) productInput.parquetSize = product.parquetSize;
+        if (product.parquetLacquering !== undefined) productInput.parquetLacquering = product.parquetLacquering;
+        if (product.parquetBrushing !== undefined) productInput.parquetBrushing = product.parquetBrushing;
+        if (product.parquetSmoking !== undefined) productInput.parquetSmoking = product.parquetSmoking;
+        if (product.parquetFixedLength !== undefined) productInput.parquetFixedLength = product.parquetFixedLength;
+        if (product.parquetOiling !== undefined) productInput.parquetOiling = product.parquetOiling;
 
         // Создаем новый продукт подзаказа
         try {

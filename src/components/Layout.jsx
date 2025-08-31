@@ -102,6 +102,7 @@ const AppLayout = ({ children }) => {
     if (pathParts[0] === "create-wallpanel") return `${translations.wallPanels}`;
     if (pathParts[0] === "create-skirting") return `${translations.skirting}`;
     if (pathParts[0] === "create-samples") return `${translations.samples}`;
+    if (pathParts[0] === "create-parquet") return `${translations.parquet}`;
 
     // if (pathParts[0] === "presentation") {
     //   if (pathParts[2] === "client") {

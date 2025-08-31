@@ -113,6 +113,7 @@ export const fetchSuborderData = async (client, suborderId, limit = 100) => {
       skirtingSelection: formatProductTitle(products, 'skirting'),
       skirtingDecorSelection: formatSkirtingDecorSelection(products),
       sampleslSelection: formatSamplesSelection(products),
+      parquetSelection: formatProductTitle(products, 'parquet'),
     };
     
     return formattedTitles;

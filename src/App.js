@@ -11,6 +11,7 @@ import CreateProduct from "./pages/CreateProduct";
 import CreateWallPanel from "./pages/CreateWallPanel";
 import CreateSkirting from "./pages/CreateSkirting";
 import CreateSamples from "./pages/CreateSamples";
+import CreateParquet from "./pages/CreateParquet";
 import CreateClient from "./pages/CreateClient";
 import EditClient from "./pages/EditClient";
 import Clients from "./pages/Clients";
@@ -53,6 +54,7 @@ const App = () => {
                 <Route path="/create-wallpanel" element={<CreateWallPanel />} />
                 <Route path="/create-skirting" element={<CreateSkirting />} />
                 <Route path="/create-samples" element={<CreateSamples />} />
+                <Route path="/create-parquet" element={<CreateParquet />} />
                 <Route path="/create-client" element={<CreateClient />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/edit-client/:documentId" element={<EditClient />} />

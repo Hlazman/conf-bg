@@ -103,6 +103,17 @@ const GET_ORDER = gql`
           doorFilling
           knobInsertion
           lockInsertion
+          parquet_grade { documentId title }
+          parquetCuttingPercent
+          parquetLacquering
+          parquetBrushing
+          parquetSmoking
+          parquetFixedLength
+          parquetOiling
+          parquetColoringVariants
+          parquetColorTitle
+          parquetColorLink
+          parquetSize
           product {
             title
             type

@@ -17,7 +17,8 @@ const WallPanelFaktory = ({ suborder }) => {
   const formatPrice = (price) => `${convertFromEUR(price || 0).toFixed(2)} ${getCurrencySymbol()}`;
 
   const sizes = wallPanelProduct.sizes || {};
-  const area = sizes.height && sizes.width ? Math.round((sizes.height * sizes.width) / 1000000) : 0;
+  // const area = sizes.height && sizes.width ? Math.round((sizes.height * sizes.width) / 1000000) : 0;
+  const area = parseFloat(((sizes.height * sizes.width) / 1000000).toFixed(2));
   
   return (
     <div className="wall-panel-presentation">

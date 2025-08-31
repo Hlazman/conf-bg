@@ -6,6 +6,7 @@ import DoorFactory from "../Factory/DoorFactory";
 import SkirtingFactory from "../Factory/SkirtingFactory";
 import SamplesFactory from "../Factory/SamplesFactory";
 import WallPanelsFactory from "../Factory/WallPanelsFactory";
+import ParquetFactory from "../Factory/ParquetFactory";
 import DecorFactory from "../Factory/DecorFactory";
 import ElementsFactory from "../Factory/ElementsFactory";
 import FrameFactory from "../Factory/FrameFactory";
@@ -40,7 +41,7 @@ const FactoryPresentation = ({ orderData }) => {
   };
 
   const sortSuborders = (suborders) => {
-    const typeOrder = ['door', 'hiddenDoor', 'slidingDoor', 'wallPanel', 'skirting', 'samples'];
+    const typeOrder = ['door', 'hiddenDoor', 'slidingDoor', 'wallPanel', 'skirting', 'samples', 'parquet'];
     
     return [...suborders].sort((a, b) => {
       const aType = a.suborder_type?.typeName || '';
@@ -81,6 +82,10 @@ const FactoryPresentation = ({ orderData }) => {
             
             {suborder.suborder_type?.typeName === 'wallPanel' && (
               <WallPanelsFactory suborder={suborder} />
+            )}
+
+            {suborder.suborder_type?.typeName === 'parquet' && (
+              <ParquetFactory suborder={suborder} />
             )}
             
             {suborder.suborder_type?.typeName === 'skirting' && (
