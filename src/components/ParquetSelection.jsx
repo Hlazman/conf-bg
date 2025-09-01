@@ -73,7 +73,7 @@ const COLORING_VARIANTS = [
   "DarkWalnut",
   "GoldenOak",
   "Savanna",
-  "standard"
+  "standard",
 ];
 
 const ParquetSelection = ({ suborderId, brand, onAfterSubmit }) => {
@@ -184,6 +184,17 @@ const ParquetSelection = ({ suborderId, brand, onAfterSubmit }) => {
     setSelectedParquetSize(null);
   };
 
+  useEffect(() => {
+    setParquetBrushing(!!parquetColoringVariants);
+  }, [parquetColoringVariants]);
+
+  useEffect(() => {
+  // Если вариант не 'standard' — очищаем поле parquetColorTitle
+    if (parquetColoringVariants !== 'standard') {
+      setParquetColorTitle('');
+    }
+  }, [parquetColoringVariants]);
+
   const handleSizeChange = (field, value) => setSizes(prev => ({ ...prev, [field]: value || 0 }));
 
   // Mutual exclusion: Lacquering vs Oiling
@@ -203,7 +214,7 @@ const ParquetSelection = ({ suborderId, brand, onAfterSubmit }) => {
     if (!sizes.width) { message.error(translations.enterWidth); return; }
     if (!selectedParquetGradeId) { message.error(translations.chooseParquetGrade); return; }
     if (!selectedParquetSize) { message.error(translations.chooseParquetSize); return; }
-    if (!parquetColoringVariants) { message.error(translations.chooseColoringVariants); return; }
+    // if (!parquetColoringVariants) { message.error(translations.chooseColoringVariants); return; }
     if (parquetColoringVariants === 'standard' && !parquetColorTitle.trim()) { message.error(translations.writeColorTitle); return; }
 
     setSaving(true);
@@ -361,7 +372,8 @@ const ParquetSelection = ({ suborderId, brand, onAfterSubmit }) => {
             </Col>
             <Col span={6}>
               <Text strong style={{ display: 'block', marginBottom: 6 }}>{translations.parquetColoringVariants}</Text>
-              <Select
+              
+              {/* <Select
                 value={parquetColoringVariants || undefined}
                 onChange={(v) => setParquetColoringVariants(v)}
                 style={{ width: '100%' }}
@@ -370,7 +382,27 @@ const ParquetSelection = ({ suborderId, brand, onAfterSubmit }) => {
                 {COLORING_VARIANTS.map(v => (
                   <Option key={v} value={v}>{translations[v] || v}</Option>
                 ))}
+              </Select> */}
+
+              <Select
+                value={parquetColoringVariants ?? null}
+                onChange={(v) => {
+                  const val = v ?? null;       // если clear — приводим к null
+                  setParquetColoringVariants(val);
+                  setParquetBrushing(!!val);   // автосвязка: есть вариант => включаем брашинг
+                }}
+                style={{ width: '100%' }}
+                placeholder={translations.chooseColoringVariants}
+                allowClear
+              >
+                {/* Явный вариант без окрашивания */}
+                <Option value={null}>{translations.none || '—'}</Option>
+
+                {COLORING_VARIANTS.map(v => (
+                  <Option key={v} value={v}>{translations[v] || v}</Option>
+                ))}
               </Select>
+
             </Col>
             <Col span={6}>
               <Text strong style={{ display: 'block', marginBottom: 6 }}>{translations.parquetColorTitle}</Text>
